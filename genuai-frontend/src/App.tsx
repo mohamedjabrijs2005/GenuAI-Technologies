@@ -1,17 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 
-// ── Feature Pages ──────────────────────────────────────────────────────────
-import { AuthPage as Auth } from "./features/auth";
-import { PathSelectionPage as PathSelection } from "./features/dashboard";
-import { CompanyOverviewPage as CompanyOverview, CompanyDashboardPage as CompanyDashboard } from "./features/company";
-import { PracticeDashboardPage as PracticeDashboard } from "./features/practiceHub";
-import { CandidatePipelinePage as CandidatePipeline } from "./features/recruitment";
-import { SearchDashboardPage as SearchDashboard } from "./features/jobs";
-import { CareerProfileDashboardPage as CareerProfileDashboard } from "./features/profile";
-import { AdminDashboardPage as AdminDashboard } from "./features/admin";
-import { AMCATTestPage as AMCATTest } from "./features/skillTest";
-import { AIMockInterviewPage } from "./features/interview";
+// ── Feature Pages (lazy-loaded per route for optimal code splitting) ────────
+const Auth                 = lazy(() => import("./features/auth").then(m => ({ default: m.AuthPage })));
+const PathSelection        = lazy(() => import("./features/dashboard").then(m => ({ default: m.PathSelectionPage })));
+const CompanyOverview      = lazy(() => import("./features/company").then(m => ({ default: m.CompanyOverviewPage })));
+const CompanyDashboard     = lazy(() => import("./features/company").then(m => ({ default: m.CompanyDashboardPage })));
+const PracticeDashboard    = lazy(() => import("./features/practiceHub").then(m => ({ default: m.PracticeDashboardPage })));
+const CandidatePipeline    = lazy(() => import("./features/recruitment").then(m => ({ default: m.CandidatePipelinePage })));
+const SearchDashboard      = lazy(() => import("./features/jobs").then(m => ({ default: m.SearchDashboardPage })));
+const CareerProfileDashboard = lazy(() => import("./features/profile").then(m => ({ default: m.CareerProfileDashboardPage })));
+const AdminDashboard       = lazy(() => import("./features/admin").then(m => ({ default: m.AdminDashboardPage })));
+const AMCATTest            = lazy(() => import("./features/skillTest").then(m => ({ default: m.AMCATTestPage })));
+const AIMockInterviewPage  = lazy(() => import("./features/interview").then(m => ({ default: m.AIMockInterviewPage })));
+
+// ── Suspense fallback ───────────────────────────────────────────────────────
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-4">
+        <img src="/logo.png" alt="GenuAI" className="w-16 h-16 object-contain animate-pulse" />
+        <p className="text-on-surface-variant text-sm font-medium">Loading...</p>
+      </div>
+    </div>
+  );
+}
 
 // ── Auth guard ─────────────────────────────────────────────────────────────
 function RequireAuth({ user, children, role }: { user: any; children: React.ReactElement; role?: string | string[] }) {
@@ -87,6 +100,7 @@ export default function App() {
   }
 
   return (
+    <Suspense fallback={<PageLoader />}>
     <Routes>
       {/* Public */}
       <Route path="/auth" element={user ? <Navigate to="/dashboard" replace /> : <Auth onLogin={handleLogin} />} />
@@ -179,5 +193,6 @@ export default function App() {
       {/* 404 fallback */}
       <Route path="*" element={<Navigate to={user ? "/dashboard" : "/auth"} replace />} />
     </Routes>
+    </Suspense>
   );
 }
