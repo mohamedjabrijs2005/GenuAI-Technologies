@@ -1,0 +1,9 @@
+{
+  "name": "genuai-technologies-monorepo",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "build": "cd genuai-frontend && npm install && npm run build",
+    "dev": "cd genuai-frontend && npm run dev"
+  }
+}
