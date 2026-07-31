@@ -1,66 +1,145 @@
-/**
- * RecruiterDecisionPanel — allows a recruiter to make a hire/reject decision
- * based on integrity data.
- */
 import React, { useState } from 'react';
+import apiClient from '../../../services/apiClient';
 
-export interface RecruiterDecisionPanelProps {
+interface Props {
+  sessionId: string;
+  candidateId: number;
   candidateName: string;
-  onDecision?: (decision: 'hire' | 'reject' | 'review', notes: string) => void;
+  initialStatus?: 'Shortlisted' | 'Hold' | 'Rejected' | 'Selected' | 'Pending';
+  initialNotes?: string;
+  onSaved?: () => void;
 }
 
-export const RecruiterDecisionPanel: React.FC<RecruiterDecisionPanelProps> = ({
+export const RecruiterDecisionPanel: React.FC<Props> = ({
+  sessionId,
+  candidateId,
   candidateName,
-  onDecision,
+  initialStatus = 'Pending',
+  initialNotes = '',
+  onSaved,
 }) => {
-  const [notes, setNotes] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState(initialStatus);
+  const [notes, setNotes] = useState(initialNotes);
+  const [nextInterviewDate, setNextInterviewDate] = useState('');
+  const [reviewer, setReviewer] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState('');
 
-  const handle = (decision: 'hire' | 'reject' | 'review') => {
-    onDecision?.(decision, notes);
-    setSubmitted(true);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await apiClient.post('/integrity/decision', {
+        sessionId,
+        candidateId,
+        recruiterNotes: notes,
+        decisionStatus: status,
+        scheduledNextInterviewAt: nextInterviewDate || undefined,
+        assignedReviewer: reviewer || undefined,
+        updatedAt: new Date().toISOString(),
+      });
+      setSavedMsg('✅ Recruiter decision saved successfully!');
+      setTimeout(() => setSavedMsg(''), 3000);
+      if (onSaved) onSaved();
+    } catch {
+      alert('Failed to save recruiter decision.');
+    }
+    setIsSaving(false);
   };
 
-  if (submitted) {
-    return (
-      <div className="glass rounded-xl border border-success/30 p-4 text-center text-success font-bold text-sm">
-        Decision submitted for {candidateName}.
-      </div>
-    );
-  }
+  const getStatusBadge = (s: string) => {
+    switch (s) {
+      case 'Selected':
+        return 'bg-success/10 text-success border-success/30';
+      case 'Shortlisted':
+        return 'bg-indigo-brand/10 text-indigo-brand border-indigo-brand/30';
+      case 'Hold':
+        return 'bg-warning/10 text-warning border-warning/30';
+      case 'Rejected':
+        return 'bg-error/10 text-error border-error/30';
+      default:
+        return 'bg-surface-container text-on-surface-variant border-surface-container';
+    }
+  };
 
   return (
-    <div className="glass rounded-xl border border-surface-container p-4 flex flex-col gap-3">
-      <div className="font-bold text-on-surface text-sm">
-        Recruiter Decision — <span className="text-indigo-brand">{candidateName}</span>
+    <div className="glass p-6 rounded-2xl border border-surface-container shadow-md flex flex-col gap-4">
+      <div className="flex justify-between items-center pb-3 border-b border-surface-container">
+        <div>
+          <h4 className="text-base font-bold text-on-surface m-0">👤 Recruiter Decision &amp; Notes Panel</h4>
+          <div className="text-xs font-semibold text-on-surface-variant mt-0.5">
+            Human Decision Authority — Candidate: <strong className="text-on-surface">{candidateName}</strong>
+          </div>
+        </div>
+        <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadge(status)}`}>
+          {status.toUpperCase()}
+        </span>
       </div>
-      <textarea
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        placeholder="Add notes (optional)…"
-        rows={3}
-        className="w-full rounded-lg border border-surface-container bg-surface-bright px-3 py-2 text-sm text-on-surface resize-none focus:outline-none focus:border-indigo-brand"
-      />
-      <div className="flex gap-2">
-        <button
-          onClick={() => handle('hire')}
-          className="flex-1 py-2 rounded-lg bg-success text-white text-xs font-bold hover:opacity-90 transition-opacity"
-        >
-          Hire
-        </button>
-        <button
-          onClick={() => handle('review')}
-          className="flex-1 py-2 rounded-lg bg-warning text-white text-xs font-bold hover:opacity-90 transition-opacity"
-        >
-          Review
-        </button>
-        <button
-          onClick={() => handle('reject')}
-          className="flex-1 py-2 rounded-lg bg-error text-white text-xs font-bold hover:opacity-90 transition-opacity"
-        >
-          Reject
-        </button>
+
+      {/* Decision Buttons */}
+      <div>
+        <label className="text-xs font-bold text-on-surface-variant uppercase mb-2 block">Set Hiring Decision Status</label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {(['Shortlisted', 'Hold', 'Selected', 'Rejected'] as const).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setStatus(s)}
+              className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                status === s
+                  ? getStatusBadge(s) + ' shadow-sm scale-[1.02]'
+                  : 'bg-surface-bright text-on-surface-variant border-surface-container hover:bg-surface-container/50'
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Schedule Next Interview & Reviewer */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant uppercase mb-1 block">Schedule Next Interview Date</label>
+          <input
+            type="datetime-local"
+            value={nextInterviewDate}
+            onChange={(e) => setNextInterviewDate(e.target.value)}
+            className="w-full p-2.5 bg-surface-bright border border-surface-container rounded-xl text-xs font-bold text-on-surface outline-none focus:border-indigo-brand"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant uppercase mb-1 block">Assign Reviewer</label>
+          <input
+            type="text"
+            placeholder="e.g. Lead Engineer / HR Name"
+            value={reviewer}
+            onChange={(e) => setReviewer(e.target.value)}
+            className="w-full p-2.5 bg-surface-bright border border-surface-container rounded-xl text-xs font-bold text-on-surface outline-none focus:border-indigo-brand"
+          />
+        </div>
+      </div>
+
+      {/* Private Notes */}
+      <div>
+        <label className="text-xs font-bold text-on-surface-variant uppercase mb-1 block">Private Recruiter Notes &amp; HR Comments</label>
+        <textarea
+          rows={3}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Add private evaluation notes, interview feedback, or HR rationale..."
+          className="w-full p-3 bg-surface-bright border border-surface-container rounded-xl text-xs font-medium text-on-surface outline-none focus:border-indigo-brand leading-relaxed"
+        />
+      </div>
+
+      {savedMsg && <div className="p-2.5 bg-success/10 border border-success/30 text-success rounded-xl font-bold text-xs text-center">{savedMsg}</div>}
+
+      <button
+        onClick={handleSave}
+        disabled={isSaving}
+        className="w-full py-3 bg-indigo-brand text-white font-bold text-xs rounded-xl shadow-lg hover:shadow-indigo-brand/30 hover:scale-[1.01] transition-all"
+      >
+        {isSaving ? 'Saving Decision...' : '💾 Save Recruiter Decision & Notes'}
+      </button>
     </div>
   );
 };

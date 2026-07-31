@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-interface Props {
-  user: any;
-  onBack?: () => void;
-  role?: string;
-  assessmentId?: number;
-  onComplete?: (scores: any) => void;
-  onTerminate?: () => void;
-}
+interface Props { user: any; onBack: () => void; }
 
 const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 

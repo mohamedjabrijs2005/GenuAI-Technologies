@@ -1,24 +1,44 @@
 /**
- * Integrity Client — API calls for integrity sessions.
+ * Integrity Module Frontend API Service
  */
+import apiClient from '../../../services/apiClient';
+import type {
+  IdentityVerificationResult,
+  MonitoringEvent,
+  IntegrityScoreReport,
+  CandidateConsent,
+} from '../types';
 
-const BASE = '/api/integrity';
-
-export const createIntegritySession = async (userId: string, assessmentId: string) => {
-  const res = await fetch(`${BASE}/sessions`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, assessmentId }),
-  });
-  return res.json();
+export const submitConsent = async (consent: CandidateConsent) => {
+  const res = await apiClient.post('/integrity/consent', consent);
+  return res.data;
 };
 
-export const closeIntegritySession = async (sessionId: string) => {
-  const res = await fetch(`${BASE}/sessions/${sessionId}/close`, { method: 'POST' });
-  return res.json();
+export const verifyIdentity = async (payload: {
+  candidateId: number;
+  faceImageBase64?: string;
+  voiceSampleBase64?: string;
+}): Promise<IdentityVerificationResult> => {
+  const res = await apiClient.post('/integrity/verify-identity', payload);
+  return res.data;
 };
 
-export const getIntegrityReport = async (sessionId: string) => {
-  const res = await fetch(`${BASE}/sessions/${sessionId}/report`);
-  return res.json();
+export const logMonitoringEvent = async (event: Partial<MonitoringEvent>) => {
+  const res = await apiClient.post('/integrity/log-event', event);
+  return res.data;
+};
+
+export const fetchIntegrityReport = async (sessionId: string): Promise<IntegrityScoreReport> => {
+  const res = await apiClient.get(`/integrity/report/${sessionId}`);
+  return res.data;
+};
+
+export const fetchCompanyIntegrityReports = async (companyId: number): Promise<IntegrityScoreReport[]> => {
+  const res = await apiClient.get(`/integrity/company/${companyId}`);
+  return res.data;
+};
+
+export const fetchAdminIntegrityAnalytics = async () => {
+  const res = await apiClient.get('/integrity/analytics');
+  return res.data;
 };

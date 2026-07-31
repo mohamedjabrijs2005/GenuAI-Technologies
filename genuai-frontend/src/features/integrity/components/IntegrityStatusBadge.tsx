@@ -1,25 +1,20 @@
-/**
- * IntegrityStatusBadge — shows a colored badge for an integrity risk level.
- */
 import React from 'react';
-import type { IntegrityRiskLevel } from '../types';
+import type { RiskLevel } from '../types';
+import { getRiskBadgeColor } from '../utils/integrityUtils';
 
-export interface IntegrityStatusBadgeProps {
-  level: IntegrityRiskLevel;
+interface Props {
+  riskLevel: RiskLevel;
+  score?: number;
 }
 
-const config: Record<IntegrityRiskLevel, { label: string; classes: string }> = {
-  low: { label: 'Low Risk', classes: 'bg-success/10 text-success border-success/30' },
-  medium: { label: 'Medium Risk', classes: 'bg-warning/10 text-warning-dark border-warning/30' },
-  high: { label: 'High Risk', classes: 'bg-error/10 text-error border-error/30' },
-  critical: { label: 'Critical', classes: 'bg-error/20 text-error border-error/50 font-black' },
-};
+export const IntegrityStatusBadge: React.FC<Props> = ({ riskLevel, score }) => {
+  const { bg, text, border } = getRiskBadgeColor(riskLevel);
 
-export const IntegrityStatusBadge: React.FC<IntegrityStatusBadgeProps> = ({ level }) => {
-  const { label, classes } = config[level];
   return (
-    <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-bold border ${classes}`}>
-      {label}
+    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${bg} ${text} ${border}`}>
+      <span className="w-2 h-2 rounded-full bg-current" />
+      <span>{riskLevel} RISK</span>
+      {score !== undefined && <span className="opacity-75">({score}%)</span>}
     </span>
   );
 };

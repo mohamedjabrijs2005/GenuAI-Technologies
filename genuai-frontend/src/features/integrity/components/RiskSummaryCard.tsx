@@ -1,32 +1,33 @@
-/**
- * RiskSummaryCard — a compact summary tile showing overall risk status.
- */
 import React from 'react';
-import type { IntegrityRiskLevel } from '../types';
+import { IntegrityStatusBadge } from './IntegrityStatusBadge';
 
-export interface RiskSummaryCardProps {
-  riskLevel: IntegrityRiskLevel;
-  riskScore: number;
-  label?: string;
+interface Props {
+  score: number;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  verifiedIdentity: boolean;
 }
 
-const colorMap: Record<IntegrityRiskLevel, string> = {
-  low: 'border-success/30 bg-success/5 text-success',
-  medium: 'border-warning/30 bg-warning/5 text-warning-dark',
-  high: 'border-error/30 bg-error/5 text-error',
-  critical: 'border-error/50 bg-error/10 text-error',
-};
-
-export const RiskSummaryCard: React.FC<RiskSummaryCardProps> = ({
-  riskLevel,
-  riskScore,
-  label = 'Risk Summary',
-}) => (
-  <div className={`rounded-2xl border p-4 flex items-center gap-4 ${colorMap[riskLevel]}`}>
-    <div className="text-3xl font-black">{riskScore}</div>
-    <div>
-      <div className="font-bold text-sm capitalize">{riskLevel} Risk</div>
-      <div className="text-xs opacity-70 mt-0.5">{label}</div>
+export const RiskSummaryCard: React.FC<Props> = ({ score, riskLevel, verifiedIdentity }) => {
+  return (
+    <div className="p-4 bg-surface-bright border border-surface-container rounded-xl flex items-center justify-between shadow-sm">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-indigo-brand/10 border border-indigo-brand/30 flex items-center justify-center text-xl">
+          📊
+        </div>
+        <div>
+          <div className="text-xs font-bold text-on-surface-variant uppercase">Session Risk Summary</div>
+          <div className="text-sm font-bold text-on-surface">
+            {verifiedIdentity ? '✅ Identity Verified' : '⚠️ Pending Identity Check'}
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="text-right">
+          <div className="text-[10px] font-bold text-on-surface-variant uppercase">Score</div>
+          <div className="text-xl font-black text-indigo-brand">{score}%</div>
+        </div>
+        <IntegrityStatusBadge riskLevel={riskLevel} />
+      </div>
     </div>
-  </div>
-);
+  );
+};

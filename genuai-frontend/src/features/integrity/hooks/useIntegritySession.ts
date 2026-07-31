@@ -1,32 +1,54 @@
 /**
- * useIntegritySession — React hook for managing an integrity monitoring session.
+ * Hook to manage active integrity monitoring session state
  */
-import { useState, useEffect, useCallback } from 'react';
-import {
-  startIntegrityMonitor,
-  stopIntegrityMonitor,
-  subscribeToMonitor,
-} from '../services/integrityMonitorService';
-import type { MonitorState } from '../types/monitoring';
+import { useState, useCallback } from 'react';
+import type { CandidateConsent, IdentityVerificationResult, MonitoringEvent } from '../types';
+import { logMonitoringEvent } from '../services/integrityClient';
 
-export function useIntegritySession(autoStart = false) {
-  const [monitorState, setMonitorState] = useState<MonitorState>({
-    isActive: false,
-    events: [],
-    lastChecked: new Date().toISOString(),
+export const useIntegritySession = (candidateId: number, initialSessionId?: string) => {
+  const [sessionId] = useState<string>(
+    initialSessionId || `session-${candidateId}-${Date.now()}`
+  );
+  const [consent, setConsent] = useState<CandidateConsent>({
+    given: false,
+    timestamp: null,
+    policyVersion: '1.0',
   });
+  const [identityResult, setIdentityResult] = useState<IdentityVerificationResult | null>(null);
+  const [events, setEvents] = useState<MonitoringEvent[]>([]);
 
-  useEffect(() => {
-    const unsubscribe = subscribeToMonitor(setMonitorState);
-    if (autoStart) startIntegrityMonitor();
-    return () => {
-      unsubscribe();
-      stopIntegrityMonitor();
-    };
-  }, [autoStart]);
+  const recordEvent = useCallback(
+    async (type: MonitoringEvent['type'], severity: MonitoringEvent['severity'], metadata?: Record<string, any>) => {
+      const newEvent: Partial<MonitoringEvent> = {
+        sessionId,
+        candidateId,
+        type,
+        severity,
+        timestamp: new Date().toISOString(),
+        metadata,
+      };
 
-  const start = useCallback(() => startIntegrityMonitor(), []);
-  const stop = useCallback(() => stopIntegrityMonitor(), []);
+      try {
+        await logMonitoringEvent(newEvent);
+      } catch (err) {
+        // Silently log monitoring event failures
+      }
 
-  return { monitorState, start, stop };
-}
+      setEvents((prev) => [
+        ...prev,
+        { ...newEvent, id: `evt-${Date.now()}-${Math.random()}` } as MonitoringEvent,
+      ]);
+    },
+    [sessionId, candidateId]
+  );
+
+  return {
+    sessionId,
+    consent,
+    setConsent,
+    identityResult,
+    setIdentityResult,
+    events,
+    recordEvent,
+  };
+};

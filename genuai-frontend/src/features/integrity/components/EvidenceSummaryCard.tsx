@@ -1,26 +1,42 @@
-/**
- * EvidenceSummaryCard — shows a brief summary of integrity evidence.
- */
 import React from 'react';
 
-export interface EvidenceSummaryCardProps {
-  label: string;
-  value: string | number;
-  icon?: string;
+interface Props {
+  behaviorSummary: {
+    tabSwitches: number;
+    copyPasteCount: number;
+    typingAbnormal: boolean;
+    totalEventsCount: number;
+  };
 }
 
-export const EvidenceSummaryCard: React.FC<EvidenceSummaryCardProps> = ({
-  label,
-  value,
-  icon,
-}) => (
-  <div className="glass rounded-xl border border-surface-container p-4 flex items-center gap-3">
-    {icon && (
-      <span className="material-symbols-outlined text-indigo-brand text-xl">{icon}</span>
-    )}
-    <div>
-      <div className="text-xs text-on-surface-variant font-medium">{label}</div>
-      <div className="text-base font-black text-on-surface">{value}</div>
+export const EvidenceSummaryCard: React.FC<Props> = ({ behaviorSummary }) => {
+  return (
+    <div className="p-4 bg-surface-bright border border-surface-container rounded-xl">
+      <div className="text-xs font-bold text-on-surface-variant uppercase mb-3">📁 Evidence Timeline Summary</div>
+      <div className="grid grid-cols-4 gap-2 text-center">
+        <div className="p-2 bg-surface-container/30 rounded-lg">
+          <div className="text-[10px] text-on-surface-variant font-bold">TOTAL EVENTS</div>
+          <div className="text-base font-black text-on-surface">{behaviorSummary.totalEventsCount}</div>
+        </div>
+        <div className="p-2 bg-surface-container/30 rounded-lg">
+          <div className="text-[10px] text-on-surface-variant font-bold">TAB SWITCHES</div>
+          <div className={`text-base font-black ${behaviorSummary.tabSwitches > 0 ? 'text-warning' : 'text-success'}`}>
+            {behaviorSummary.tabSwitches}
+          </div>
+        </div>
+        <div className="p-2 bg-surface-container/30 rounded-lg">
+          <div className="text-[10px] text-on-surface-variant font-bold">COPY/PASTE</div>
+          <div className={`text-base font-black ${behaviorSummary.copyPasteCount > 0 ? 'text-warning' : 'text-success'}`}>
+            {behaviorSummary.copyPasteCount}
+          </div>
+        </div>
+        <div className="p-2 bg-surface-container/30 rounded-lg">
+          <div className="text-[10px] text-on-surface-variant font-bold">TYPING</div>
+          <div className="text-base font-black text-indigo-brand">
+            {behaviorSummary.typingAbnormal ? 'VAR' : 'NORM'}
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};

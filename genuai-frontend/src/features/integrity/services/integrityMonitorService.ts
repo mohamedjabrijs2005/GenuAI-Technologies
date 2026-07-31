@@ -1,55 +1,30 @@
 /**
- * Integrity Monitor Service — tracks browser-side integrity events.
+ * Integrity Monitor Service — handles screen integrity event streaming & session summaries
  */
-import type { MonitorEvent, MonitorState } from '../types/monitoring';
+import apiClient from '../../../services/apiClient';
+import type { ScreenIntegrityEvent, AssessmentSessionSummary } from '../types/monitoring';
 
-let _state: MonitorState = {
-  isActive: false,
-  events: [],
-  lastChecked: new Date().toISOString(),
+export const streamScreenEvent = async (event: ScreenIntegrityEvent): Promise<boolean> => {
+  try {
+    await apiClient.post('/integrity/log-event', {
+      sessionId: event.sessionId,
+      candidateId: event.candidateId,
+      type: event.type,
+      severity: event.severity,
+      timestamp: event.timestamp,
+      metadata: event.metadata,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 };
 
-const _listeners: Array<(state: MonitorState) => void> = [];
-
-function notify() {
-  _listeners.forEach((fn) => fn({ ..._state, events: [..._state.events] }));
-}
-
-export function startIntegrityMonitor(): void {
-  if (_state.isActive) return;
-  _state.isActive = true;
-  _state.lastChecked = new Date().toISOString();
-  notify();
-}
-
-export function stopIntegrityMonitor(): void {
-  _state.isActive = false;
-  notify();
-}
-
-export function recordMonitorEvent(
-  type: MonitorEvent['type'],
-  metadata?: Record<string, unknown>
-): void {
-  const event: MonitorEvent = {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-    type,
-    timestamp: new Date().toISOString(),
-    metadata,
-  };
-  _state.events.push(event);
-  notify();
-}
-
-export function getMonitorState(): MonitorState {
-  return { ..._state, events: [..._state.events] };
-}
-
-export function subscribeToMonitor(fn: (state: MonitorState) => void): () => void {
-  _listeners.push(fn);
-  fn(getMonitorState());
-  return () => {
-    const idx = _listeners.indexOf(fn);
-    if (idx !== -1) _listeners.splice(idx, 1);
-  };
-}
+export const submitSessionSummary = async (summary: AssessmentSessionSummary): Promise<boolean> => {
+  try {
+    await apiClient.post('/integrity/session-summary', summary);
+    return true;
+  } catch {
+    return false;
+  }
+};

@@ -1,43 +1,102 @@
 /**
- * AI Assistance Analyzer — detects potential AI-generated or copy-pasted content.
+ * AI Assistance Likelihood Analyzer — Phase 4
+ * Evaluates candidate responses for LLM/GPT-like structure, repetitive transition phrases,
+ * unnatural formatting, and burstiness.
+ *
+ * NOTE: Never state that the candidate definitely used AI. Returns risk indicators only.
  */
 
-export interface AIAssistanceResult {
-  score: number; // 0–100, higher = more likely AI-assisted
-  confidence: 'low' | 'medium' | 'high';
-  flags: string[];
+export interface AIAssistanceAnalysisResult {
+  aiAssistanceLikelihood: number;     // 0 - 100 %
+  humanAuthorshipLikelihood: number;  // 0 - 100 %
+  confidenceScore: number;            // 0 - 100 %
+  contributingCharacteristics: string[];
+  explanation: string;
 }
 
-/**
- * Analyze text for signs of AI assistance.
- * This is a lightweight heuristic placeholder.
- * Replace with a real backend call as needed.
- */
-export function analyzeForAIAssistance(text: string): AIAssistanceResult {
-  const flags: string[] = [];
-  let score = 0;
-
-  // Heuristic: very long perfectly-structured text
-  if (text.length > 800 && text.split('\n').length > 10) {
-    flags.push('Unusually long and structured response');
-    score += 30;
+export const analyzeAIAssistanceLikelihood = (
+  text: string,
+  typingBurstCount: number = 0,
+  pasteCount: number = 0
+): AIAssistanceAnalysisResult => {
+  if (!text || text.trim().length < 20) {
+    return {
+      aiAssistanceLikelihood: 5,
+      humanAuthorshipLikelihood: 95,
+      confidenceScore: 70,
+      contributingCharacteristics: ['Short answer format'],
+      explanation: 'Answer is too short to perform reliable AI assistance analysis.',
+    };
   }
 
-  // Heuristic: no filler words
-  const fillerCount = (text.match(/\b(um|uh|like|you know|basically)\b/gi) ?? []).length;
-  if (text.length > 200 && fillerCount === 0) {
-    flags.push('No natural speech fillers detected');
-    score += 20;
+  const characteristics: string[] = [];
+  let scorePoints = 0;
+
+  // 1. Check common GPT transition phrases
+  const gptPhrases = [
+    'in conclusion',
+    'furthermore',
+    'moreover',
+    'it is important to note',
+    'delve into',
+    'tapestry',
+    'testament to',
+    'firstly',
+    'secondly',
+    'on the other hand',
+  ];
+
+  const lower = text.toLowerCase();
+  let phraseMatches = 0;
+  gptPhrases.forEach((p) => {
+    if (lower.includes(p)) phraseMatches++;
+  });
+
+  if (phraseMatches >= 2) {
+    scorePoints += 25;
+    characteristics.push('Formal transition phrases typical of generated text templates');
   }
 
-  // Heuristic: multiple bullet points or numbered lists
-  if (/^\s*[\d\-*•]/m.test(text) && (text.match(/^\s*[\d\-*•]/gm) ?? []).length > 4) {
-    flags.push('Structured list formatting detected');
-    score += 15;
+  // 2. Uniform sentence length (low burstiness)
+  const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
+  if (sentences.length >= 3) {
+    const lengths = sentences.map((s) => s.trim().split(/\s+/).length);
+    const avgLen = lengths.reduce((a, b) => a + b, 0) / lengths.length;
+    const variance = lengths.reduce((a, b) => a + Math.pow(b - avgLen, 2), 0) / lengths.length;
+
+    if (variance < 10 && avgLen > 12) {
+      scorePoints += 20;
+      characteristics.push('Unusually uniform sentence length and structure');
+    }
   }
 
-  const confidence: AIAssistanceResult['confidence'] =
-    score >= 50 ? 'high' : score >= 25 ? 'medium' : 'low';
+  // 3. Paste behavior / Instant burst input
+  if (pasteCount > 0) {
+    scorePoints += 30;
+    characteristics.push('Direct paste activity detected during answer entry');
+  } else if (typingBurstCount > 3) {
+    scorePoints += 15;
+    characteristics.push('Extremely fast burst typing detected');
+  }
 
-  return { score: Math.min(score, 100), confidence, flags };
-}
+  const aiAssistanceLikelihood = Math.min(85, Math.max(5, scorePoints));
+  const humanAuthorshipLikelihood = 100 - aiAssistanceLikelihood;
+  const confidenceScore = Math.min(95, 60 + text.length / 20);
+
+  let explanation = '';
+  if (aiAssistanceLikelihood < 30) {
+    explanation = 'Natural human conversational tone with natural variation in sentence length.';
+  } else if (aiAssistanceLikelihood < 60) {
+    explanation = 'Moderate formal structure observed. Characteristics suggest structured preparation.';
+  } else {
+    explanation = 'High formal structure and transition phrase density noted. Recommended for recruiter review.';
+  }
+
+  return {
+    aiAssistanceLikelihood,
+    humanAuthorshipLikelihood,
+    confidenceScore: Math.round(confidenceScore),
+    contributingCharacteristics: characteristics.length > 0 ? characteristics : ['Standard conversational phrasing'],
+    explanation,
+  };
+};

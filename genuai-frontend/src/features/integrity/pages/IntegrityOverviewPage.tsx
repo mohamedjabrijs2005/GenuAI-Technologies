@@ -1,42 +1,28 @@
-/**
- * IntegrityOverviewPage — dashboard overview for integrity monitoring.
- */
 import React from 'react';
-import { DashboardMetricCard } from '../components/DashboardMetricCard';
-import { AnalyticsChart } from '../components/AnalyticsChart';
+import { IntegrityStatusBadge } from '../components/IntegrityStatusBadge';
 
-export interface IntegrityOverviewPageProps {
-  sessionId?: string;
-}
-
-export const IntegrityOverviewPage: React.FC<IntegrityOverviewPageProps> = () => {
-  const metrics = [
-    { label: 'Risk Score', value: '12%', icon: 'shield', color: 'success' as const },
-    { label: 'Violations', value: 3, icon: 'warning', color: 'warning' as const },
-    { label: 'Identity Checks', value: '✓ Pass', icon: 'verified_user', color: 'indigo' as const },
-    { label: 'Flagged Events', value: 1, icon: 'flag', color: 'error' as const },
-  ];
-
-  const chartData = [
-    { label: 'Tab Switches', value: 2, color: '#F59E0B' },
-    { label: 'Copy/Paste', value: 1, color: '#EF4444' },
-    { label: 'Face Alerts', value: 0, color: '#10B981' },
-    { label: 'Audio Peaks', value: 3, color: '#6366F1' },
-  ];
-
+export const IntegrityOverviewPage: React.FC = () => {
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <h1 className="text-2xl font-black text-on-surface">Integrity Overview</h1>
+    <div className="p-8 max-w-4xl mx-auto glass rounded-2xl">
+      <h1 className="text-2xl font-bold mb-4 text-on-surface">🛡️ AI Integrity & Identity Verification System</h1>
+      <p className="text-on-surface-variant mb-6">
+        Privacy-conscious, browser-compatible monitoring and risk engine for recruitment assessments.
+      </p>
 
-      {/* Metric Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {metrics.map((m) => (
-          <DashboardMetricCard key={m.label} {...m} />
-        ))}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="p-4 bg-surface-bright border border-surface-container rounded-xl">
+          <div className="text-xs font-bold text-on-surface-variant uppercase mb-1">Status</div>
+          <IntegrityStatusBadge riskLevel="LOW" score={95} />
+        </div>
+        <div className="p-4 bg-surface-bright border border-surface-container rounded-xl">
+          <div className="text-xs font-bold text-on-surface-variant uppercase mb-1">Identity Check</div>
+          <div className="text-lg font-bold text-success">Verified</div>
+        </div>
+        <div className="p-4 bg-surface-bright border border-surface-container rounded-xl">
+          <div className="text-xs font-bold text-on-surface-variant uppercase mb-1">Responsible AI</div>
+          <div className="text-xs font-medium text-on-surface-variant">Recruiter decides hiring</div>
+        </div>
       </div>
-
-      {/* Analytics Chart */}
-      <AnalyticsChart title="Violation Breakdown" data={chartData} />
     </div>
   );
 };
