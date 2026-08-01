@@ -202,6 +202,9 @@ export const AIMockInterviewPage: React.FC<Props> = ({ user, onBack, onComplete 
       responses: finalResponses,
     };
 
+    const overallScore = Math.round((avgTech + avgComm + avgConf) / 3);
+    sessionStorage.setItem('genuai_module_5', JSON.stringify({ overall: overallScore, summary }));
+
     if (onComplete) onComplete(summary);
   };
 

@@ -156,7 +156,9 @@ export default function AMCATTest({ user, role, assessmentId, onComplete, onTerm
       streamRef.current?.getTracks().forEach(t => t.stop());
       setPhase('result');
       const overall = Math.round(newScores.reduce((a, s) => a + s.percentage, 0) / newScores.length);
-      onComplete({ sectionScores: newScores, overall });
+      const resPayload = { sectionScores: newScores, overall };
+      sessionStorage.setItem('amcat_scores', JSON.stringify(resPayload));
+      onComplete(resPayload);
     }
   };
 
@@ -257,6 +259,12 @@ export default function AMCATTest({ user, role, assessmentId, onComplete, onTerm
                 {Math.round(sectionScores.reduce((a,s) => a+s.percentage,0)/Math.max(sectionScores.length,1))}%
               </div>
             </div>
+            <button
+              onClick={() => onTerminate ? onTerminate() : null}
+              className="w-full mt-lg py-md bg-gradient-to-r from-indigo-brand to-[#7C3AED] text-white rounded-xl font-bold text-body-base hover:shadow-[0_4px_15px_rgba(102,126,234,0.4)] hover:scale-[1.01] transition-all"
+            >
+              Return to Pipeline Dashboard →
+            </button>
           </>
         )}
       </div>
