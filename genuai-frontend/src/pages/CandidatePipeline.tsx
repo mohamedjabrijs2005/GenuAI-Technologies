@@ -48,18 +48,20 @@ const IMPORTANT_COMPANIES = [
 ];
 
 export default function CandidatePipeline({ user, onLogout, onInterview }: Props) {
+  const userId = user?.user?.id || user?.id || 'guest';
+
   const [stage, setStage] = useState<Stage>(() => {
-    const saved = sessionStorage.getItem('genuai_pipeline_stage');
+    const saved = sessionStorage.getItem(`genuai_pipeline_stage_${userId}`);
     return (saved as Stage) || 'interest';
   });
 
   const [completedModules, setCompletedModules] = useState<number[]>(() => {
-    const saved = sessionStorage.getItem('genuai_completed_modules');
+    const saved = sessionStorage.getItem(`genuai_completed_modules_${userId}`);
     return saved ? JSON.parse(saved) : [];
   });
 
   const [moduleData, setModuleData] = useState<Record<number, any>>(() => {
-    const saved = sessionStorage.getItem('genuai_module_data');
+    const saved = sessionStorage.getItem(`genuai_module_data_${userId}`);
     return saved ? JSON.parse(saved) : {};
   });
 
@@ -67,27 +69,41 @@ export default function CandidatePipeline({ user, onLogout, onInterview }: Props
   const [availableCompanies, setAvailableCompanies] = useState<any[]>([]);
 
   const [selectedCompanies, setSelectedCompanies] = useState<number[]>(() => {
-    const saved = sessionStorage.getItem('genuai_selected_companies');
+    const saved = sessionStorage.getItem(`genuai_selected_companies_${userId}`);
     return saved ? JSON.parse(saved) : [];
   });
 
   const [availableJobsList, setAvailableJobsList] = useState<any[]>([]);
 
   const [targetJobs, setTargetJobs] = useState<number[]>(() => {
-    const saved = sessionStorage.getItem('genuai_target_jobs');
+    const saved = sessionStorage.getItem(`genuai_target_jobs_${userId}`);
     return saved ? JSON.parse(saved) : [];
   });
 
   const submittedRef = useRef(false);
 
-  // Sync state into sessionStorage
+  // Sync state into sessionStorage scoped by userId
   useEffect(() => {
-    sessionStorage.setItem('genuai_pipeline_stage', stage);
-    sessionStorage.setItem('genuai_completed_modules', JSON.stringify(completedModules));
-    sessionStorage.setItem('genuai_module_data', JSON.stringify(moduleData));
-    sessionStorage.setItem('genuai_selected_companies', JSON.stringify(selectedCompanies));
-    sessionStorage.setItem('genuai_target_jobs', JSON.stringify(targetJobs));
-  }, [stage, completedModules, moduleData, selectedCompanies, targetJobs]);
+    sessionStorage.setItem(`genuai_pipeline_stage_${userId}`, stage);
+    sessionStorage.setItem(`genuai_completed_modules_${userId}`, JSON.stringify(completedModules));
+    sessionStorage.setItem(`genuai_module_data_${userId}`, JSON.stringify(moduleData));
+    sessionStorage.setItem(`genuai_selected_companies_${userId}`, JSON.stringify(selectedCompanies));
+    sessionStorage.setItem(`genuai_target_jobs_${userId}`, JSON.stringify(targetJobs));
+  }, [stage, completedModules, moduleData, selectedCompanies, targetJobs, userId]);
+
+  const handleResetCompanies = () => {
+    setSelectedCompanies([]);
+    setTargetJobs([]);
+    sessionStorage.removeItem(`genuai_selected_companies_${userId}`);
+    sessionStorage.removeItem(`genuai_target_jobs_${userId}`);
+    sessionStorage.removeItem(`genuai_pipeline_stage_${userId}`);
+    setStage('interest');
+  };
+
+  const handleUserLogout = () => {
+    sessionStorage.clear();
+    onLogout();
+  };
 
   // Check for external completion results (e.g. from AMCAT or AI Interview)
   useEffect(() => {
@@ -382,15 +398,16 @@ export default function CandidatePipeline({ user, onLogout, onInterview }: Props
         </div>
         <div className="flex items-center gap-md">
           <button
-            onClick={() => setStage('interest')}
-            className="text-indigo-brand border border-indigo-brand/30 bg-indigo-brand/10 rounded-lg px-md py-xs cursor-pointer text-xs font-bold hover:bg-indigo-brand/20 transition-colors"
+            onClick={handleResetCompanies}
+            className="text-indigo-brand border border-indigo-brand/30 bg-indigo-brand/10 rounded-lg px-md py-xs cursor-pointer text-xs font-bold hover:bg-indigo-brand/20 transition-colors flex items-center gap-xs"
           >
-            🏢 Target Companies ({selectedCompanies.length})
+            <span>🏢 Target Companies ({selectedCompanies.length})</span>
+            <span className="bg-indigo-brand text-white px-1.5 py-0.5 rounded text-[10px] font-bold uppercase">Change</span>
           </button>
           <div className="text-on-surface-variant text-sm font-bold flex items-center gap-xs">
             <span className="text-lg">👤</span> {userName}
           </div>
-          <button onClick={onLogout} className="bg-surface-bright text-error border border-error/30 rounded-lg px-md py-xs cursor-pointer text-sm font-bold hover:bg-error/10 transition-colors">Logout</button>
+          <button onClick={handleUserLogout} className="bg-surface-bright text-error border border-error/30 rounded-lg px-md py-xs cursor-pointer text-sm font-bold hover:bg-error/10 transition-colors">Logout</button>
         </div>
       </div>
 

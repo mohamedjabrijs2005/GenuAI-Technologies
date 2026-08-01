@@ -73,6 +73,7 @@ export default function App() {
   };
 
   const handleLogin = (ud: any) => {
+    sessionStorage.clear();
     setUser(ud);
     localStorage.setItem("genuai_user", JSON.stringify(ud));
     routeAfterLogin(ud, navigate);
@@ -80,6 +81,7 @@ export default function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("genuai_user");
+    sessionStorage.clear();
     setUser(null);
     navigate("/auth", { replace: true });
   };
