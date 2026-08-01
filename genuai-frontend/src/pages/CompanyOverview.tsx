@@ -43,10 +43,10 @@ export default function CompanyOverview({ user, onStartTest }: Props) {
           <div className="absolute -inset-4 bg-accent-gold/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
           <img src="/logo.png" alt="GenuAI" className="relative w-full h-full object-contain gold-glow-subtle transition-transform duration-700 group-hover:scale-105" />
         </div>
-        <h1 className="text-display-md font-display-md text-on-surface mb-xs hero-title-weight">GenuAI Technologies</h1>
-        <p className="text-headline-sm font-headline-sm text-accent-gold mb-sm drop-shadow-sm">AI-Powered Recruitment Intelligence Platform</p>
+        <h1 className="text-display-md font-display-md text-on-surface mb-xs hero-title-weight">Official Candidate Assessment</h1>
+        <p className="text-headline-sm font-headline-sm text-accent-gold mb-sm drop-shadow-sm">AI-Powered Proctored Evaluation Pipeline &amp; Rules</p>
         <p className="text-body-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-          We transform traditional hiring by evaluating candidates across seven dimensions — skills, communication, problem-solving, aptitude, collaboration, and personality — all powered by cutting-edge AI.
+          Welcome to the official GenuAI candidate evaluation. Complete all 7 dimensions — profile analysis, technical skills, SVAR verbal fluency, hackathon, AI interview, group discussion, and final scorecard.
         </p>
       </div>
 

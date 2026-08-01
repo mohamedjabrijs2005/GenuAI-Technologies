@@ -113,7 +113,7 @@ export default function App() {
             if (path === "practice") navigate("/practice");
             else if (path === "search") navigate("/search");
             else if (path === "career-profile") navigate("/career-profile");
-            else navigate("/company-overview");
+            else navigate("/assessment");
           }} />
         </RequireAuth>
       } />
@@ -139,12 +139,13 @@ export default function App() {
         </RequireAuth>
       } />
 
-      {/* Company Overview */}
-      <Route path="/company-overview" element={
+      {/* Candidate Official Assessment Overview */}
+      <Route path="/assessment" element={
         <RequireAuth user={user} role={["candidate"]}>
           <CompanyOverview user={user} onStartTest={() => navigate("/pipeline")} />
         </RequireAuth>
       } />
+      <Route path="/company-overview" element={<Navigate to="/assessment" replace />} />
 
       {/* 6-Module pipeline */}
       <Route path="/pipeline" element={
