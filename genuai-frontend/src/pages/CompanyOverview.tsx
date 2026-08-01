@@ -118,8 +118,11 @@ export default function CompanyOverview({ user, onStartTest }: Props) {
         <div className="text-center animate-[fadeIn_0.5s_ease_0.2s_both]">
           <div className="text-sm font-bold text-on-surface-variant mb-md">You have read and understood all the rules. Ready to begin?</div>
           <button
-            onClick={onStartTest}
-            className="gradient-button px-xl py-md rounded-xl font-bold text-white shadow-xl shadow-indigo-brand/30 hover:-translate-y-1 transition-all"
+            onClick={() => {
+              sessionStorage.setItem('genuai_pipeline_stage', 'interest');
+              onStartTest();
+            }}
+            className="gradient-button px-xl py-md rounded-xl font-bold text-white shadow-xl shadow-indigo-brand/30 hover:-translate-y-1 transition-all cursor-pointer"
           >
             <span className="flex items-center justify-center gap-2">
                Begin Official Assessment

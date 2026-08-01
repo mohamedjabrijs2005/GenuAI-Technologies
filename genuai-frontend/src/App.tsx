@@ -113,7 +113,10 @@ export default function App() {
             if (path === "practice") navigate("/practice");
             else if (path === "search") navigate("/search");
             else if (path === "career-profile") navigate("/career-profile");
-            else navigate("/assessment");
+            else {
+              sessionStorage.setItem('genuai_pipeline_stage', 'interest');
+              navigate("/pipeline");
+            }
           }} />
         </RequireAuth>
       } />
