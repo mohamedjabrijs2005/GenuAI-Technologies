@@ -75,23 +75,15 @@ export const Navbar: React.FC = () => {
             ))}
           </div>
 
-          {/* Right Status Badge & Mobile Hamburger Menu */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success-dark text-xs font-bold border border-success/20">
-              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
-              <span>Assessment Network Live</span>
-            </div>
-
-            {/* Mobile hamburger menu toggle */}
-            <div className="flex lg:hidden">
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 rounded-xl text-on-surface hover:bg-surface-bright border border-surface-container transition-colors cursor-pointer"
-                aria-label="Toggle menu"
-              >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
-            </div>
+          {/* Mobile hamburger menu toggle */}
+          <div className="flex lg:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-xl text-on-surface hover:bg-surface-bright border border-surface-container transition-colors cursor-pointer"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
       </div>
