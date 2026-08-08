@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/home/Navbar';
 import { Hero } from '../components/home/Hero';
+import { FounderSection } from '../components/home/FounderSection';
+import { VideoSection } from '../components/home/VideoSection';
 import { About } from '../components/home/About';
 import { Problem } from '../components/home/Problem';
 import { Solution } from '../components/home/Solution';
@@ -47,68 +49,74 @@ export default function HomePage() {
         {/* 2. Hero Section with Animated AI Recruitment Visual */}
         <Hero onGetStarted={handleGetStarted} onExplore={handleExplore} />
 
-        {/* 3. About GenuAI Section */}
+        {/* 3. Founder Details Section */}
+        <FounderSection />
+
+        {/* 4. See GenuAI in Action YouTube Video Section */}
+        <VideoSection />
+
+        {/* 5. About GenuAI Section */}
         <About />
 
-        {/* 4. The Problem Section */}
+        {/* 6. The Problem Section */}
         <Problem />
 
-        {/* 5. GenuAI Solution Section */}
+        {/* 7. GenuAI Solution Section */}
         <Solution />
 
-        {/* 6. Core USP: One Assessment -> Multiple Companies */}
+        {/* 8. Core USP: One Assessment -> Multiple Companies */}
         <CoreUSP />
 
-        {/* 7. Why Companies Need GenuAI */}
+        {/* 9. Why Companies Need GenuAI */}
         <WhyCompanies />
 
-        {/* 8. 10-Step Assessment Workflow Ecosystem */}
+        {/* 10. 10-Step Assessment Workflow Ecosystem */}
         <AssessmentWorkflow />
 
-        {/* 9. AI Anti-Proxy System */}
+        {/* 11. AI Anti-Proxy System */}
         <TrustVerification />
 
-        {/* 10. AI Trust Score & Verification Dashboard */}
+        {/* 12. AI Trust Score & Verification Dashboard */}
         <TrustScore />
 
-        {/* 11. Edge AI Hardware Innovation (Raspberry Pi 5 + Google Coral TPU) */}
+        {/* 13. Edge AI Hardware Innovation (Raspberry Pi 5 + Google Coral TPU) */}
         <EdgeAI />
 
-        {/* 12. Candidate Experience */}
+        {/* 14. Candidate Experience */}
         <CandidateSection />
 
-        {/* 13. Company Experience */}
+        {/* 15. Company Experience */}
         <CompanySection />
 
-        {/* 14. Admin & Institution Experience */}
+        {/* 16. Admin & Institution Experience */}
         <AdminSection />
 
-        {/* 15. Intensive Learning Hub & Multilingual Vision */}
+        {/* 17. Intensive Learning Hub & Multilingual Vision */}
         <LearningHub />
 
-        {/* 16. Recruitment Intelligence Pipeline */}
+        {/* 18. Recruitment Intelligence Pipeline */}
         <RecruitmentIntelligence />
 
-        {/* 17. Traditional vs GenuAI Comparison */}
+        {/* 19. Traditional vs GenuAI Comparison */}
         <Comparison />
 
-        {/* 18. Technology Stack */}
+        {/* 20. Technology Stack */}
         <TechStack />
 
-        {/* 19. Why GenuAI (5 Core Pillars) */}
+        {/* 21. Why GenuAI (5 Core Pillars) */}
         <WhyGenuAI />
 
-        {/* 20. Future Roadmap */}
+        {/* 22. Future Roadmap */}
         <Roadmap />
 
-        {/* 21. Send a Message / Public Contact Form */}
+        {/* 23. Send a Message / Public Contact Form */}
         <ContactForm />
 
-        {/* 22. Final Call to Action */}
+        {/* 24. Final Call to Action */}
         <FinalCTA onGetStarted={handleGetStarted} onExplore={handleExplore} />
       </main>
 
-      {/* 23. Footer */}
+      {/* 25. Footer */}
       <Footer />
     </div>
   );

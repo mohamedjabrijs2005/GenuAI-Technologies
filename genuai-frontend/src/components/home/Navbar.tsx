@@ -23,9 +23,10 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
     { label: 'Solution', href: '#solution' },
     { label: 'One Assessment', href: '#core-usp' },
     { label: 'Innovation', href: '#edge-ai' },
+    { label: 'Founder', href: '#founder' },
+    { label: 'Demo', href: '#demo-video' },
     { label: 'Candidates', href: '#candidates' },
     { label: 'Companies', href: '#companies' },
-    { label: 'Learning Hub', href: '#learning-hub' },
     { label: 'Contact', href: '#contact' },
   ];
 
@@ -33,85 +34,85 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-surface/90 backdrop-blur-xl border-b border-surface-container shadow-sm py-3'
-          : 'bg-surface/60 backdrop-blur-md border-b border-surface-container/40 py-4'
+          ? 'bg-surface/95 backdrop-blur-xl border-b border-surface-container shadow-md py-3'
+          : 'bg-surface/75 backdrop-blur-md border-b border-surface-container/50 py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Brand Logo */}
-          <a href="#hero" className="flex items-center gap-3 group">
+        <div className="flex items-center justify-between gap-4">
+          {/* Brand Logo & Prominent Title */}
+          <a href="#hero" className="flex items-center gap-3.5 group shrink-0">
             <div className="relative">
               <img
                 src="/logo.png"
-                alt="GenuAI Technologies"
+                alt="GenuAI Technologies Logo"
                 className="w-10 h-10 object-contain transition-transform duration-300 group-hover:scale-105"
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
-              <div className="absolute -inset-1 bg-indigo-brand/20 blur-md rounded-full -z-10 group-hover:bg-indigo-brand/30 transition-all" />
+              <div className="absolute -inset-1 bg-accent-gold/20 blur-md rounded-full -z-10 group-hover:bg-indigo-brand/30 transition-all" />
             </div>
             <div>
-              <div className="font-bold text-lg text-on-surface tracking-tight flex items-center gap-1.5">
-                <span>Genu<span className="text-indigo-brand">AI</span></span>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20">
+              <div className="font-black text-xl tracking-tight text-on-surface flex items-center gap-1.5 leading-none">
+                <span>Genu<span className="text-accent-gold">AI</span> Technologies</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20">
                   Platform
                 </span>
               </div>
-              <div className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">
-                Recruitment Intelligence
+              <div className="text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest mt-1">
+                AI-Powered Recruitment Intelligence
               </div>
             </div>
           </a>
 
-          {/* Desktop Nav Links */}
-          <div className="hidden xl:flex items-center gap-6">
+          {/* Center Nav Links on Desktop */}
+          <div className="hidden lg:flex items-center gap-5 xl:gap-6">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="text-xs font-semibold text-on-surface-variant hover:text-indigo-brand transition-colors"
+                className="text-xs font-semibold text-on-surface-variant hover:text-indigo-brand transition-colors whitespace-nowrap"
               >
                 {link.label}
               </a>
             ))}
           </div>
 
-          {/* Right Action */}
-          <div className="hidden sm:flex items-center gap-3">
+          {/* Right Action: Get Started Button ALWAYS Visible */}
+          <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={onGetStarted}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-indigo-brand to-indigo-brand-dark hover:shadow-lg hover:shadow-indigo-brand/30 transition-all transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-indigo-brand focus-visible:ring-offset-2"
+              className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-indigo-brand via-[#7C3AED] to-indigo-brand-dark hover:shadow-xl hover:shadow-indigo-brand/30 transition-all transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-indigo-brand focus-visible:ring-offset-2 cursor-pointer shadow-md"
             >
               <span>Get Started</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
-          </div>
 
-          {/* Mobile menu button */}
-          <div className="flex sm:hidden">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-on-surface hover:bg-surface-bright border border-surface-container transition-colors"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Mobile hamburger menu toggle */}
+            <div className="flex lg:hidden">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-xl text-on-surface hover:bg-surface-bright border border-surface-container transition-colors cursor-pointer"
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-b border-surface-container bg-surface/95 backdrop-blur-xl px-4 pt-3 pb-6 animate-[fadeIn_0.2s_ease]">
-          <div className="flex flex-col gap-2">
+        <div className="lg:hidden border-b border-surface-container bg-surface/98 backdrop-blur-2xl px-4 pt-3 pb-6 shadow-2xl animate-[fadeIn_0.2s_ease]">
+          <div className="flex flex-col gap-1.5">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-lg text-sm font-semibold text-on-surface hover:bg-indigo-brand/10 hover:text-indigo-brand transition-colors"
+                className="px-3.5 py-2.5 rounded-xl text-sm font-semibold text-on-surface hover:bg-indigo-brand/10 hover:text-indigo-brand transition-colors"
               >
                 {link.label}
               </a>
@@ -122,10 +123,10 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
                   setMobileMenuOpen(false);
                   onGetStarted();
                 }}
-                className="w-full py-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-indigo-brand to-indigo-brand-dark flex items-center justify-center gap-2 shadow-md"
+                className="w-full py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-indigo-brand to-indigo-brand-dark flex items-center justify-center gap-2 shadow-md cursor-pointer"
               >
                 <span>Get Started</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </div>
