@@ -18,7 +18,7 @@ export const WhyGenuAI: React.FC = () => {
     {
       num: '03',
       title: 'Complete Recruitment Assessment Ecosystem',
-      desc: 'ATS parsing, aptitude, coding compiler, verbal SVAR, AI interviews, GDs, and live git repositories unified in one platform.',
+      desc: 'ATS parsing, aptitude, coding compiler, verbal SVAR, AI interviews, GDs, and live git repositories unified in one ecosystem.',
       icon: Building2,
     },
     {

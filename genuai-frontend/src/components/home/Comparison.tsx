@@ -4,9 +4,9 @@ import { CheckCircle2, XCircle, Zap, Sparkles } from 'lucide-react';
 export const Comparison: React.FC = () => {
   const points = [
     {
-      metric: 'Platform Fragmentation',
+      metric: 'Ecosystem Fragmentation',
       trad: 'Candidates manage 10+ different job portals & accounts',
-      genu: 'One Unified Assessment Platform with single persistent talent passport',
+      genu: 'One Unified Assessment Ecosystem with single persistent talent passport',
     },
     {
       metric: 'Assessment Repetition',

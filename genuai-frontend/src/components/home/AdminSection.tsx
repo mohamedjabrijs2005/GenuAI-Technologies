@@ -38,10 +38,10 @@ export const AdminSection: React.FC<Props> = ({ onProtectedAction }) => {
             <span>Institutional Governance</span>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
-            One Platform. Complete Recruitment Control.
+            One Ecosystem. Complete Recruitment Control.
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
-            Designed for university placement cells, corporate talent heads, and platform administrators to oversee verified recruitment at institutional scale.
+            Designed for university placement cells, corporate talent heads, and ecosystem administrators to oversee verified recruitment at institutional scale.
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export const AdminSection: React.FC<Props> = ({ onProtectedAction }) => {
           {/* Bottom Admin Link */}
           <div className="mt-8 pt-6 border-t border-surface-container text-center">
             <button
-              onClick={() => handleProtectedClick('Full Platform Governance')}
+              onClick={() => handleProtectedClick('Full Ecosystem Governance')}
               className="inline-flex items-center gap-2 text-xs font-bold text-on-surface bg-surface px-4 py-2 rounded-2xl border border-surface-container hover:bg-surface-bright hover:border-purple-500/30 transition-colors cursor-pointer"
             >
               <Shield className="w-4 h-4 text-purple-600" />

@@ -76,11 +76,11 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
               <div className="font-black text-lg sm:text-xl tracking-tight text-on-surface flex items-center gap-1.5 leading-none">
                 <span>Genu<span className="text-accent-gold">AI</span> Technologies</span>
                 <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20">
-                  Platform
+                  Ecosystem
                 </span>
               </div>
               <div className="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest mt-1">
-                AI Recruitment Intelligence
+                AI Recruitment Intelligence Ecosystem
               </div>
             </div>
           </a>

@@ -95,7 +95,7 @@ export const AssessmentWorkflow: React.FC<Props> = ({ onProtectedAction }) => {
             Complete Assessment Ecosystem
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
-            "One platform. Complete assessment intelligence." Ten synchronized evaluation stages working together to build an authentic candidate profile.
+            "One ecosystem. Complete assessment intelligence." Ten synchronized evaluation stages working together to build an authentic candidate profile.
           </p>
         </div>
 

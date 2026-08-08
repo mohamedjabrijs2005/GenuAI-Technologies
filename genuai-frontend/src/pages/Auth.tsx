@@ -218,7 +218,7 @@ export default function Auth({ onLogin }: Props) {
         </h2>
         <div className="inline-flex items-center px-3 py-1.5 glass rounded-lg shadow-sm bg-surface-bright/50 mb-4">
           <span className="text-[10px] font-black text-[#F59E0B] uppercase tracking-[0.2em]" style={{ fontFamily: "'Inter', sans-serif" }}>
-            AI-Powered Recruitment Intelligence Platform
+            AI-Powered Recruitment Intelligence Ecosystem
           </span>
         </div>
         <h1 className="text-3xl font-black text-on-surface mb-2 leading-tight">
@@ -264,7 +264,7 @@ export default function Auth({ onLogin }: Props) {
               </h2>
               <div className="inline-flex items-center px-sm py-1.5 glass rounded-lg border-surface-container self-start shadow-sm bg-surface-bright/50">
                 <span className="text-[11px] font-black text-[#F59E0B] flex items-center gap-1.5 uppercase tracking-[0.2em]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  AI-Powered Recruitment Intelligence Platform
+                  AI-Powered Recruitment Intelligence Ecosystem
                 </span>
               </div>
             </div>
@@ -479,7 +479,7 @@ export default function Auth({ onLogin }: Props) {
                     <select value={form.role} onChange={e => set("role", e.target.value)} className="w-full p-sm bg-surface-bright border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand transition-all text-sm">
                       <option value="candidate">Candidate - Looking for jobs</option>
                       <option value="company">Company - Hiring talent</option>
-                      <option value="admin">Admin - Platform management</option>
+                      <option value="admin">Admin - Ecosystem management</option>
                     </select>
                   </div>
                 </div>

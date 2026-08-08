@@ -98,7 +98,7 @@ export const TermsAndConditions: React.FC = () => {
         'Candidates are strictly prohibited from screen-recording, scraping, publishing, or sharing proprietary GenuAI test questions and coding prompts.',
         'Code written by candidates during project challenges remains the intellectual property of the author, subject to evaluation licensing by prospective employers.',
         'Violations involving commercial leakage of test materials will be prosecuted under applicable digital intellectual property laws.',
-        'By participating, candidates and companies agree to abide by all platform terms and institutional guidelines.',
+        'By participating, candidates and companies agree to abide by all ecosystem terms and institutional guidelines.',
       ],
     },
   ];
@@ -110,7 +110,7 @@ export const TermsAndConditions: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-indigo-brand/20">
             <Scale className="w-3.5 h-3.5" />
-            <span>Platform Governance &amp; Compliance</span>
+            <span>Ecosystem Governance &amp; Compliance</span>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
             Terms &amp; Conditions Applied Concepts

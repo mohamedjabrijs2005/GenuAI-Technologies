@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-xs text-on-surface-variant max-w-sm leading-relaxed">
-              AI-Powered Recruitment Intelligence Platform. Transforming hiring through multi-modal assessment, anti-proxy verification, and intelligent talent distribution.
+              AI-Powered Recruitment Intelligence Ecosystem. Transforming hiring through multi-modal assessment, anti-proxy verification, and intelligent talent distribution.
             </p>
             <div className="text-xs font-semibold text-on-surface flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-success" />
@@ -25,7 +25,7 @@ export const Footer: React.FC = () => {
 
           {/* Col 2: Navigation */}
           <div>
-            <div className="text-xs font-bold text-on-surface uppercase tracking-wider mb-3">Platform</div>
+            <div className="text-xs font-bold text-on-surface uppercase tracking-wider mb-3">Ecosystem</div>
             <ul className="space-y-2 text-xs">
               <li><a href="#about" className="hover:text-indigo-brand transition-colors">Experience</a></li>
               <li><a href="#solution" className="hover:text-indigo-brand transition-colors">Solutions</a></li>

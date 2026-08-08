@@ -30,7 +30,7 @@ export const FounderSection: React.FC = () => {
             </div>
 
             <p className="text-sm sm:text-base text-on-surface-variant/90 leading-relaxed">
-              Our multi-dimensional AI platform evaluates candidates across 6 core dimensions, providing real-time, actionable insights. This ensures that every hire is based on true merit and demonstrated capability, bridging the gap between exceptional developers and world-class opportunities.
+              Our multi-dimensional AI ecosystem evaluates candidates across 6 core dimensions, providing real-time, actionable insights. This ensures that every hire is based on true merit and demonstrated capability, bridging the gap between exceptional developers and world-class opportunities.
             </p>
 
             <div className="pt-2 border-t border-surface-container/60 flex items-center justify-between">

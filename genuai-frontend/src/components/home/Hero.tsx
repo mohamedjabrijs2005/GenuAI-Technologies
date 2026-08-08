@@ -82,7 +82,7 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore, onProtectedActi
 
             {/* Description */}
             <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              GenuAI Technologies is an AI-powered recruitment intelligence platform that verifies skills, detects recruitment fraud, and connects candidates with multiple companies through one trusted assessment.
+              GenuAI Technologies is an AI-powered recruitment intelligence ecosystem that verifies skills, detects recruitment fraud, and connects candidates with multiple companies through one trusted assessment.
             </p>
 
             {/* Core USP Ribbon */}

@@ -26,7 +26,7 @@ export const Solution: React.FC = () => {
             One Intelligent Recruitment Ecosystem
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
-            Instead of stitching together multiple isolated tools, GenuAI brings all recruitment stages together into a single, standardized, fraud-resistant intelligence platform.
+            Instead of stitching together multiple isolated tools, GenuAI brings all recruitment stages together into a single, standardized, fraud-resistant intelligence ecosystem.
           </p>
         </div>
 

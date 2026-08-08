@@ -9,7 +9,7 @@ export const VideoSection: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-indigo-brand/20">
             <PlayCircle className="w-3.5 h-3.5" />
-            <span>Platform Demonstration</span>
+            <span>Ecosystem Demonstration</span>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-on-surface mb-3 sm:mb-4 leading-tight tracking-tight">
             See GenuAI in Action
@@ -27,7 +27,7 @@ export const VideoSection: React.FC = () => {
               <iframe
                 className="w-full h-full"
                 src="https://www.youtube-nocookie.com/embed/hBfLOl41IwI?autoplay=0&controls=1&rel=0"
-                title="GenuAI Technologies Platform Overview"
+                title="GenuAI Technologies Ecosystem Overview"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
