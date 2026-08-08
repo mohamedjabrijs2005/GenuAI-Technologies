@@ -16,7 +16,7 @@ export const Comparison: React.FC = () => {
     {
       metric: 'Fraud & Anti-Proxy Security',
       trad: 'Weak basic webcams easily bypassed with second persons & phones',
-      genu: 'Multi-modal AI Anti-Proxy (Face, Voice, Liveness, Gaze & Edge AI)',
+      genu: 'Multi-modal AI Anti-Proxy (Face, Voice, Liveness, Gaze & AI Scoring)',
     },
     {
       metric: 'Interview & GD Infrastructure',

@@ -121,7 +121,7 @@ export const TermsAndConditions: React.FC = () => {
         </div>
 
         {/* Tab Navigation Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-2.5 mb-8">
           {sections.map((sec, idx) => {
             const Icon = sec.icon;
             const isSelected = activeTab === idx;
@@ -129,14 +129,14 @@ export const TermsAndConditions: React.FC = () => {
               <button
                 key={sec.id}
                 onClick={() => setActiveTab(idx)}
-                className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-2 cursor-pointer ${
+                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
                   isSelected
-                    ? 'bg-indigo-brand text-white border-indigo-brand shadow-md scale-105'
+                    ? 'bg-indigo-brand text-white border-indigo-brand shadow-md ring-2 ring-indigo-brand/30'
                     : 'bg-surface border-surface-container text-on-surface-variant hover:border-indigo-brand/40 hover:text-on-surface'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-indigo-brand'}`} />
-                <span className="text-[11px] font-bold leading-snug line-clamp-1">
+                <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isSelected ? 'text-white' : 'text-indigo-brand'}`} />
+                <span className="text-[10px] sm:text-[11px] font-bold leading-snug truncate w-full">
                   Section 0{idx + 1}
                 </span>
               </button>
