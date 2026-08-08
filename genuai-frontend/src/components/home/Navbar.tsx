@@ -24,12 +24,12 @@ export const Navbar: React.FC = () => {
     { label: 'Problem', href: '#problem' },
     { label: 'Solution', href: '#solution' },
     { label: 'One Assessment', href: '#core-usp' },
-    { label: 'Founder', href: '#founder' },
-    { label: 'Demo', href: '#demo-video' },
     { label: 'Candidates', href: '#candidates' },
     { label: 'Companies', href: '#companies' },
     { label: 'Terms & Policies', href: '#terms' },
     { label: 'Contact', href: '#contact' },
+    { label: 'Demo', href: '#demo-video' },
+    { label: 'Founder', href: '#founder' },
   ];
 
   return (
