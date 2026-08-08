@@ -8,7 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 export default function Auth({ onLogin }: Props) {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [oauthLoading, setOauthLoading] = useState<"google" | "github" | "linkedin" | null>(null);
+  const [oauthLoading, setOauthLoading] = useState<"google" | "github" | "linkedin" | "microsoft" | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showOtp, setShowOtp] = useState(false);
@@ -162,7 +162,7 @@ export default function Auth({ onLogin }: Props) {
     setLoading(false);
   };
 
-  const handleOAuth = (provider: "google" | "github" | "linkedin") => {
+  const handleOAuth = (provider: "google" | "github" | "linkedin" | "microsoft") => {
     setOauthLoading(provider);
     window.location.href = `${API_URL}/auth/${provider}`;
   };
@@ -323,13 +323,11 @@ export default function Auth({ onLogin }: Props) {
         <div className="w-full max-w-[550px] glass p-lg md:p-xl rounded-xxl relative">
           
           <div className="mb-lg">
-            <h2 className="text-4xl md:text-5xl font-black text-on-surface mb-md tracking-tight drop-shadow-sm">
-              {isForgotPassword ? "Reset Password" : isLogin ? "Welcome back!" : "Create account"}
+            <h2 className="text-3xl md:text-4xl font-black text-on-surface mb-xs tracking-tight drop-shadow-sm">
+              {isForgotPassword ? "Reset Password" : "Welcome to GenuAI"}
             </h2>
-            <p className="text-xl text-on-surface-variant/90 font-medium leading-relaxed">
-              {isForgotPassword ? "Follow the steps below to reset your password" : isLogin ? (
-                <>Sign in to continue<br/>to your dashboard</>
-              ) : "Join GenuAI and get discovered by top companies"}
+            <p className="text-sm md:text-base text-on-surface-variant font-medium leading-relaxed">
+              {isForgotPassword ? "Follow the steps below to reset your password" : "Choose how you want to continue."}
             </p>
           </div>
 
@@ -490,17 +488,26 @@ export default function Auth({ onLogin }: Props) {
                 <div className="flex-1 h-px bg-surface-container"></div>
               </div>
 
-              <div className="flex flex-col gap-md">
-                <button onClick={() => handleOAuth("google")} disabled={oauthLoading !== null} className="w-full bg-surface border border-surface-container flex items-center justify-center gap-md py-md rounded-xl font-bold text-lg text-on-surface hover:border-indigo-brand/50 hover:shadow-[0_0_15px_rgba(102,126,234,0.15)] transition-all disabled:opacity-50 group">
-                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-7 h-7 group-hover:scale-110 transition-transform" />
+              <div className="flex flex-col gap-3">
+                <button onClick={() => handleOAuth("google")} disabled={oauthLoading !== null} className="w-full bg-surface border border-surface-container flex items-center justify-center gap-md py-3.5 rounded-xl font-bold text-sm text-on-surface hover:border-indigo-brand/50 hover:shadow-[0_0_15px_rgba(102,126,234,0.15)] transition-all disabled:opacity-50 group">
+                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5 group-hover:scale-110 transition-transform" />
                   Continue with Google
                 </button>
-                <button onClick={() => handleOAuth("github")} disabled={oauthLoading !== null} className="w-full bg-surface border border-surface-container flex items-center justify-center gap-md py-md rounded-xl font-bold text-lg text-on-surface hover:border-on-surface hover:shadow-[0_0_15px_rgba(15,23,42,0.1)] transition-all disabled:opacity-50 group">
-                  <img src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" className="w-7 h-7 group-hover:scale-110 transition-transform" />
+                <button onClick={() => handleOAuth("microsoft")} disabled={oauthLoading !== null} className="w-full bg-surface border border-surface-container flex items-center justify-center gap-md py-3.5 rounded-xl font-bold text-sm text-on-surface hover:border-[#00A4EF] hover:shadow-[0_0_15px_rgba(0,164,239,0.15)] transition-all disabled:opacity-50 group">
+                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 23 23">
+                    <path fill="#f35325" d="M1 1h10v10H1z"/>
+                    <path fill="#81bc06" d="M12 1h10v10H12z"/>
+                    <path fill="#05a6f0" d="M1 12h10v10H1z"/>
+                    <path fill="#ffba08" d="M12 12h10v10H12z"/>
+                  </svg>
+                  Continue with Microsoft
+                </button>
+                <button onClick={() => handleOAuth("github")} disabled={oauthLoading !== null} className="w-full bg-surface border border-surface-container flex items-center justify-center gap-md py-3.5 rounded-xl font-bold text-sm text-on-surface hover:border-on-surface hover:shadow-[0_0_15px_rgba(15,23,42,0.1)] transition-all disabled:opacity-50 group">
+                  <img src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" className="w-5 h-5 group-hover:scale-110 transition-transform" />
                   Continue with GitHub
                 </button>
-                <button onClick={() => handleOAuth("linkedin")} disabled={oauthLoading !== null} className="w-full bg-surface border border-surface-container flex items-center justify-center gap-md py-md rounded-xl font-bold text-lg text-on-surface hover:border-[#0A66C2] hover:shadow-[0_0_15px_rgba(10,102,194,0.15)] transition-all disabled:opacity-50 group">
-                  <img src="https://www.svgrepo.com/show/448234/linkedin.svg" alt="LinkedIn" className="w-7 h-7 group-hover:scale-110 transition-transform" />
+                <button onClick={() => handleOAuth("linkedin")} disabled={oauthLoading !== null} className="w-full bg-surface border border-surface-container flex items-center justify-center gap-md py-3.5 rounded-xl font-bold text-sm text-on-surface hover:border-[#0A66C2] hover:shadow-[0_0_15px_rgba(10,102,194,0.15)] transition-all disabled:opacity-50 group">
+                  <img src="https://www.svgrepo.com/show/448234/linkedin.svg" alt="LinkedIn" className="w-5 h-5 group-hover:scale-110 transition-transform" />
                   Continue with LinkedIn
                 </button>
               </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 
-// ── Feature Pages (lazy-loaded per route for optimal code splitting) ────────
+const HomePage             = lazy(() => import("./pages/HomePage"));
 const Auth                 = lazy(() => import("./features/auth").then(m => ({ default: m.AuthPage })));
 const PathSelection        = lazy(() => import("./features/dashboard").then(m => ({ default: m.PathSelectionPage })));
 const CompanyOverview      = lazy(() => import("./features/company").then(m => ({ default: m.CompanyOverviewPage })));
@@ -104,9 +104,9 @@ export default function App() {
   return (
     <Suspense fallback={<PageLoader />}>
     <Routes>
-      {/* Public */}
+      {/* Public Home Page & Auth Routes */}
+      <Route path="/" element={<HomePage />} />
       <Route path="/auth" element={user ? <Navigate to="/dashboard" replace /> : <Auth onLogin={handleLogin} />} />
-      <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/auth" replace />} />
 
       {/* Candidate dashboard hub */}
       <Route path="/dashboard" element={
