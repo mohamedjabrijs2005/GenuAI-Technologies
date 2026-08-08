@@ -448,7 +448,7 @@ export default function Auth({ onLogin }: Props) {
                     <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Upload Photo</span>
                     <input id="auth-photo-input" type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
                   </div>
-                  <div className="grid grid-cols-2 gap-sm mb-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-sm mb-sm">
                     <div>
                       <label className="text-label-caps text-on-surface-variant mb-xs block">Full Name *</label>
                       <input placeholder="John Doe" value={form.name} onChange={e => set("name", e.target.value)} className="w-full p-sm bg-surface-bright border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand transition-all text-sm" />
@@ -463,7 +463,7 @@ export default function Auth({ onLogin }: Props) {
                     <input placeholder="University / Inc." value={form.college} onChange={e => set("college", e.target.value)} className="w-full p-sm bg-surface-bright border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand transition-all text-sm" />
                   </div>
                   {form.role !== 'admin' && (
-                    <div className="grid grid-cols-2 gap-sm mb-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-sm mb-sm">
                       <div>
                         <label className="text-label-caps text-on-surface-variant mb-xs block">GitHub *</label>
                         <input placeholder="url" value={form.github} onChange={e => set("github", e.target.value)} className="w-full p-sm bg-surface-bright border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand transition-all text-sm" />
