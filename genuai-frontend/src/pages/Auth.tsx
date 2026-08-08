@@ -292,7 +292,6 @@ export default function Auth({ onLogin }: Props) {
 
           {/* Testimonial */}
           <div className="glass-gold p-md rounded-xl border border-accent-gold/20 relative overflow-hidden group">
-            <span className="material-symbols-outlined text-accent-gold/10 text-6xl absolute -top-2 left-4 pointer-events-none" data-icon="format_quote">format_quote</span>
             <div className="relative z-10">
               <div key={testimonialIdx} className="animate-[fadeIn_0.5s_ease]">
                 <p className="text-body-base italic text-on-surface mb-sm leading-relaxed">{TESTIMONIALS[testimonialIdx].quote}</p>
