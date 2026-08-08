@@ -19,6 +19,7 @@ export default function Auth({ onLogin }: Props) {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "", role: "candidate", phone: "", college: "", github: "", linkedin: "" });
   const [testimonialIdx, setTestimonialIdx] = useState(0);
   const [liveUserCount, setLiveUserCount] = useState(2042);
+  const [agreedTerms, setAgreedTerms] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -58,24 +59,20 @@ export default function Auth({ onLogin }: Props) {
     // Reset OAuth loading state when returning to the page
     setOauthLoading(null);
 
-    // Handle Back-Forward Cache (BFcache) to clear spinner on back button
-    const handlePageShow = () => setOauthLoading(null);
-    window.addEventListener("pageshow", handlePageShow);
-
+    // Check for error in query string
     const params = new URLSearchParams(window.location.search);
-    const oauthUser = params.get("oauth_user");
     const oauthError = params.get("oauth_error");
-
     if (oauthError) {
       setError(decodeURIComponent(oauthError));
       window.history.replaceState({}, document.title, window.location.pathname);
-      window.removeEventListener("pageshow", handlePageShow);
       return;
     }
 
-    if (oauthUser) {
+    // Check for successful oauth_user
+    const oauthUserStr = params.get("oauth_user");
+    if (oauthUserStr) {
       try {
-        const userData = JSON.parse(decodeURIComponent(oauthUser));
+        const userData = JSON.parse(decodeURIComponent(oauthUserStr));
         localStorage.setItem("genuai_user", JSON.stringify(userData));
         window.history.replaceState({}, document.title, window.location.pathname);
         onLogin(userData);
@@ -84,12 +81,17 @@ export default function Auth({ onLogin }: Props) {
       }
     }
 
+    const handlePageShow = () => {
+      setOauthLoading(null);
+    };
+    window.addEventListener("pageshow", handlePageShow);
     return () => window.removeEventListener("pageshow", handlePageShow);
   }, [onLogin]);
 
   const set = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
   const validate = () => {
+    if (!agreedTerms) return "Please check the box to agree to the Terms & Conditions and Privacy Policy.";
     if (!form.email || !form.email.includes("@")) return "Valid email is required.";
     if (!form.password || form.password.length < 6) return "Password must be at least 6 characters.";
     if (!isLogin) {
@@ -493,8 +495,35 @@ export default function Auth({ onLogin }: Props) {
                 </div>
               )}
 
+              {/* Mandatory Terms & Conditions Agreement Checkbox */}
+              <div
+                className={`mb-md p-3.5 rounded-xl border flex items-start gap-2.5 transition-all select-none cursor-pointer ${
+                  agreedTerms
+                    ? 'bg-indigo-brand/5 border-indigo-brand/40 shadow-xs'
+                    : 'bg-surface-bright border-surface-container hover:border-surface-container-high'
+                }`}
+                onClick={() => {
+                  setAgreedTerms(!agreedTerms);
+                  if (error && error.includes("Terms")) setError("");
+                }}
+              >
+                <input
+                  type="checkbox"
+                  id="agree-terms-checkbox"
+                  checked={agreedTerms}
+                  onChange={(e) => {
+                    setAgreedTerms(e.target.checked);
+                    if (error && error.includes("Terms")) setError("");
+                  }}
+                  className="mt-0.5 w-4 h-4 rounded text-indigo-brand focus:ring-indigo-brand border-surface-container cursor-pointer accent-indigo-600 shrink-0"
+                />
+                <label htmlFor="agree-terms-checkbox" className="text-xs text-on-surface-variant leading-relaxed cursor-pointer">
+                  I agree to the <a href="/#terms" target="_blank" rel="noopener noreferrer" className="text-indigo-brand font-bold hover:underline" onClick={(e) => e.stopPropagation()}>Terms &amp; Conditions</a>, Assessment Integrity Rules, and <span className="font-semibold text-on-surface">Candidate Privacy Policy</span>.
+                </label>
+              </div>
+
               <button onClick={handleSubmit} disabled={loading}
-                className="w-full gradient-button text-white font-bold py-sm rounded-xl mb-lg disabled:opacity-50 hover:scale-[0.98] transition-transform text-sm">
+                className="w-full gradient-button text-white font-bold py-sm rounded-xl mb-lg disabled:opacity-50 hover:scale-[0.98] transition-transform text-sm cursor-pointer shadow-md">
                 {loading ? (isLogin ? "Signing in..." : "Sending OTP...") : (isLogin ? "Sign in to GenuAI" : "Create Account")}
               </button>
 
