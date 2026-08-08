@@ -37,7 +37,7 @@ export const About: React.FC<Props> = ({ onProtectedAction }) => {
       intent: 'genuai',
       tagline: 'Connect skills with opportunity.',
       description:
-        'The intelligent recruitment layer that unifies assessment, anti-proxy verification, edge computing, and predictive hiring analytics into a trusted ecosystem.',
+        'The intelligent recruitment layer that unifies assessment, anti-proxy verification, multi-modal AI, and predictive hiring analytics into a trusted ecosystem.',
       icon: Cpu,
       color: 'from-purple-500 to-indigo-600',
       badge: 'Unified Intelligence',

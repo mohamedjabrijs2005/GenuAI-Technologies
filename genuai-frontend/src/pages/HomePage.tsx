@@ -10,13 +10,14 @@ import { WhyCompanies } from '../components/home/WhyCompanies';
 import { AssessmentWorkflow } from '../components/home/AssessmentWorkflow';
 import { TrustVerification } from '../components/home/TrustVerification';
 import { TrustScore } from '../components/home/TrustScore';
-import { EdgeAI } from '../components/home/EdgeAI';
+import { SoftwareInnovation } from '../components/home/SoftwareInnovation';
 import { CandidateSection } from '../components/home/CandidateSection';
 import { CompanySection } from '../components/home/CompanySection';
 import { AdminSection } from '../components/home/AdminSection';
 import { LearningHub } from '../components/home/LearningHub';
 import { RecruitmentIntelligence } from '../components/home/RecruitmentIntelligence';
 import { Comparison } from '../components/home/Comparison';
+import { TechStack } from '../components/home/TechStack';
 import { WhyGenuAI } from '../components/home/WhyGenuAI';
 import { Roadmap } from '../components/home/Roadmap';
 import { SubscriptionPricing } from '../components/home/SubscriptionPricing';
@@ -148,14 +149,14 @@ export default function HomePage() {
         {/* 8. 10-Step Assessment Workflow Ecosystem */}
         <AssessmentWorkflow onProtectedAction={handleProtectedAction} />
 
-        {/* 9. AI Anti-Proxy System */}
+        {/* 9. AI Anti-Proxy System (Multi-Modal AI Verification) */}
         <TrustVerification onProtectedAction={handleProtectedAction} />
 
         {/* 10. AI Trust Score & Verification Dashboard */}
         <TrustScore onProtectedAction={handleProtectedAction} />
 
-        {/* 11. Edge AI Hardware Innovation & Architecture */}
-        <EdgeAI />
+        {/* 11. AI-Powered Recruitment Intelligence (Software Innovation) */}
+        <SoftwareInnovation onProtectedAction={handleProtectedAction} />
 
         {/* 12. Candidate Experience */}
         <CandidateSection onProtectedAction={handleProtectedAction} />
@@ -169,20 +170,23 @@ export default function HomePage() {
         {/* 15. Intensive Learning Hub & Multilingual Vision */}
         <LearningHub onProtectedAction={handleProtectedAction} />
 
-        {/* 16. Recruitment Intelligence Pipeline */}
+        {/* 16. Recruitment Intelligence & Analytics */}
         <RecruitmentIntelligence onProtectedAction={handleProtectedAction} />
 
         {/* 17. Traditional vs GenuAI Comparison */}
         <Comparison />
 
-        {/* 18. Why GenuAI (5 Core Pillars) */}
+        {/* 18. Technology Stack (Pure Software Stack) */}
+        <TechStack />
+
+        {/* 19. Why GenuAI (5 Core Value Pillars) */}
         <WhyGenuAI />
 
-        {/* 20. Future Roadmap */}
-        <Roadmap />
-
-        {/* 21. Subscription / Pricing Section */}
+        {/* 20. Subscription / Pricing Section */}
         <SubscriptionPricing onProtectedAction={handleProtectedAction} />
+
+        {/* 21. Future Roadmap */}
+        <Roadmap />
 
         {/* 22. Send a Message / Public Contact Form */}
         <ContactForm />

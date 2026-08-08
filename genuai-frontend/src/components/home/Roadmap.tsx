@@ -1,14 +1,14 @@
 import React from 'react';
-import { Compass, CheckCircle2, ShieldCheck, Cpu, School, Building2, Globe2, Sparkles, Rocket } from 'lucide-react';
+import { Compass, CheckCircle2, ShieldCheck, Cpu, School, Building2, Globe2, Sparkles } from 'lucide-react';
 
 export const Roadmap: React.FC = () => {
   const roadmapItems = [
     // ── Group 1: 3 Distinct Active & Live Deployment Colors ──
     {
       stage: 'Phase 01',
-      title: 'Interactive Web Platform & Assessment Hub',
+      title: 'Current MVP / Prototype',
       status: 'Completed • Live',
-      desc: 'Core 7-module assessment ecosystem, ATS resume parser, multi-language coding IDE, and automated grading.',
+      desc: 'Core 8-module assessment ecosystem, ATS resume parser, multi-language coding IDE, and automated scoring.',
       icon: CheckCircle2,
       accent: {
         iconBg: 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20',
@@ -20,9 +20,9 @@ export const Roadmap: React.FC = () => {
     },
     {
       stage: 'Phase 02',
-      title: 'AI Verification & Biometric Proctoring Engine',
+      title: 'AI Verification Enhancement',
       status: 'Completed • Live',
-      desc: 'Face recognition, voice baseline timbre matching, continuous gaze tracking, and AI Trust scoring algorithms.',
+      desc: 'Browser-based face recognition, voice baseline matching, continuous gaze tracking, and AI Trust scoring algorithms.',
       icon: ShieldCheck,
       accent: {
         iconBg: 'bg-cyan-600 text-white shadow-md shadow-cyan-600/20',
@@ -34,7 +34,7 @@ export const Roadmap: React.FC = () => {
     },
     {
       stage: 'Phase 03',
-      title: 'Autonomous AI Technical Interviewer & GD Moderator',
+      title: 'Assessment Intelligence Enhancement',
       status: 'In Active Deployment',
       desc: 'Contextual technical interrogation, natural dialogue synthesis, and collaborative group discussion scoring.',
       icon: Cpu,
@@ -47,10 +47,10 @@ export const Roadmap: React.FC = () => {
       },
     },
 
-    // ── Group 2: 3 Distinct Future & Expansion Colors ──
+    // ── Group 2: 4 Distinct Future & Expansion Colors ──
     {
       stage: 'Phase 04',
-      title: 'University & Pilot Campus Deployments',
+      title: 'Pilot Deployment',
       status: 'Q3 2026 • Pilot Phase',
       desc: 'Placement cell trials across engineering institutions to validate multi-company distribution and cohort telemetry.',
       icon: School,
@@ -64,7 +64,7 @@ export const Roadmap: React.FC = () => {
     },
     {
       stage: 'Phase 05',
-      title: 'Corporate Enterprise Partnerships',
+      title: 'Company & Institution Partnerships',
       status: 'Q4 2026 • Expansion',
       desc: 'Direct ATS integration with top tier tech companies and automated candidate dispatch pipelines.',
       icon: Building2,
@@ -78,7 +78,7 @@ export const Roadmap: React.FC = () => {
     },
     {
       stage: 'Phase 06',
-      title: 'Multilingual Learning Hub Expansion',
+      title: 'Commercial Platform',
       status: 'Roadmap 2027 • Global Scale',
       desc: 'Native audio coaching & assessment delivery across Tamil, Hindi, Japanese, Chinese, German, and Spanish.',
       icon: Globe2,
@@ -92,9 +92,9 @@ export const Roadmap: React.FC = () => {
     },
     {
       stage: 'Phase 07',
-      title: 'Global Scalable Recruitment Infrastructure',
-      status: 'Future Horizon • Protocol',
-      desc: 'Standardized international skill accreditation protocol with cryptographic verification and edge compute nodes.',
+      title: 'Scalable Recruitment Intelligence Infrastructure',
+      status: 'Future Horizon • Cloud Architecture',
+      desc: 'Standardized international skill accreditation protocol with cryptographic verification and distributed cloud microservices.',
       icon: Sparkles,
       accent: {
         iconBg: 'bg-teal-600 text-white shadow-md shadow-teal-600/20',
@@ -119,11 +119,11 @@ export const Roadmap: React.FC = () => {
             Where GenuAI Is Going
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
-            From our current working prototype to global enterprise edge deployment, we clearly delineate our active milestones from future innovations.
+            From our current working prototype to global enterprise cloud deployment, we clearly delineate our active milestones from future innovations.
           </p>
         </div>
 
-        {/* Roadmap Timeline with 6+ Unique Color Schemes */}
+        {/* Roadmap Timeline with 7 Distinct Color Schemes */}
         <div className="space-y-4 max-w-4xl mx-auto">
           {roadmapItems.map((item) => {
             const Icon = item.icon;

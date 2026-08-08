@@ -83,7 +83,7 @@ export const TermsAndConditions: React.FC = () => {
       icon: FileText,
       summary: 'Candidates retain the legal right to contest flagged proctoring warnings and request a certified human review within 14 business days.',
       details: [
-        'If a session is flagged for environment anomalies due to technical hardware glitches or network drops, candidates can file an official appeal within 14 days.',
+        'If a session is flagged for environment anomalies due to technical system anomalies or network drops, candidates can file an official appeal within 14 days.',
         'An independent human audit panel reviews the encrypted proctoring logs and code submission timestamps within 5 business days.',
         'Legitimate appeals resulting from connectivity interruptions entitle the candidate to an expedited proctored re-assessment at zero additional fee.',
         'Final arbitration outcomes are documented transparently with clear rationale provided in the candidate portal.',

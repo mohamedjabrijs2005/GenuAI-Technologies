@@ -11,8 +11,8 @@ export const WhyGenuAI: React.FC = () => {
     },
     {
       num: '02',
-      title: 'Multi-Modal Candidate Verification',
-      desc: 'Computer vision, audio biometrics, and gaze proctoring defeat impersonation, second-person whispering, and proxy cheating.',
+      title: 'Multi-Modal AI Verification',
+      desc: 'Face, voice, liveness and environment-based verification concepts running in standard browser sessions.',
       icon: ShieldCheck,
     },
     {
@@ -23,13 +23,13 @@ export const WhyGenuAI: React.FC = () => {
     },
     {
       num: '04',
-      title: 'AI Proctoring & Verification Intelligence',
-      desc: 'Multi-layered computer vision, vocal biometric baselines, and liveness scoring ensure assessment legitimacy at scale.',
+      title: 'AI-Powered Recruitment Intelligence',
+      desc: 'Multi-layered AI analysis of candidate performance, verbal fluency, coding logic, and verified hiring signals.',
       icon: Cpu,
     },
     {
       num: '05',
-      title: 'Candidate + Company + Admin Ecosystem',
+      title: 'Candidate + Company + Institution Ecosystem',
       desc: 'Seamless three-way visibility giving candidates skill portability, employers verified talent, and colleges administrative governance.',
       icon: Users,
     },

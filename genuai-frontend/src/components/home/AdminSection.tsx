@@ -14,7 +14,7 @@ export const AdminSection: React.FC<Props> = ({ onProtectedAction }) => {
     { title: 'Compliance & Audit Logs', desc: 'Immutable activity tracking for fairness, dispute investigations, and DPDP/GDPR requests.', icon: FileCheck },
     { title: 'Cross-Company Analytics', desc: 'Aggregated hiring benchmarks, score distributions, and talent pipeline health metrics.', icon: BarChart3 },
     { title: 'Dispute & Appeal Resolution', desc: '14-day appeal workflow console for reviewing candidate score challenges.', icon: Scale },
-    { title: 'System Health & Edge Clusters', desc: 'Latency, uptime, and cluster workload telemetry across distributed edge workers.', icon: Activity },
+    { title: 'System Health & Cloud Clusters', desc: 'Latency, uptime, and cluster workload telemetry across distributed cloud workers.', icon: Activity },
     { title: 'Enterprise Data Lake', desc: 'Secure, encrypted candidate assessment storage with granular retention policies.', icon: Database },
   ];
 
