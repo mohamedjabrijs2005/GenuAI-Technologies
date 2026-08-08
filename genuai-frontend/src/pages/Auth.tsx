@@ -526,7 +526,7 @@ export default function Auth({ onLogin }: Props) {
                   className="mt-0.5 w-4 h-4 rounded text-indigo-brand focus:ring-indigo-brand border-surface-container cursor-pointer accent-indigo-600 shrink-0"
                 />
                 <label htmlFor="agree-terms-checkbox" className="text-xs text-on-surface-variant leading-relaxed cursor-pointer">
-                  I agree to the <a href="/#terms" target="_blank" rel="noopener noreferrer" className="text-indigo-brand font-bold hover:underline" onClick={(e) => e.stopPropagation()}>Terms &amp; Conditions</a>, Assessment Integrity Rules, and <span className="font-semibold text-on-surface">Candidate Privacy Policy</span>.
+                  I agree to the <a href="/#terms-and-conditions" className="text-indigo-600 font-semibold underline hover:text-indigo-800 transition-colors cursor-pointer" onClick={(e) => e.stopPropagation()}>Terms and Conditions</a> and candidate assessment policies.
                 </label>
               </div>
 

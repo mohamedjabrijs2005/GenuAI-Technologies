@@ -48,33 +48,33 @@ export const TermsAndConditions: React.FC = () => {
       summary: 'The AI Trust Score is an aggregated evidentiary metric designed to assist human recruiters in evaluating test authenticity objectively.',
       details: [
         'The AI Trust Score combines facial landmark consistency, audio baseline match, eye-gaze tracking, and environment stability into a percentage index.',
-        'The Trust Score operates as an evidentiary decision-support tool for recruiters and does not replace final human employer hiring discretion.',
-        'Recruiters receive a multi-signal audit log rather than raw unindexed video files, ensuring compliance and unbiased review.',
-        'Platform algorithms are continually audited to minimize false positive triggers caused by ambient lighting or domestic background noises.',
+        'GenuAI explicitly designates the AI Trust Score as an evidentiary aid; it is not advertised as a 100% infallible fraud detection guarantee.',
+        'Recruiters review timestamped anomaly logs before making final employment determinations to ensure fairness and prevent false positives.',
+        'Biometric vectors are encrypted at rest using AES-256 and processed in compliance with global ethical AI guidelines.',
       ],
     },
     {
       id: 'privacy',
-      title: '05. Privacy, Cryptography & DPDP / GDPR Compliance',
+      title: '05. Candidate Privacy, DPDP & GDPR Compliance',
       icon: Lock,
-      summary: 'Enterprise-grade encryption at rest and in transit; biometric embeddings are cryptographically hashed and never stored as raw unencrypted video.',
+      summary: 'Comprehensive candidate data rights under DPDP 2023, GDPR, and international data protection laws with explicit retention lifecycles.',
       details: [
-        'All candidate video feeds, code submissions, and personal records are encrypted with AES-256 at rest and TLS 1.3 in transit.',
-        'Biometric verification vectors are stored as non-reversible mathematical facial and vocal embeddings rather than raw media.',
-        'Full compliance with the Digital Personal Data Protection (DPDP) Act and GDPR standards, including candidate rights to data portability and deletion.',
-        'Data access logs are cryptographically hashed on Supabase PostgreSQL with strict Row-Level Security (RLS) enforcement.',
+        'Candidates have the fundamental right to request complete data deletion, export their assessment JSON scorecard, and inspect proctoring logs.',
+        'Raw audio/video session recordings are permanently purged 90 days after assessment completion; only cryptographic verification digests and scorecards are preserved.',
+        'GenuAI does not process biometric data for advertising, social profiling, or unauthorized background surveillance.',
+        'All data storage is hosted in ISO 27001-certified, SOC-2 compliant data centers with end-to-end transport encryption (TLS 1.3).',
       ],
     },
     {
-      id: 'equality',
-      title: '06. Non-Discrimination & Equal Opportunity Clause',
+      id: 'non-discrimination',
+      title: '06. Non-Discrimination & Algorithmic Fairness',
       icon: Scale,
-      summary: '100% merit-first evaluation standard eliminating human subjective bias based on gender, ethnicity, geography, or academic pedigree.',
+      summary: 'Algorithmic models are continuously audited against gender, ethnic, dialectal, and institutional pedigree bias.',
       details: [
-        'Assessments evaluate pure algorithmic logic, technical system design, verbal fluency, and problem-solving without demographic bias.',
-        'Blind screening options allow employers to evaluate verified skill matrices prior to viewing applicant names or photographs.',
-        'Participating companies agree to uphold fair employment standards and evaluate candidates strictly on authenticated merit and demonstrated competencies.',
-        'Disability accommodations and alternative testing modalities can be requested through institutional placement coordinators.',
+        'SVAR speech recognition and AI interview models are trained across diverse regional and international accents to eliminate linguistic penalization.',
+        'College brand, geography, and gender are completely decoupled from core skill percentiles in initial automated screening rounds.',
+        'Routine bias audits and disparity tests are conducted every quarter to maintain statistical fairness across demographic cohorts.',
+        'Recruiters receive standardized scoring rubrics calibrated strictly against verifiable technical and problem-solving benchmarks.',
       ],
     },
     {
@@ -104,87 +104,97 @@ export const TermsAndConditions: React.FC = () => {
   ];
 
   return (
-    <section id="terms" className="py-20 sm:py-24 lg:py-32 bg-surface-bright/40 border-t border-b border-surface-container/50 relative">
+    <section id="terms-and-conditions" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/40 border-t border-b border-surface-container/50 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-brand/20">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-indigo-brand/20">
             <Scale className="w-3.5 h-3.5" />
             <span>Platform Governance &amp; Compliance</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
             Terms &amp; Conditions Applied Concepts
           </h2>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
             Our legal, operational, and ethical framework guarantees assessment integrity, candidate data protection, multi-company scorecard portability, and non-discriminatory hiring standards.
           </p>
         </div>
 
-        {/* Tab Navigation Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-2.5 mb-8">
+        {/* 8-Tab Navigation Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-8">
           {sections.map((sec, idx) => {
             const Icon = sec.icon;
-            const isSelected = activeTab === idx;
+            const isActive = activeTab === idx;
             return (
               <button
                 key={sec.id}
                 onClick={() => setActiveTab(idx)}
-                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
-                  isSelected
-                    ? 'bg-indigo-brand text-white border-indigo-brand shadow-md ring-2 ring-indigo-brand/30'
-                    : 'bg-surface border-surface-container text-on-surface-variant hover:border-indigo-brand/40 hover:text-on-surface'
+                className={`p-3 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between cursor-pointer ${
+                  isActive
+                    ? 'bg-indigo-brand text-white border-indigo-brand shadow-md scale-[1.02]'
+                    : 'bg-surface border-surface-container text-on-surface hover:bg-surface-bright'
                 }`}
               >
-                <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isSelected ? 'text-white' : 'text-indigo-brand'}`} />
-                <span className="text-[10px] sm:text-[11px] font-bold leading-snug truncate w-full">
-                  Section 0{idx + 1}
-                </span>
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-2 ${
+                  isActive ? 'bg-white/20 text-white' : 'bg-indigo-brand/10 text-indigo-brand'
+                }`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div className="text-[11px] font-bold leading-tight truncate">
+                  {sec.title.split('. ')[1]}
+                </div>
+                <div className={`text-[9px] font-mono mt-1 ${isActive ? 'text-indigo-100' : 'text-on-surface-variant'}`}>
+                  0{idx + 1}
+                </div>
               </button>
             );
           })}
         </div>
 
-        {/* Active Policy Card View */}
-        <div className="glass rounded-3xl p-8 sm:p-12 border border-surface-container shadow-xl mb-12 animate-[fadeIn_0.3s_ease]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-surface-container pb-6 mb-8">
+        {/* Active Policy Deep-Dive Panel */}
+        <div className="glass rounded-3xl p-6 sm:p-10 border border-surface-container shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-surface-container/60 mb-6">
             <div>
-              <div className="text-xs font-bold text-indigo-brand uppercase tracking-widest mb-1">
-                Official Platform Policy · Active Governance Standard
+              <div className="text-xs font-bold text-indigo-brand uppercase tracking-wider mb-1">
+                Official Platform Policy • Section 0{activeTab + 1}
               </div>
-              <h3 className="text-xl sm:text-2xl font-black text-on-surface">
+              <h3 className="text-xl sm:text-2xl font-bold text-on-surface">
                 {sections[activeTab].title}
               </h3>
             </div>
-            <span className="px-3.5 py-1.5 rounded-full bg-success/10 text-success-dark text-xs font-bold border border-success/30 shrink-0">
-              Legally Binding &amp; Verified ✓
-            </span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success-dark text-xs font-bold border border-success/20 shrink-0">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>Legally Binding Policy</span>
+            </div>
           </div>
 
-          {/* Summary Box */}
-          <div className="p-4 rounded-2xl bg-indigo-brand/5 border border-indigo-brand/20 text-xs sm:text-sm font-semibold text-on-surface mb-8">
-            💡 <strong>Core Principle:</strong> {sections[activeTab].summary}
+          {/* Executive Summary */}
+          <div className="p-4 rounded-2xl bg-surface-bright border border-surface-container mb-6 text-sm text-on-surface font-medium leading-relaxed">
+            {sections[activeTab].summary}
           </div>
 
-          {/* Clauses List */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Detailed Clauses */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sections[activeTab].details.map((clause, i) => (
-              <div key={i} className="p-5 rounded-2xl bg-surface border border-surface-container flex items-start gap-3.5 shadow-xs">
-                <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
-                <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+              <div key={i} className="p-4 rounded-2xl bg-surface border border-surface-container flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-indigo-brand/10 text-indigo-brand text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  {i + 1}
+                </span>
+                <p className="text-xs text-on-surface-variant leading-relaxed">
                   {clause}
                 </p>
               </div>
             ))}
           </div>
 
-          {/* Bottom Agreement Banner */}
-          <div className="mt-8 pt-6 border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-on-surface-variant">
-            <div className="flex items-center gap-2 font-medium">
-              <ShieldCheck className="w-4 h-4 text-indigo-brand shrink-0" />
-              <span>Governed under International Data Protection &amp; Academic Integrity Standards</span>
+          {/* Bottom Compliance Guarantee Banner */}
+          <div className="mt-8 pt-6 border-t border-surface-container/60 flex flex-wrap items-center justify-between gap-4 text-[11px] text-on-surface-variant">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-success" />
+              <span>GenuAI Trust Framework • Continuous Audit &amp; Fair Recruitment Standard</span>
             </div>
-            <div className="text-[11px] font-mono text-on-surface-variant/70">
-              Last Updated: August 2026 · Version 3.4
+            <div className="font-mono text-indigo-brand font-semibold">
+              Doc Ref: GENUAI-TOS-2026-V2.1
             </div>
           </div>
         </div>

@@ -10,16 +10,19 @@ import { WhyCompanies } from '../components/home/WhyCompanies';
 import { AssessmentWorkflow } from '../components/home/AssessmentWorkflow';
 import { TrustVerification } from '../components/home/TrustVerification';
 import { TrustScore } from '../components/home/TrustScore';
+import { EdgeAI } from '../components/home/EdgeAI';
 import { CandidateSection } from '../components/home/CandidateSection';
 import { CompanySection } from '../components/home/CompanySection';
 import { AdminSection } from '../components/home/AdminSection';
 import { LearningHub } from '../components/home/LearningHub';
 import { RecruitmentIntelligence } from '../components/home/RecruitmentIntelligence';
 import { Comparison } from '../components/home/Comparison';
-import { TermsAndConditions } from '../components/home/TermsAndConditions';
+import { TechStack } from '../components/home/TechStack';
 import { WhyGenuAI } from '../components/home/WhyGenuAI';
 import { Roadmap } from '../components/home/Roadmap';
+import { SubscriptionPricing } from '../components/home/SubscriptionPricing';
 import { ContactForm } from '../components/home/ContactForm';
+import { TermsAndConditions } from '../components/home/TermsAndConditions';
 import { VideoSection } from '../components/home/VideoSection';
 import { FounderSection } from '../components/home/FounderSection';
 import { FinalCTA } from '../components/home/FinalCTA';
@@ -38,7 +41,7 @@ export default function HomePage() {
     config: null,
   });
 
-  // Main primary entry point: GET STARTED directly enters /auth
+  // Main primary entry point: GET STARTED directly enters /auth without intermediate modal
   const handleGetStarted = () => {
     navigate('/auth');
   };
@@ -91,15 +94,15 @@ export default function HomePage() {
     }
   };
 
-  // Modal Continue Exploring clicked -> Close modal, remain on Home Page
+  // Modal Continue Exploring clicked -> Close modal, remain on Home Page at current scroll
   const handleCloseModal = () => {
     setModalState({ isOpen: false, config: null });
   };
 
   return (
     <div className="min-h-screen bg-background text-on-background font-body-base antialiased selection:bg-indigo-brand selection:text-white">
-      {/* 1. Fixed Glassmorphism Navbar */}
-      <Navbar />
+      {/* 1. Fixed Glassmorphism Navbar with direct Get Started */}
+      <Navbar onGetStarted={handleGetStarted} />
 
       <main>
         {/* 2. Hero Section with Animated AI Recruitment Visual */}
@@ -133,50 +136,59 @@ export default function HomePage() {
         {/* 10. AI Trust Score & Verification Dashboard */}
         <TrustScore onProtectedAction={handleProtectedAction} />
 
-        {/* 11. Candidate Experience */}
+        {/* 11. Edge AI Hardware Innovation & Architecture */}
+        <EdgeAI />
+
+        {/* 12. Candidate Experience */}
         <CandidateSection onProtectedAction={handleProtectedAction} />
 
-        {/* 12. Company Experience */}
+        {/* 13. Company Experience */}
         <CompanySection onProtectedAction={handleProtectedAction} />
 
-        {/* 13. Admin & Institution Experience */}
+        {/* 14. Admin & Institution Experience */}
         <AdminSection onProtectedAction={handleProtectedAction} />
 
-        {/* 14. Intensive Learning Hub & Multilingual Vision */}
+        {/* 15. Intensive Learning Hub & Multilingual Vision */}
         <LearningHub onProtectedAction={handleProtectedAction} />
 
-        {/* 15. Recruitment Intelligence Pipeline */}
+        {/* 16. Recruitment Intelligence Pipeline */}
         <RecruitmentIntelligence onProtectedAction={handleProtectedAction} />
 
-        {/* 16. Traditional vs GenuAI Comparison */}
+        {/* 17. Traditional vs GenuAI Comparison */}
         <Comparison />
 
-        {/* 17. Complete Terms & Conditions Applied Concepts */}
-        <TermsAndConditions />
+        {/* 18. Modern Technology Stack */}
+        <TechStack />
 
-        {/* 18. Why GenuAI (5 Core Pillars) */}
+        {/* 19. Why GenuAI (5 Core Pillars) */}
         <WhyGenuAI />
 
-        {/* 19. Future Roadmap */}
+        {/* 20. Future Roadmap */}
         <Roadmap />
 
-        {/* 20. Send a Message / Public Contact Form */}
+        {/* 21. Subscription / Pricing Section */}
+        <SubscriptionPricing onProtectedAction={handleProtectedAction} />
+
+        {/* 22. Send a Message / Public Contact Form */}
         <ContactForm />
 
-        {/* 21. See GenuAI in Action YouTube Video Section */}
+        {/* 23. Complete Terms & Conditions (Single Source Anchor: id="terms-and-conditions") */}
+        <TermsAndConditions />
+
+        {/* 24. See GenuAI in Action YouTube Video Section */}
         <VideoSection />
 
-        {/* 22. Founder Details & Leadership Vision */}
+        {/* 25. Founder Details & Leadership Vision */}
         <FounderSection />
 
-        {/* 23. Final Call to Action */}
+        {/* 26. Final Call to Action */}
         <FinalCTA onGetStarted={handleGetStarted} onExplore={handleExplore} />
       </main>
 
-      {/* 24. Footer */}
+      {/* 27. Footer */}
       <Footer />
 
-      {/* 25. Login Required Modal Overlay */}
+      {/* 28. Login Required Modal Overlay */}
       <LoginRequiredModal
         isOpen={modalState.isOpen}
         config={modalState.config}
