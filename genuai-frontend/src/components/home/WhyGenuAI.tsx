@@ -23,8 +23,8 @@ export const WhyGenuAI: React.FC = () => {
     },
     {
       num: '04',
-      title: 'AI + Edge AI Hardware Innovation',
-      desc: 'Prototype Raspberry Pi 5 + Google Coral TPU architecture performs local AI inference with minimal cloud bandwidth.',
+      title: 'AI Proctoring & Verification Intelligence',
+      desc: 'Multi-layered computer vision, vocal biometric baselines, and liveness scoring ensure assessment legitimacy at scale.',
       icon: Cpu,
     },
     {

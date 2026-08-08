@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ShieldAlert } from 'lucide-react';
 
-interface Props {
-  onGetStarted: () => void;
-}
-
-export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
+export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -22,11 +18,11 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
     { label: 'Problem', href: '#problem' },
     { label: 'Solution', href: '#solution' },
     { label: 'One Assessment', href: '#core-usp' },
-    { label: 'Innovation', href: '#edge-ai' },
     { label: 'Founder', href: '#founder' },
     { label: 'Demo', href: '#demo-video' },
     { label: 'Candidates', href: '#candidates' },
     { label: 'Companies', href: '#companies' },
+    { label: 'Terms & Policies', href: '#terms' },
     { label: 'Contact', href: '#contact' },
   ];
 
@@ -79,15 +75,12 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
             ))}
           </div>
 
-          {/* Right Action: Get Started Button ALWAYS Visible */}
+          {/* Right Status Badge & Mobile Hamburger Menu */}
           <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={onGetStarted}
-              className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-indigo-brand via-[#7C3AED] to-indigo-brand-dark hover:shadow-xl hover:shadow-indigo-brand/30 transition-all transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-indigo-brand focus-visible:ring-offset-2 cursor-pointer shadow-md"
-            >
-              <span>Get Started</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success-dark text-xs font-bold border border-success/20">
+              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <span>Assessment Network Live</span>
+            </div>
 
             {/* Mobile hamburger menu toggle */}
             <div className="flex lg:hidden">
@@ -117,18 +110,6 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
                 {link.label}
               </a>
             ))}
-            <div className="pt-3 mt-2 border-t border-surface-container">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onGetStarted();
-                }}
-                className="w-full py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-indigo-brand to-indigo-brand-dark flex items-center justify-center gap-2 shadow-md cursor-pointer"
-              >
-                <span>Get Started</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
           </div>
         </div>
       )}

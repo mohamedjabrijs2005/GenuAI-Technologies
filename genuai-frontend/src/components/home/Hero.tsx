@@ -215,7 +215,7 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
 
               {/* Bottom status badge */}
               <div className="mt-4 pt-3 border-t border-surface-container/60 flex items-center justify-between text-[11px] text-on-surface-variant font-medium">
-                <span>⚡ Edge AI &amp; Local Verification</span>
+                <span>⚡ Multi-Modal AI Verification</span>
                 <span className="text-indigo-brand font-bold">Zero Redundant Retesting</span>
               </div>
             </div>

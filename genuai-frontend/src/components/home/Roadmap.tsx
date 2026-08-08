@@ -3,9 +3,9 @@ import { Compass, CheckCircle2, Clock, Sparkles } from 'lucide-react';
 
 export const Roadmap: React.FC = () => {
   const roadmapItems = [
-    { stage: 'Phase 01', title: 'Interactive Web Prototype & Assessment Hub', status: 'Completed • Live', desc: 'Core 7-module assessment platform, ATS parser, coding IDE, and automated grading.', active: true },
+    { stage: 'Phase 01', title: 'Interactive Web Platform & Assessment Hub', status: 'Completed • Live', desc: 'Core 7-module assessment platform, ATS parser, coding IDE, and automated grading.', active: true },
     { stage: 'Phase 02', title: 'AI Verification & Biometric Proctoring Engine', status: 'Completed • Live', desc: 'Face recognition, voice baseline matching, continuous gaze tracking, and AI Trust scoring.', active: true },
-    { stage: 'Phase 03', title: 'Edge AI Assessment Unit Hardware Prototype', status: 'In Active R&D', desc: 'Raspberry Pi 5 + Google Coral TPU local neural inference pipeline integration.', active: false },
+    { stage: 'Phase 03', title: 'Autonomous AI Technical Interviewer & GD Moderator', status: 'In Active Deployment', desc: 'Contextual technical interrogation, natural dialogue synthesis, and collaborative discussion scoring.', active: true },
     { stage: 'Phase 04', title: 'University & Pilot Campus Deployments', status: 'Q3 2026', desc: 'Placement cell trials across engineering institutions to validate multi-company distribution.', active: false },
     { stage: 'Phase 05', title: 'Corporate Enterprise Partnerships', status: 'Q4 2026', desc: 'Direct ATS integration with top tier tech companies and automated candidate dispatch.', active: false },
     { stage: 'Phase 06', title: 'Multilingual Learning Hub Expansion', status: 'Roadmap 2027', desc: 'Native audio coaching & assessment delivery across Tamil, Hindi, Japanese, and Chinese.', active: false },

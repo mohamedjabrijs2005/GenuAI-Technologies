@@ -30,8 +30,7 @@ export const Footer: React.FC = () => {
               <li><a href="#about" className="hover:text-indigo-brand transition-colors">What is GenuAI?</a></li>
               <li><a href="#problem" className="hover:text-indigo-brand transition-colors">The Problem</a></li>
               <li><a href="#solution" className="hover:text-indigo-brand transition-colors">Our Solution</a></li>
-              <li><a href="#core-usp" className="hover:text-indigo-brand transition-colors">One Assessment</a></li>
-              <li><a href="#edge-ai" className="hover:text-indigo-brand transition-colors">Edge AI Hardware</a></li>
+              <li><a href="#terms" className="hover:text-indigo-brand transition-colors">Terms &amp; Policies</a></li>
             </ul>
           </div>
 

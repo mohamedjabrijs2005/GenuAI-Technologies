@@ -12,14 +12,13 @@ import { WhyCompanies } from '../components/home/WhyCompanies';
 import { AssessmentWorkflow } from '../components/home/AssessmentWorkflow';
 import { TrustVerification } from '../components/home/TrustVerification';
 import { TrustScore } from '../components/home/TrustScore';
-import { EdgeAI } from '../components/home/EdgeAI';
 import { CandidateSection } from '../components/home/CandidateSection';
 import { CompanySection } from '../components/home/CompanySection';
 import { AdminSection } from '../components/home/AdminSection';
 import { LearningHub } from '../components/home/LearningHub';
 import { RecruitmentIntelligence } from '../components/home/RecruitmentIntelligence';
 import { Comparison } from '../components/home/Comparison';
-import { TechStack } from '../components/home/TechStack';
+import { TermsAndConditions } from '../components/home/TermsAndConditions';
 import { WhyGenuAI } from '../components/home/WhyGenuAI';
 import { Roadmap } from '../components/home/Roadmap';
 import { ContactForm } from '../components/home/ContactForm';
@@ -42,8 +41,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-on-background font-body-base antialiased selection:bg-indigo-brand selection:text-white">
-      {/* 1. Transparent Fixed Glassmorphism Navbar */}
-      <Navbar onGetStarted={handleGetStarted} />
+      {/* 1. Transparent Fixed Glassmorphism Navbar (Without right Get Started button & without hardware links) */}
+      <Navbar />
 
       <main>
         {/* 2. Hero Section with Animated AI Recruitment Visual */}
@@ -79,44 +78,41 @@ export default function HomePage() {
         {/* 12. AI Trust Score & Verification Dashboard */}
         <TrustScore />
 
-        {/* 13. Edge AI Hardware Innovation (Raspberry Pi 5 + Google Coral TPU) */}
-        <EdgeAI />
-
-        {/* 14. Candidate Experience */}
+        {/* 13. Candidate Experience */}
         <CandidateSection />
 
-        {/* 15. Company Experience */}
+        {/* 14. Company Experience */}
         <CompanySection />
 
-        {/* 16. Admin & Institution Experience */}
+        {/* 15. Admin & Institution Experience */}
         <AdminSection />
 
-        {/* 17. Intensive Learning Hub & Multilingual Vision */}
+        {/* 16. Intensive Learning Hub & Multilingual Vision */}
         <LearningHub />
 
-        {/* 18. Recruitment Intelligence Pipeline */}
+        {/* 17. Recruitment Intelligence Pipeline */}
         <RecruitmentIntelligence />
 
-        {/* 19. Traditional vs GenuAI Comparison */}
+        {/* 18. Traditional vs GenuAI Comparison */}
         <Comparison />
 
-        {/* 20. Technology Stack */}
-        <TechStack />
+        {/* 19. Complete Terms & Conditions Applied Concepts (Replaces Tech Stack) */}
+        <TermsAndConditions />
 
-        {/* 21. Why GenuAI (5 Core Pillars) */}
+        {/* 20. Why GenuAI (5 Core Pillars) */}
         <WhyGenuAI />
 
-        {/* 22. Future Roadmap */}
+        {/* 21. Future Roadmap */}
         <Roadmap />
 
-        {/* 23. Send a Message / Public Contact Form */}
+        {/* 22. Send a Message / Public Contact Form */}
         <ContactForm />
 
-        {/* 24. Final Call to Action */}
+        {/* 23. Final Call to Action */}
         <FinalCTA onGetStarted={handleGetStarted} onExplore={handleExplore} />
       </main>
 
-      {/* 25. Footer */}
+      {/* 24. Footer */}
       <Footer />
     </div>
   );
