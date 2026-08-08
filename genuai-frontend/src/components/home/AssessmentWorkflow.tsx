@@ -68,18 +68,18 @@ export const AssessmentWorkflow: React.FC = () => {
   ];
 
   return (
-    <section id="workflow" className="py-20 sm:py-24 lg:py-32 bg-background relative">
+    <section id="workflow" className="py-12 sm:py-16 lg:py-24 bg-background relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-brand/20">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-indigo-brand/20">
             <CheckCircle className="w-3.5 h-3.5" />
             <span>End-to-End Timeline</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
             Complete Assessment Ecosystem
           </h2>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
             "One platform. Complete assessment intelligence." Ten synchronized evaluation stages working together to build an authentic candidate profile.
           </p>
         </div>

@@ -20,24 +20,24 @@ export const LearningHub: React.FC = () => {
   ];
 
   return (
-    <section id="learning-hub" className="py-20 sm:py-24 lg:py-32 bg-surface-bright/50 border-t border-b border-surface-container/50 relative">
+    <section id="learning-hub" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/40 border-t border-b border-surface-container/50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-xs font-bold uppercase tracking-wider mb-4 border border-blue-500/20">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-blue-500/20">
             <BookOpen className="w-3.5 h-3.5" />
             <span>Inclusive Learning &amp; Upskilling</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
             Learn. Practice. Get Verified.
           </h2>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
             Assessment without preparation creates anxiety. GenuAI provides complete practice environments so candidates can sharpen their coding, speaking, and collaboration skills before taking the official evaluation.
           </p>
         </div>
 
         {/* 6 Learning Modules */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16">
           {hubs.map((hub) => {
             const Icon = hub.icon;
             return (

@@ -33,30 +33,30 @@ export const About: React.FC = () => {
   ];
 
   return (
-    <section id="about" className="py-20 sm:py-24 lg:py-32 bg-surface-bright/50 relative border-t border-b border-surface-container/50">
+    <section id="about" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/50 relative border-t border-b border-surface-container/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-brand/20">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-indigo-brand/20">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>The Unified Platform</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
             What is GenuAI?
           </h2>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
             GenuAI is a unified AI-powered recruitment ecosystem connecting <strong className="text-on-surface">Candidates</strong>, <strong className="text-on-surface">Companies</strong>, <strong className="text-on-surface">Institutions</strong>, and <strong className="text-on-surface">Administrators</strong> through intelligent assessment, verification, and recruitment analytics.
           </p>
         </div>
 
         {/* Three Connected Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-          {cards.map((c, i) => {
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-8 relative">
+          {cards.map((c) => {
             const Icon = c.icon;
             return (
               <div
                 key={c.role}
-                className="glass rounded-3xl p-8 border border-surface-container shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between relative group"
+                className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-surface-container shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">

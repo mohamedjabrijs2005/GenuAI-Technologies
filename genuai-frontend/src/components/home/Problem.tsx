@@ -38,35 +38,35 @@ export const Problem: React.FC = () => {
   ];
 
   return (
-    <section id="problem" className="py-20 sm:py-24 lg:py-32 bg-background relative">
+    <section id="problem" className="py-12 sm:py-16 lg:py-24 bg-background relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-error/10 text-error text-xs font-bold uppercase tracking-wider mb-4 border border-error/20">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-error/10 text-error text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-error/20">
             <AlertTriangle className="w-3.5 h-3.5" />
             <span>The Hiring Bottleneck</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
             Recruitment Has a Trust &amp; Efficiency Problem.
           </h2>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
             Traditional hiring pipelines are broken for both applicants and employers. Fragmented platforms, repetitive testing, and rampant cheating create friction across the entire industry.
           </p>
         </div>
 
         {/* 4 Problem Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {problems.map((p) => {
             const Icon = p.icon;
             return (
               <div
                 key={p.title}
-                className="glass rounded-3xl p-6 sm:p-8 border border-surface-container shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 lg:p-8 border border-surface-container shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className={`w-12 h-12 rounded-2xl ${p.bg} ${p.color} flex items-center justify-center`}>
-                      <Icon className="w-6 h-6" />
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl ${p.bg} ${p.color} flex items-center justify-center`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
                     <span className="font-mono text-xs font-bold text-on-surface-variant/40">
                       {p.num}

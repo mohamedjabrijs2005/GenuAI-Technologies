@@ -24,30 +24,30 @@ export const CoreUSP: React.FC = () => {
   };
 
   return (
-    <section id="core-usp" className="py-20 sm:py-24 lg:py-32 bg-background relative overflow-hidden">
+    <section id="core-usp" className="py-12 sm:py-16 lg:py-24 bg-background relative overflow-hidden">
       {/* Visual Accent Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-indigo-brand/10 blur-[140px] rounded-full pointer-events-none -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[700px] h-[350px] sm:h-[700px] bg-indigo-brand/10 blur-[100px] sm:blur-[140px] rounded-full pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-accent-gold/15 text-accent-gold-dark text-xs font-bold uppercase tracking-wider mb-4 border border-accent-gold/30">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-accent-gold/15 text-accent-gold-dark text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-accent-gold/30">
             <Star className="w-3.5 h-3.5" />
             <span>The Primary Innovation</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-on-surface mb-6 leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
             One Assessment → <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-brand via-[#7C3AED] to-accent-gold">
               Multiple Companies
             </span>
           </h2>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
             "Your skills should travel with you." Take one rigorous, AI-verified assessment and securely share your standardized credentials across your chosen target organizations.
           </p>
         </div>
 
         {/* Interactive 4-Step Interactive Simulation Card */}
-        <div className="glass rounded-3xl p-8 sm:p-12 border border-surface-container shadow-xl">
+        <div className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-12 border border-surface-container shadow-xl">
           <div className="text-center mb-8">
             <span className="text-xs font-bold text-indigo-brand uppercase tracking-widest bg-indigo-brand/10 px-3 py-1 rounded-full border border-indigo-brand/20">
               Interactive Workflow Simulation

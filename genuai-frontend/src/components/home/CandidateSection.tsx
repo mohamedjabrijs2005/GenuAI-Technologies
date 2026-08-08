@@ -16,21 +16,21 @@ export const CandidateSection: React.FC = () => {
   ];
 
   return (
-    <section id="candidates" className="py-20 sm:py-24 lg:py-32 bg-background relative">
+    <section id="candidates" className="py-12 sm:py-16 lg:py-24 bg-background relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-brand/20">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-indigo-brand/20">
             <UserCheck className="w-3.5 h-3.5" />
             <span>Candidate Empowerment</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface mb-4 leading-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-2 sm:mb-4 leading-tight">
             Built for Candidates
           </h2>
-          <p className="text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-brand to-[#7C3AED] mb-4">
+          <p className="text-base sm:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-brand to-[#7C3AED] mb-2 sm:mb-4">
             "Your skills should travel with you."
           </p>
-          <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
             Stop wasting weeks taking identical tests. Prove your competencies once and let your verified talent passport unlock opportunities across top technology leaders.
           </p>
         </div>

@@ -11,25 +11,25 @@ export const TrustScore: React.FC = () => {
   ];
 
   return (
-    <section id="trust-score" className="py-20 sm:py-24 lg:py-32 bg-background relative overflow-hidden">
+    <section id="trust-score" className="py-12 sm:py-16 lg:py-24 bg-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Text (6 cols) */}
-          <div className="lg:col-span-6 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 text-success-dark text-xs font-bold uppercase tracking-wider border border-success/20">
+          <div className="lg:col-span-6 space-y-4 sm:space-y-6">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-success/10 text-success-dark text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-success/20">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Trust Index Engine</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface leading-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface leading-tight">
               AI Trust Score &amp; Integrity Verification
             </h2>
 
-            <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+            <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
               "The AI Trust Score summarizes multiple verification signals to help recruiters evaluate assessment authenticity." Instead of watching hours of raw video, recruiters receive a consolidated authenticity index.
             </p>
 
-            <div className="p-4 rounded-2xl bg-surface-bright border border-surface-container space-y-2">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-bright border border-surface-container space-y-1.5 sm:space-y-2">
               <div className="text-xs font-bold text-on-surface flex items-center gap-2">
                 <Activity className="w-4 h-4 text-indigo-brand" />
                 <span>Multi-Signal Fusion</span>
@@ -49,7 +49,7 @@ export const TrustScore: React.FC = () => {
 
           {/* Right Dashboard Card (6 cols) */}
           <div className="lg:col-span-6">
-            <div className="glass rounded-3xl p-8 sm:p-10 border border-surface-container shadow-2xl relative overflow-hidden">
+            <div className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 border border-surface-container shadow-xl relative overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between border-b border-surface-container pb-5 mb-8">
                 <div>

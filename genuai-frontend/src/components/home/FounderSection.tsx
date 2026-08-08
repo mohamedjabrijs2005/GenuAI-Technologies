@@ -3,17 +3,17 @@ import { Quote, Sparkles, Award, ShieldCheck } from 'lucide-react';
 
 export const FounderSection: React.FC = () => {
   return (
-    <section id="founder" className="py-20 sm:py-24 lg:py-32 bg-surface relative z-10 border-t border-b border-surface-container/50">
+    <section id="founder" className="py-12 sm:py-16 lg:py-24 bg-surface relative z-10 border-t border-b border-surface-container/50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
+        <div className="flex flex-col lg:flex-row gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Left Text Content */}
-          <div className="flex-1 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-gold/15 text-accent-gold-dark text-xs font-bold uppercase tracking-wider border border-accent-gold/30">
+          <div className="flex-1 space-y-4 sm:space-y-6">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-accent-gold/15 text-accent-gold-dark text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-accent-gold/30">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Leadership &amp; Vision</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-on-surface leading-tight tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-on-surface leading-tight tracking-tight">
               Built by Founders, <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-gold via-indigo-brand to-[#7C3AED]">
                 For the Future of Work.

@@ -8,25 +8,25 @@ interface Props {
 
 export const FinalCTA: React.FC<Props> = ({ onGetStarted, onExplore }) => {
   return (
-    <section className="py-24 sm:py-32 bg-background relative overflow-hidden">
+    <section className="py-14 sm:py-20 lg:py-28 bg-background relative overflow-hidden">
       {/* Background Accent Gradients */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-gradient-to-tr from-indigo-brand/20 to-accent-gold/15 blur-[150px] rounded-full pointer-events-none -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[650px] h-[350px] sm:h-[650px] bg-gradient-to-tr from-indigo-brand/20 to-accent-gold/15 blur-[90px] sm:blur-[150px] rounded-full pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-brand/10 text-indigo-brand text-xs font-bold uppercase tracking-wider border border-indigo-brand/20">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-indigo-brand/20">
             <Sparkles className="w-3.5 h-3.5 text-indigo-brand animate-pulse" />
             <span>Join The Recruitment Revolution</span>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-on-surface leading-tight">
+          <h2 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight text-on-surface leading-tight">
             Recruitment Should Measure Potential, <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-brand to-[#7C3AED]">
               Not Just Paper.
             </span>
           </h2>
 
-          <p className="text-base sm:text-lg lg:text-xl text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
             Experience secure, intelligent and verified recruitment with GenuAI Technologies. Start your unified assessment today.
           </p>
 
