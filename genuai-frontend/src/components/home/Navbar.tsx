@@ -98,22 +98,22 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
             ))}
           </div>
 
-          {/* Right Action on Desktop: Main Get Started directly to /auth */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
+          {/* Right Action on Desktop (xl and above) */}
+          <div className="hidden xl:flex items-center gap-3 shrink-0">
             <button
               onClick={handleGetStartedClick}
-              className="px-5 py-2 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-indigo-brand to-indigo-brand-dark hover:shadow-lg hover:shadow-indigo-brand/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-indigo-brand to-indigo-brand-dark hover:shadow-lg hover:shadow-indigo-brand/30 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-[0.99]"
             >
               <span>Get Started</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Mobile hamburger menu toggle */}
+          {/* Mobile & Tablet Action (below xl) - exactly ONE button and toggle */}
           <div className="flex xl:hidden items-center gap-2">
             <button
               onClick={handleGetStartedClick}
-              className="px-3.5 py-1.5 rounded-xl font-bold text-xs text-white bg-indigo-brand transition-all flex items-center gap-1 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-indigo-brand to-indigo-brand-dark transition-all flex items-center gap-1 cursor-pointer shadow-xs active:scale-[0.99]"
             >
               <span>Get Started</span>
             </button>
