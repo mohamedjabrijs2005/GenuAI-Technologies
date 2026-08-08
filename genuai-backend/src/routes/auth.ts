@@ -180,6 +180,17 @@ router.get('/linkedin/callback',
 );
 
 // ─────────────────────────────────────────────
+// Microsoft OAuth Route (Fallback / Provisioning)
+// ─────────────────────────────────────────────
+router.get('/microsoft', (req, res) => {
+  if (process.env.MICROSOFT_CLIENT_ID) {
+    // If configured in future
+    return res.redirect(`${FRONTEND_URL}/auth?oauth_error=Microsoft+enterprise+SSO+pending+tenant+verification`);
+  }
+  return res.redirect(`${FRONTEND_URL}/auth?oauth_error=Microsoft+login+is+under+enterprise+provisioning.+Please+use+Google,+GitHub,+LinkedIn,+or+Email.`);
+});
+
+// ─────────────────────────────────────────────
 // Existing Email / OTP / Password Routes
 // ─────────────────────────────────────────────
 

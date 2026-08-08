@@ -163,6 +163,10 @@ export default function Auth({ onLogin }: Props) {
   };
 
   const handleOAuth = (provider: "google" | "github" | "linkedin" | "microsoft") => {
+    if (provider === "microsoft") {
+      setError("Microsoft Enterprise SSO is currently being provisioned. Please sign in with Google, GitHub, LinkedIn, or Email & Password.");
+      return;
+    }
     setOauthLoading(provider);
     window.location.href = `${API_URL}/auth/${provider}`;
   };
