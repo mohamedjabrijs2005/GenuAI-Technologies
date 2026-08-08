@@ -1,7 +1,12 @@
 import React from 'react';
-import { BarChart3, BrainCircuit, UserCheck, ShieldCheck, Building2, CheckCircle2, TrendingUp } from 'lucide-react';
+import { BarChart3, BrainCircuit, UserCheck, ShieldCheck, Building2, CheckCircle2, TrendingUp, ArrowRight } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const RecruitmentIntelligence: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const RecruitmentIntelligence: React.FC<Props> = ({ onProtectedAction }) => {
   const stages = [
     { title: 'Candidate Performance', desc: 'Real assessment telemetry & code submissions', icon: UserCheck },
     { title: 'AI Analysis', desc: 'Multi-modal natural language & vision evaluation', icon: BrainCircuit },
@@ -10,6 +15,16 @@ export const RecruitmentIntelligence: React.FC = () => {
     { title: 'Company Matching', desc: 'Standardized score distribution to chosen employers', icon: Building2 },
     { title: 'Recruitment Decision', desc: 'Data-driven hiring offers and interview invites', icon: CheckCircle2 },
   ];
+
+  const handleProtectedClick = (stageTitle: string) => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'company',
+        title: 'Ready to access Recruitment Intelligence?',
+        description: `Sign in or create an account to view ${stageTitle} analytics and verified candidate pipelines.`,
+      });
+    }
+  };
 
   return (
     <section id="intelligence" className="py-12 sm:py-16 lg:py-24 bg-background relative">
@@ -35,7 +50,8 @@ export const RecruitmentIntelligence: React.FC = () => {
             return (
               <div
                 key={st.title}
-                className="glass rounded-3xl p-5 border border-surface-container shadow-xs text-center flex flex-col justify-between hover:border-indigo-brand/40 transition-all group"
+                onClick={() => handleProtectedClick(st.title)}
+                className="glass rounded-3xl p-5 border border-surface-container shadow-xs text-center flex flex-col justify-between hover:border-indigo-brand/40 transition-all group cursor-pointer"
               >
                 <div>
                   <div className="w-10 h-10 rounded-2xl bg-indigo-brand/10 text-indigo-brand mx-auto flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
@@ -50,6 +66,10 @@ export const RecruitmentIntelligence: React.FC = () => {
                   <p className="text-[11px] text-on-surface-variant leading-relaxed">
                     {st.desc}
                   </p>
+                </div>
+                <div className="mt-3 pt-2 border-t border-surface-container/50 flex items-center justify-center text-[10px] font-bold text-indigo-brand group-hover:text-indigo-brand-dark transition-colors">
+                  <span>View Pipeline</span>
+                  <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             );

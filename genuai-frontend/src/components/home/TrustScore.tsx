@@ -1,7 +1,12 @@
 import React from 'react';
-import { CheckCircle2, ShieldCheck, Activity, Award, AlertCircle } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Activity, AlertCircle, ArrowRight } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const TrustScore: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const TrustScore: React.FC<Props> = ({ onProtectedAction }) => {
   const checks = [
     { label: 'IDENTITY VERIFIED', status: 'Passed', icon: CheckCircle2 },
     { label: 'VOICE VERIFIED', status: 'Passed', icon: CheckCircle2 },
@@ -9,6 +14,16 @@ export const TrustScore: React.FC = () => {
     { label: 'SECOND PERSON NOT DETECTED', status: 'Clear', icon: CheckCircle2 },
     { label: 'PHONE NOT DETECTED', status: 'Clear', icon: CheckCircle2 },
   ];
+
+  const handleProtectedClick = () => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'candidate',
+        title: 'Ready to generate your AI Trust Score?',
+        description: 'Sign in or create an account to authenticate your assessment integrity and build a tamper-proof recruitment record.',
+      });
+    }
+  };
 
   return (
     <section id="trust-score" className="py-12 sm:py-16 lg:py-24 bg-background relative overflow-hidden">
@@ -45,11 +60,22 @@ export const TrustScore: React.FC = () => {
                 <strong>Clarification:</strong> AI-generated indicator; not a guarantee of perfect fraud detection. Designed to augment and accelerate human recruiter decision-making.
               </span>
             </div>
+
+            <button
+              onClick={handleProtectedClick}
+              className="px-6 py-3 rounded-xl bg-indigo-brand hover:bg-indigo-brand-dark text-white text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-md"
+            >
+              <span>Build Verified Trust Score</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Right Dashboard Card (6 cols) */}
           <div className="lg:col-span-6">
-            <div className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 border border-surface-container shadow-xl relative overflow-hidden">
+            <div
+              onClick={handleProtectedClick}
+              className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 border border-surface-container shadow-xl relative overflow-hidden cursor-pointer hover:border-indigo-brand/40 transition-colors"
+            >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-surface-container pb-5 mb-8">
                 <div>

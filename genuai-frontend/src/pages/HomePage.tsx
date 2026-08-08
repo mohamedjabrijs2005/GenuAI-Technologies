@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/home/Navbar';
 import { Hero } from '../components/home/Hero';
@@ -24,19 +24,76 @@ import { VideoSection } from '../components/home/VideoSection';
 import { FounderSection } from '../components/home/FounderSection';
 import { FinalCTA } from '../components/home/FinalCTA';
 import { Footer } from '../components/home/Footer';
+import { LoginRequiredModal, ProtectedActionConfig } from '../components/home/LoginRequiredModal';
 
 export default function HomePage() {
   const navigate = useNavigate();
 
+  // State for Login Required Modal over Home Page
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    config: ProtectedActionConfig | null;
+  }>({
+    isOpen: false,
+    config: null,
+  });
+
+  // Main primary entry point: GET STARTED directly enters /auth
   const handleGetStarted = () => {
     navigate('/auth');
   };
 
+  // Smooth scroll explore without route changes
   const handleExplore = () => {
     const el = document.getElementById('about');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  // Protected actions on the Home Page
+  const handleProtectedAction = (config: ProtectedActionConfig) => {
+    // 1. Check if user is already authenticated
+    const saved = localStorage.getItem('genuai_user');
+    if (saved) {
+      try {
+        const ud = JSON.parse(saved);
+        const role = ud?.user?.role || ud?.role;
+        if (config.intent === 'company' || role === 'company') {
+          navigate('/company');
+          return;
+        }
+        if (config.intent === 'admin' || config.intent === 'genuai' || role === 'admin') {
+          navigate('/admin');
+          return;
+        }
+        navigate('/dashboard');
+        return;
+      } catch {
+        localStorage.removeItem('genuai_user');
+      }
+    }
+
+    // 2. Not logged in: Show Login Required Modal OVER Home Page, preserving scroll position
+    setModalState({
+      isOpen: true,
+      config,
+    });
+  };
+
+  // Modal Login / Register clicked -> Navigate to /auth with intent
+  const handleLoginRegisterFromModal = (intent?: string) => {
+    setModalState({ isOpen: false, config: null });
+    if (intent) {
+      navigate(`/auth?intent=${encodeURIComponent(intent)}`);
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  // Modal Continue Exploring clicked -> Close modal, remain on Home Page
+  const handleCloseModal = () => {
+    setModalState({ isOpen: false, config: null });
   };
 
   return (
@@ -46,10 +103,14 @@ export default function HomePage() {
 
       <main>
         {/* 2. Hero Section with Animated AI Recruitment Visual */}
-        <Hero onGetStarted={handleGetStarted} onExplore={handleExplore} />
+        <Hero
+          onGetStarted={handleGetStarted}
+          onExplore={handleExplore}
+          onProtectedAction={handleProtectedAction}
+        />
 
-        {/* 3. About GenuAI Section */}
-        <About />
+        {/* 3. About GenuAI Section (Candidate, Company, GenuAI Ecosystem Cards) */}
+        <About onProtectedAction={handleProtectedAction} />
 
         {/* 4. The Problem Section */}
         <Problem />
@@ -58,34 +119,34 @@ export default function HomePage() {
         <Solution />
 
         {/* 6. Core USP: One Assessment -> Multiple Companies */}
-        <CoreUSP />
+        <CoreUSP onProtectedAction={handleProtectedAction} />
 
         {/* 7. Why Companies Need GenuAI */}
-        <WhyCompanies />
+        <WhyCompanies onProtectedAction={handleProtectedAction} />
 
         {/* 8. 10-Step Assessment Workflow Ecosystem */}
-        <AssessmentWorkflow />
+        <AssessmentWorkflow onProtectedAction={handleProtectedAction} />
 
         {/* 9. AI Anti-Proxy System */}
-        <TrustVerification />
+        <TrustVerification onProtectedAction={handleProtectedAction} />
 
         {/* 10. AI Trust Score & Verification Dashboard */}
-        <TrustScore />
+        <TrustScore onProtectedAction={handleProtectedAction} />
 
         {/* 11. Candidate Experience */}
-        <CandidateSection />
+        <CandidateSection onProtectedAction={handleProtectedAction} />
 
         {/* 12. Company Experience */}
-        <CompanySection />
+        <CompanySection onProtectedAction={handleProtectedAction} />
 
         {/* 13. Admin & Institution Experience */}
-        <AdminSection />
+        <AdminSection onProtectedAction={handleProtectedAction} />
 
         {/* 14. Intensive Learning Hub & Multilingual Vision */}
-        <LearningHub />
+        <LearningHub onProtectedAction={handleProtectedAction} />
 
         {/* 15. Recruitment Intelligence Pipeline */}
-        <RecruitmentIntelligence />
+        <RecruitmentIntelligence onProtectedAction={handleProtectedAction} />
 
         {/* 16. Traditional vs GenuAI Comparison */}
         <Comparison />
@@ -102,10 +163,10 @@ export default function HomePage() {
         {/* 20. Send a Message / Public Contact Form */}
         <ContactForm />
 
-        {/* 21. See GenuAI in Action YouTube Video Section (Placed at the end) */}
+        {/* 21. See GenuAI in Action YouTube Video Section */}
         <VideoSection />
 
-        {/* 22. Founder Details & Leadership Vision (Placed at the end) */}
+        {/* 22. Founder Details & Leadership Vision */}
         <FounderSection />
 
         {/* 23. Final Call to Action */}
@@ -114,6 +175,14 @@ export default function HomePage() {
 
       {/* 24. Footer */}
       <Footer />
+
+      {/* 25. Login Required Modal Overlay */}
+      <LoginRequiredModal
+        isOpen={modalState.isOpen}
+        config={modalState.config}
+        onClose={handleCloseModal}
+        onLoginRegister={handleLoginRegisterFromModal}
+      />
     </div>
   );
 }

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Sparkles, ShieldCheck, CheckCircle2, User, Building, Cpu, Award, Activity } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
 interface Props {
   onGetStarted: () => void;
   onExplore: () => void;
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
 }
 
-export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
+export const Hero: React.FC<Props> = ({ onGetStarted, onExplore, onProtectedAction }) => {
   const [pulseStage, setPulseStage] = useState(0);
 
   useEffect(() => {
@@ -22,6 +24,36 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
     { name: 'Amazon', role: 'Full Stack Dev', match: '91%' },
     { name: 'Zoho', role: 'Backend Lead', match: '95%' },
   ];
+
+  const handleCandidateNodeClick = () => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'candidate',
+        title: 'Ready to enter the Candidate Ecosystem?',
+        description: 'Sign in or create an account to take unified assessments, practice coding, and build your verified talent profile.',
+      });
+    }
+  };
+
+  const handleAssessmentNodeClick = () => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'candidate',
+        title: 'Ready to start AI Assessment & Anti-Proxy Verification?',
+        description: 'Sign in or create an account to access standardized assessments, coding IDE, and speech evaluation.',
+      });
+    }
+  };
+
+  const handleCompanyNodeClick = () => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'company',
+        title: 'Ready to enter the Company Ecosystem?',
+        description: 'Sign in or create an account to discover authenticated talent, access standardized scorecards, and streamline hiring.',
+      });
+    }
+  };
 
   return (
     <section className="relative pt-24 pb-12 sm:pt-32 sm:pb-20 lg:pt-40 lg:pb-28 overflow-hidden bg-background">
@@ -65,7 +97,7 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
               </div>
             </div>
 
-            {/* CTAs */}
+            {/* CTAs: "Experience GenuAI" smoothly scrolls, "Get Started" directly opens /auth */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4">
               <button
                 onClick={onExplore}
@@ -110,7 +142,8 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
               <div className="space-y-3 sm:space-y-4 relative">
                 {/* 1. Candidate Node */}
                 <div
-                  className={`p-3 sm:p-4 rounded-2xl border transition-all duration-500 flex items-center justify-between ${
+                  onClick={handleCandidateNodeClick}
+                  className={`p-3 sm:p-4 rounded-2xl border transition-all duration-500 flex items-center justify-between cursor-pointer hover:border-indigo-brand ${
                     pulseStage >= 0
                       ? 'bg-surface-bright border-indigo-brand shadow-xs'
                       : 'bg-surface border-surface-container opacity-80'
@@ -135,7 +168,8 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
 
                 {/* 2. AI Assessment & Verification Node */}
                 <div
-                  className={`p-3 sm:p-4 rounded-2xl border transition-all duration-500 flex items-center justify-between ${
+                  onClick={handleAssessmentNodeClick}
+                  className={`p-3 sm:p-4 rounded-2xl border transition-all duration-500 flex items-center justify-between cursor-pointer hover:border-indigo-brand ${
                     pulseStage >= 1
                       ? 'bg-indigo-brand/5 border-indigo-brand/60 shadow-xs ring-1 ring-indigo-brand/20'
                       : 'bg-surface border-surface-container opacity-80'
@@ -163,7 +197,8 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
 
                 {/* 3. Verified Talent Node */}
                 <div
-                  className={`p-3 sm:p-4 rounded-2xl border transition-all duration-500 flex items-center justify-between ${
+                  onClick={handleCandidateNodeClick}
+                  className={`p-3 sm:p-4 rounded-2xl border transition-all duration-500 flex items-center justify-between cursor-pointer hover:border-success ${
                     pulseStage >= 2
                       ? 'bg-success/10 border-success/40 shadow-xs'
                       : 'bg-surface border-surface-container opacity-80'
@@ -187,7 +222,10 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
                 <div className="h-3 sm:h-4 w-0.5 bg-gradient-to-b from-success to-indigo-brand mx-auto" />
 
                 {/* 4. Multiple Companies Distribution */}
-                <div className="p-3 sm:p-4 rounded-2xl bg-surface-bright border border-surface-container">
+                <div
+                  onClick={handleCompanyNodeClick}
+                  className="p-3 sm:p-4 rounded-2xl bg-surface-bright border border-surface-container cursor-pointer hover:border-indigo-brand/50 transition-colors"
+                >
                   <div className="text-[10px] sm:text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-2 flex items-center justify-between">
                     <span>One Score → Multiple Companies</span>
                     <Building className="w-3.5 h-3.5 text-indigo-brand" />

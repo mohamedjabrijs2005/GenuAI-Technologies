@@ -1,19 +1,31 @@
 import React from 'react';
-import { Building2, Search, Code, Users, Video, FolderGit2, ShieldCheck, BarChart3, BrainCircuit, LayoutDashboard } from 'lucide-react';
+import { Building2, ShieldAlert, Cpu, BarChart2, ShieldCheck, Video, LayoutDashboard, ArrowRight } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const CompanySection: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const CompanySection: React.FC<Props> = ({ onProtectedAction }) => {
   const features = [
-    { title: 'AI Resume Screening', desc: 'Automated skill extraction and ATS ranking across thousands of incoming applications.', icon: Search },
-    { title: 'Role-Based Assessments', desc: 'Pre-calibrated test modules mapped directly to specific job descriptions.', icon: Building2 },
-    { title: 'Coding Evaluation', desc: 'Multi-language compiler with plagiarism checks and runtime performance benchmarks.', icon: Code },
-    { title: 'Group Discussions', desc: 'Structured assessment of peer leadership, active listening, and negotiation skills.', icon: Users },
-    { title: 'AI Interviews', desc: 'Automated technical interviews with contextual follow-ups and speech scoring.', icon: Video },
-    { title: 'Project Assessment', desc: 'Code repository validation evaluating production architecture and design patterns.', icon: FolderGit2 },
-    { title: 'Candidate Verification', desc: 'Biometric identity, gaze orientation, and anti-proxy proctoring reports.', icon: ShieldCheck },
-    { title: 'Recruitment Analytics', desc: 'Real-time hiring funnel metrics, pipeline velocity, and talent quality indicators.', icon: BarChart3 },
-    { title: 'AI Decision Support', desc: 'Predictive candidate fit recommendations based on verified historical scores.', icon: BrainCircuit },
+    { title: 'Zero Assessment Overhead', desc: 'Eliminate the cost of building custom aptitude and coding testing clusters.', icon: Building2 },
+    { title: 'Anti-Proxy Verification', desc: 'Screen out fraudulent candidates, fake profiles, and remote proxy test-takers.', icon: ShieldAlert },
+    { title: 'Standardized Scoring', desc: 'Trust consistent, calibrated scorecards across all candidate applications.', icon: Cpu },
+    { title: 'Pre-Screened Talent Pool', desc: 'Instantly access pre-evaluated candidates matching your exact role criteria.', icon: ShieldCheck },
+    { title: 'Recruitment Analytics', desc: 'Real-time hiring pipelines, cohort benchmarks, and candidate analytics.', icon: BarChart2 },
+    { title: 'Integrated Video Interviews', desc: 'View AI-recorded technical interviews with instant transcription and scorecards.', icon: Video },
     { title: 'Company Dashboard', desc: 'Centralized portal to review verified scorecards, schedule interviews, and issue offers.', icon: LayoutDashboard },
   ];
+
+  const handleProtectedClick = (featureTitle: string) => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'company',
+        title: 'Ready to enter the Company Ecosystem?',
+        description: `Sign in or create an account to access ${featureTitle} and streamline verified hiring.`,
+      });
+    }
+  };
 
   return (
     <section id="companies" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/40 border-t border-b border-surface-container/50 relative">
@@ -35,14 +47,15 @@ export const CompanySection: React.FC = () => {
           </p>
         </div>
 
-        {/* 10 Feature Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+        {/* 7 Feature Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {features.map((f) => {
             const Icon = f.icon;
             return (
               <div
                 key={f.title}
-                className="glass rounded-3xl p-5 border border-surface-container shadow-xs hover:border-emerald-500/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+                onClick={() => handleProtectedClick(f.title)}
+                className="glass rounded-3xl p-5 border border-surface-container shadow-xs hover:border-emerald-500/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group cursor-pointer"
               >
                 <div>
                   <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
@@ -55,9 +68,28 @@ export const CompanySection: React.FC = () => {
                     {f.desc}
                   </p>
                 </div>
+
+                <div className="mt-4 pt-3 border-t border-surface-container/60 flex items-center text-[11px] font-bold text-emerald-600 group-hover:text-emerald-700 transition-colors">
+                  <span>Access Company Tool</span>
+                  <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
             );
           })}
+        </div>
+
+        {/* Bottom CTA Bar */}
+        <div className="mt-8 sm:mt-12 p-5 sm:p-6 rounded-3xl bg-surface border border-surface-container flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-center sm:text-left">
+            <div className="text-sm font-bold text-on-surface">Enter the Employer Talent Hub</div>
+            <div className="text-xs text-on-surface-variant">Instant access to verified assessment scorecards and candidate analytics.</div>
+          </div>
+          <button
+            onClick={() => handleProtectedClick('Company Dashboard')}
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-emerald-600 hover:bg-emerald-700 transition-all cursor-pointer"
+          >
+            Access Company Portal
+          </button>
         </div>
       </div>
     </section>

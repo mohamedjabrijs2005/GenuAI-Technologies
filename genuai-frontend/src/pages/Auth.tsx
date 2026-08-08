@@ -342,10 +342,18 @@ export default function Auth({ onLogin }: Props) {
           
           <div className="mb-lg">
             <h2 className="text-3xl md:text-4xl font-black text-on-surface mb-xs tracking-tight drop-shadow-sm">
-              {isForgotPassword ? "Reset Password" : "Welcome to GenuAI"}
+              {isForgotPassword
+                ? "Reset Password"
+                : form.role === "company"
+                ? "Welcome to GenuAI Employer Portal"
+                : form.role === "admin"
+                ? "Welcome to GenuAI Governance Portal"
+                : "Welcome to GenuAI"}
             </h2>
             <p className="text-sm md:text-base text-on-surface-variant font-medium leading-relaxed">
-              {isForgotPassword ? "Follow the steps below to reset your password" : "Choose how you want to continue."}
+              {isForgotPassword
+                ? "Follow the steps below to reset your password"
+                : "One Assessment. Multiple Opportunities. Verified Talent."}
             </p>
           </div>
 

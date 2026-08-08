@@ -55,7 +55,7 @@ export default function App() {
       try {
         const ud = JSON.parse(saved);
         setUser(ud);
-        if (location.pathname === "/auth" || location.pathname === "/") {
+        if (location.pathname === "/auth") {
           routeAfterLogin(ud, navigate);
         }
       } catch {
@@ -66,9 +66,22 @@ export default function App() {
   }, []);
 
   const routeAfterLogin = (ud: any, nav: typeof navigate) => {
+    const params = new URLSearchParams(window.location.search);
+    const intent = params.get("intent");
     const role = ud?.user?.role || ud?.role;
-    if (role === "admin") { nav("/admin"); return; }
-    if (role === "company") { nav("/company"); return; }
+
+    if (intent === "company" || role === "company") {
+      nav("/company");
+      return;
+    }
+    if (intent === "admin" || intent === "genuai" || role === "admin") {
+      nav("/admin");
+      return;
+    }
+    if (intent === "practice") {
+      nav("/practice");
+      return;
+    }
     nav("/dashboard");
   };
 

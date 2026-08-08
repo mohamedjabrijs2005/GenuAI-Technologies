@@ -1,7 +1,12 @@
 import React from 'react';
 import { UserCheck, FileText, Code, Users, Video, FolderGit2, Award, Building, BarChart2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const CandidateSection: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const CandidateSection: React.FC<Props> = ({ onProtectedAction }) => {
   const features = [
     { title: 'One Assessment → Multiple Opportunities', desc: 'Attempt one unified test and share results with all your selected target employers.', icon: Award },
     { title: 'AI Resume Analysis', desc: 'Instant ATS scoring, keyword detection, and CV improvement recommendations.', icon: FileText },
@@ -14,6 +19,16 @@ export const CandidateSection: React.FC = () => {
     { title: 'Company Matching', desc: 'Intelligent role recommendation matching your skill footprint to open vacancies.', icon: Building },
     { title: 'Recruitment Insights', desc: 'Benchmark your performance against global peer percentiles and market standards.', icon: BarChart2 },
   ];
+
+  const handleProtectedClick = (featureTitle: string) => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'candidate',
+        title: 'Ready to enter the Candidate Ecosystem?',
+        description: `Sign in or create an account to access ${featureTitle} and unlock verified recruitment opportunities.`,
+      });
+    }
+  };
 
   return (
     <section id="candidates" className="py-12 sm:py-16 lg:py-24 bg-background relative">
@@ -42,7 +57,8 @@ export const CandidateSection: React.FC = () => {
             return (
               <div
                 key={f.title}
-                className="glass rounded-3xl p-5 border border-surface-container shadow-xs hover:border-indigo-brand/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+                onClick={() => handleProtectedClick(f.title)}
+                className="glass rounded-3xl p-5 border border-surface-container shadow-xs hover:border-indigo-brand/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group cursor-pointer"
               >
                 <div>
                   <div className="w-10 h-10 rounded-2xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center mb-4 group-hover:bg-indigo-brand group-hover:text-white transition-colors">
@@ -55,9 +71,28 @@ export const CandidateSection: React.FC = () => {
                     {f.desc}
                   </p>
                 </div>
+
+                <div className="mt-4 pt-3 border-t border-surface-container/60 flex items-center text-[11px] font-bold text-indigo-brand group-hover:text-indigo-brand-dark transition-colors">
+                  <span>Enter Feature</span>
+                  <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
             );
           })}
+        </div>
+
+        {/* Bottom CTA Bar */}
+        <div className="mt-8 sm:mt-12 p-5 sm:p-6 rounded-3xl bg-surface-bright border border-surface-container flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-center sm:text-left">
+            <div className="text-sm font-bold text-on-surface">Start Building Your Verified Candidate Profile</div>
+            <div className="text-xs text-on-surface-variant">One assessment recognized across participating enterprise employers.</div>
+          </div>
+          <button
+            onClick={() => handleProtectedClick('Verified Candidate Profile')}
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-indigo-brand hover:bg-indigo-brand-dark transition-all cursor-pointer"
+          >
+            Explore Candidate Portal
+          </button>
         </div>
       </div>
     </section>

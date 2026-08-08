@@ -1,36 +1,60 @@
 import React from 'react';
-import { UserCheck, Building2, Cpu, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { UserCheck, Building2, Cpu, ArrowRight, ShieldCheck } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const About: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const About: React.FC<Props> = ({ onProtectedAction }) => {
   const cards = [
     {
       role: 'CANDIDATE',
+      intent: 'candidate',
       tagline: 'Prove your skills.',
       description:
         'Take one comprehensive, proctored assessment across technical, verbal, and collaboration dimensions. Build a tamper-proof credential that opens doors to multiple companies.',
       icon: UserCheck,
       color: 'from-blue-500 to-indigo-600',
       badge: 'Skill Freedom',
+      modalTitle: 'Ready to enter the Candidate Ecosystem?',
+      modalDesc: 'Sign in or create an account to take assessments, build your verified profile, and unlock multi-company opportunities.',
     },
     {
       role: 'COMPANY',
+      intent: 'company',
       tagline: 'Discover verified talent.',
       description:
         'Access standardized, authentic candidate evaluations without incurring massive infrastructure costs or building complex assessment pipelines from scratch.',
       icon: Building2,
       color: 'from-emerald-500 to-teal-600',
       badge: 'Zero Retest Overhead',
+      modalTitle: 'Ready to enter the Company Ecosystem?',
+      modalDesc: 'Sign in or create an account to discover authenticated talent, access standardized scorecards, and streamline hiring.',
     },
     {
       role: 'GENUAI',
+      intent: 'genuai',
       tagline: 'Connect skills with opportunity.',
       description:
         'The intelligent recruitment layer that unifies assessment, anti-proxy verification, edge computing, and predictive hiring analytics into a trusted ecosystem.',
       icon: Cpu,
       color: 'from-purple-500 to-indigo-600',
       badge: 'Unified Intelligence',
+      modalTitle: 'Ready to enter the GenuAI Ecosystem?',
+      modalDesc: 'Sign in or create an account to access institutional placement analytics and platform governance.',
     },
   ];
+
+  const handleCardClick = (c: typeof cards[0]) => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: c.intent,
+        title: c.modalTitle,
+        description: c.modalDesc,
+      });
+    }
+  };
 
   return (
     <section id="about" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/50 relative border-t border-b border-surface-container/50">
@@ -56,7 +80,8 @@ export const About: React.FC = () => {
             return (
               <div
                 key={c.role}
-                className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-surface-container shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative group"
+                onClick={() => handleCardClick(c)}
+                className="glass rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-surface-container shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative group cursor-pointer"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">

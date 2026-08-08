@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { FileText, Award, Code, Mic, Users, Video, FolderGit2, Fingerprint, Eye, BarChart3, CheckCircle } from 'lucide-react';
+import { FileText, Award, Code, Mic, Users, Video, FolderGit2, Fingerprint, Eye, BarChart3, CheckCircle, ArrowRight } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const AssessmentWorkflow: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const AssessmentWorkflow: React.FC<Props> = ({ onProtectedAction }) => {
   const [activeStep, setActiveStep] = useState(0);
 
   const steps = [
@@ -67,6 +72,16 @@ export const AssessmentWorkflow: React.FC = () => {
     },
   ];
 
+  const handleStartStage = (stepTitle: string) => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'candidate',
+        title: 'Ready to take this Assessment Stage?',
+        description: `Sign in or create an account to start ${stepTitle} and build your verified talent scorecard.`,
+      });
+    }
+  };
+
   return (
     <section id="workflow" className="py-12 sm:py-16 lg:py-24 bg-background relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -93,7 +108,7 @@ export const AssessmentWorkflow: React.FC = () => {
               <div
                 key={s.num}
                 onClick={() => setActiveStep(idx)}
-                className={`glass rounded-3xl p-6 border cursor-pointer transition-all duration-300 flex flex-col justify-between ${
+                className={`glass rounded-3xl p-5 sm:p-6 border cursor-pointer transition-all duration-300 flex flex-col justify-between ${
                   isActive
                     ? 'border-indigo-brand ring-2 ring-indigo-brand/30 bg-indigo-brand/5 shadow-md -translate-y-1'
                     : 'border-surface-container hover:border-surface-container-high hover:shadow-xs'
@@ -126,9 +141,9 @@ export const AssessmentWorkflow: React.FC = () => {
         </div>
 
         {/* Active Stage Highlight Box */}
-        <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-surface-bright border border-surface-container flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
+        <div className="mt-8 sm:mt-10 p-5 sm:p-8 rounded-3xl bg-surface-bright border border-surface-container flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-brand text-white flex items-center justify-center font-black text-lg">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-brand text-white flex items-center justify-center font-black text-lg shrink-0">
               {steps[activeStep].num}
             </div>
             <div>
@@ -137,9 +152,13 @@ export const AssessmentWorkflow: React.FC = () => {
               <div className="text-xs text-on-surface-variant">{steps[activeStep].desc}</div>
             </div>
           </div>
-          <span className="text-xs font-bold px-4 py-2 rounded-xl bg-surface border border-surface-container text-on-surface">
-            Standardized Across All Companies
-          </span>
+          <button
+            onClick={() => handleStartStage(steps[activeStep].title)}
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-indigo-brand hover:bg-indigo-brand-dark text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+          >
+            <span>Start Stage {steps[activeStep].num}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </section>

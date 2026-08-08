@@ -1,14 +1,19 @@
 import React from 'react';
-import { BookOpen, Code, Mic, Users, Video, Globe, Sparkles, Check, Languages } from 'lucide-react';
+import { BookOpen, Code, Mic, Users, Video, FolderGit2, Globe2, ArrowRight } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const LearningHub: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const LearningHub: React.FC<Props> = ({ onProtectedAction }) => {
   const hubs = [
-    { title: 'Coding Practice IDE', desc: 'Algorithm challenges, data structure drills, and test case validators.', icon: Code },
-    { title: 'SVAR Verbal Lab', desc: 'Pronunciation drills, speech fluency benchmarks, and conversational coaching.', icon: Mic },
-    { title: 'AI Mock Interviews', desc: 'Simulated technical & behavioral interviews with instant speech evaluation.', icon: Video },
-    { title: 'GD Simulation Arena', desc: 'Topic-based collaborative discussions with automated moderation.', icon: Users },
-    { title: 'Curated Learning Tracks', desc: 'Structured roadmaps covering full-stack web, AI engineering, and cloud systems.', icon: BookOpen },
-    { title: 'Skill Benchmark Drills', desc: 'Timed mock quizzes calibrated to actual company recruitment patterns.', icon: Sparkles },
+    { title: 'Aptitude Sandbox', desc: 'Unlimited practice tests covering numerical ability, data interpretation, and deductive logic.', icon: BookOpen },
+    { title: 'Coding Practice IDE', desc: 'Real-time multi-language code runner with 500+ data structures & algorithms challenges.', icon: Code },
+    { title: 'AI-Guided GD Simulator', desc: 'Practice debate pacing, active listening, and constructive rebuttal in simulated groups.', icon: Users },
+    { title: 'AI Mock Interview', desc: 'Interactive AI voice agent asking domain-specific questions with instant feedback.', icon: Video },
+    { title: 'Project Sandbox', desc: 'Build and test production-ready micro-apps directly linked to your Git profile.', icon: FolderGit2 },
+    { title: 'Multilingual Support', desc: 'Speech evaluation and practice modules calibrated across diverse global accents.', icon: Globe2 },
   ];
 
   const languages = [
@@ -18,6 +23,16 @@ export const LearningHub: React.FC = () => {
     { name: 'Japanese (日本語)', status: 'Planned • Roadmap' },
     { name: 'Chinese (中文)', status: 'Planned • Roadmap' },
   ];
+
+  const handlePracticeClick = (hubTitle: string) => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'candidate',
+        title: 'Ready to practice in the Learning Hub?',
+        description: `Sign in or create an account to access ${hubTitle}, mock tests, and real-time coding sandboxes.`,
+      });
+    }
+  };
 
   return (
     <section id="learning-hub" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/40 border-t border-b border-surface-container/50 relative">
@@ -43,47 +58,51 @@ export const LearningHub: React.FC = () => {
             return (
               <div
                 key={hub.title}
-                className="glass rounded-3xl p-6 sm:p-8 border border-surface-container shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                onClick={() => handlePracticeClick(hub.title)}
+                className="glass rounded-3xl p-6 border border-surface-container shadow-xs hover:border-blue-500/40 hover:-translate-y-1 transition-all group flex flex-col justify-between cursor-pointer"
               >
                 <div>
-                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center mb-5">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                     <Icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-base font-bold text-on-surface mb-2">
-                    {hub.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                    {hub.desc}
-                  </p>
+                  <h3 className="text-base font-bold text-on-surface mb-2">{hub.title}</h3>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">{hub.desc}</p>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-surface-container/60 flex items-center justify-between text-xs font-bold text-blue-600 group-hover:text-blue-700 transition-colors">
+                  <span>Practice Now</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Multilingual Vision Card */}
-        <div className="glass rounded-3xl p-8 sm:p-10 border border-surface-container shadow-sm max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center">
-              <Languages className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs font-bold text-indigo-brand uppercase tracking-wider">Multilingual Vision</div>
-              <h3 className="text-lg font-bold text-on-surface">"Learn in the language you understand best."</h3>
-            </div>
-          </div>
-
-          <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-6">
-            We are architecting native language interfaces so talent from diverse linguistic backgrounds can access high-quality technical preparation without linguistic barriers.
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-            {languages.map((lang) => (
-              <div key={lang.name} className="p-3 rounded-2xl bg-surface border border-surface-container text-xs font-bold text-on-surface">
-                <div>{lang.name}</div>
-                <div className="text-[10px] text-indigo-brand font-medium mt-1">{lang.status}</div>
+        {/* Multilingual Vision Callout */}
+        <div className="glass rounded-3xl p-6 sm:p-8 border border-surface-container">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-1 text-center md:text-left">
+              <div className="text-xs font-bold text-indigo-brand uppercase tracking-wider">
+                Multilingual AI Evaluation Engine
               </div>
-            ))}
+              <div className="text-lg font-bold text-on-surface">Supporting Diverse Linguistic Backgrounds</div>
+              <p className="text-xs text-on-surface-variant max-w-xl">
+                GenuAI is designed to remove linguistic bias. Candidates can demonstrate technical problem solving while receiving native language coaching.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2 justify-center md:justify-end">
+              {languages.map((lang) => (
+                <div
+                  key={lang.name}
+                  className="px-3 py-1.5 rounded-xl bg-surface border border-surface-container text-xs font-bold text-on-surface flex items-center gap-2"
+                >
+                  <span>{lang.name}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-brand" />
+                  <span className="text-[10px] text-on-surface-variant font-normal">{lang.status}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

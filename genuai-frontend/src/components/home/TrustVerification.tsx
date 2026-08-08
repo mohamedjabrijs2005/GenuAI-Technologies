@@ -1,7 +1,12 @@
 import React from 'react';
-import { ShieldAlert, UserCheck, Mic, Eye, Smartphone, Users, HelpCircle, Activity, Camera, AlertCircle } from 'lucide-react';
+import { ShieldAlert, UserCheck, Mic, Eye, Smartphone, Users, HelpCircle, Activity, Camera, AlertCircle, ArrowRight } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const TrustVerification: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const TrustVerification: React.FC<Props> = ({ onProtectedAction }) => {
   const layers = [
     { title: 'Face Recognition', desc: 'Continuous match against registered profile photo', icon: Camera },
     { title: 'Voice Recognition', desc: 'Acoustic voiceprint baseline & speaker verification', icon: Mic },
@@ -14,6 +19,16 @@ export const TrustVerification: React.FC = () => {
     { title: 'Head Pose Analysis', desc: 'Calculates pitch, yaw, and roll orientation angles', icon: Activity },
     { title: 'AI-Assisted Cheating Detection', desc: 'Identifies LLM-generated speech cadence & tab switches', icon: HelpCircle },
   ];
+
+  const handleProtectedClick = (layerTitle: string) => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'candidate',
+        title: 'Ready to test Anti-Proxy Verification?',
+        description: `Sign in or create an account to start your proctored assessment with ${layerTitle} integrity checks.`,
+      });
+    }
+  };
 
   return (
     <section id="anti-proxy" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/40 border-t border-b border-surface-container/50 relative">
@@ -33,23 +48,30 @@ export const TrustVerification: React.FC = () => {
         </div>
 
         {/* 10 Verification Layers Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-10 sm:mb-12">
           {layers.map((layer) => {
             const Icon = layer.icon;
             return (
               <div
                 key={layer.title}
-                className="glass rounded-3xl p-5 border border-surface-container shadow-xs hover:border-indigo-brand/40 transition-all group"
+                onClick={() => handleProtectedClick(layer.title)}
+                className="glass rounded-3xl p-5 border border-surface-container shadow-xs hover:border-indigo-brand/40 transition-all group cursor-pointer flex flex-col justify-between"
               >
-                <div className="w-10 h-10 rounded-2xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center mb-4 group-hover:bg-indigo-brand group-hover:text-white transition-colors">
-                  <Icon className="w-5 h-5" />
+                <div>
+                  <div className="w-10 h-10 rounded-2xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center mb-4 group-hover:bg-indigo-brand group-hover:text-white transition-colors">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-on-surface mb-1.5 leading-snug">
+                    {layer.title}
+                  </h3>
+                  <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                    {layer.desc}
+                  </p>
                 </div>
-                <h3 className="text-xs sm:text-sm font-bold text-on-surface mb-1.5 leading-snug">
-                  {layer.title}
-                </h3>
-                <p className="text-[11px] text-on-surface-variant leading-relaxed">
-                  {layer.desc}
-                </p>
+                <div className="mt-4 pt-3 border-t border-surface-container/50 flex items-center text-[10px] font-bold text-indigo-brand group-hover:text-indigo-brand-dark transition-colors">
+                  <span>Verify Layer</span>
+                  <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                </div>
               </div>
             );
           })}

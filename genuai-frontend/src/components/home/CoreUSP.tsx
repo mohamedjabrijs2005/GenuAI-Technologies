@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { ArrowRight, CheckCircle2, ShieldCheck, Sparkles, Building, Briefcase, Zap, Star } from 'lucide-react';
+import { ProtectedActionConfig } from './LoginRequiredModal';
 
-export const CoreUSP: React.FC = () => {
+interface Props {
+  onProtectedAction?: (config: ProtectedActionConfig) => void;
+}
+
+export const CoreUSP: React.FC<Props> = ({ onProtectedAction }) => {
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>(['Google', 'Microsoft', 'Amazon']);
 
   const sampleCompanies = [
@@ -20,6 +25,16 @@ export const CoreUSP: React.FC = () => {
       }
     } else {
       setSelectedCompanies([...selectedCompanies, name]);
+    }
+  };
+
+  const handleStartUnifiedTest = () => {
+    if (onProtectedAction) {
+      onProtectedAction({
+        intent: 'candidate',
+        title: 'Ready to start your Unified Assessment?',
+        description: `Take one rigorous, AI-verified assessment and dispatch your standardized credentials to ${selectedCompanies.join(', ')}.`,
+      });
     }
   };
 
@@ -70,7 +85,7 @@ export const CoreUSP: React.FC = () => {
                       <button
                         key={c.name}
                         onClick={() => toggleCompany(c.name)}
-                        className={`w-full p-2 rounded-xl text-left text-xs font-bold transition-all flex items-center justify-between border ${
+                        className={`w-full p-2 rounded-xl text-left text-xs font-bold transition-all flex items-center justify-between border cursor-pointer ${
                           isSelected
                             ? 'bg-indigo-brand/10 border-indigo-brand text-indigo-brand'
                             : 'bg-surface border-surface-container text-on-surface-variant hover:border-surface-container-high'
@@ -89,7 +104,10 @@ export const CoreUSP: React.FC = () => {
             </div>
 
             {/* Step 2 */}
-            <div className="p-6 rounded-2xl bg-surface-bright border border-indigo-brand/30 flex flex-col justify-between shadow-xs">
+            <div
+              onClick={handleStartUnifiedTest}
+              className="p-6 rounded-2xl bg-surface-bright border border-indigo-brand/30 flex flex-col justify-between shadow-xs cursor-pointer hover:border-indigo-brand transition-colors"
+            >
               <div>
                 <div className="text-xs font-bold text-indigo-brand uppercase mb-2">Step 02</div>
                 <h3 className="text-base font-bold text-on-surface mb-2">ONE GenuAI Assessment</h3>
@@ -115,10 +133,17 @@ export const CoreUSP: React.FC = () => {
                   </div>
                 </div>
               </div>
+              <div className="mt-4 text-[10px] font-bold text-indigo-brand flex items-center gap-1">
+                <span>Start Assessment</span>
+                <ArrowRight className="w-3 h-3" />
+              </div>
             </div>
 
             {/* Step 3 */}
-            <div className="p-6 rounded-2xl bg-surface-bright border border-success/30 flex flex-col justify-between shadow-xs">
+            <div
+              onClick={handleStartUnifiedTest}
+              className="p-6 rounded-2xl bg-surface-bright border border-success/30 flex flex-col justify-between shadow-xs cursor-pointer hover:border-success transition-colors"
+            >
               <div>
                 <div className="text-xs font-bold text-success-dark uppercase mb-2">Step 03</div>
                 <h3 className="text-base font-bold text-on-surface mb-2">AI Verified Performance</h3>
@@ -131,6 +156,10 @@ export const CoreUSP: React.FC = () => {
                   <div className="text-[10px] text-on-surface-variant mt-1">Tamper-Proof Verification</div>
                 </div>
               </div>
+              <div className="mt-4 text-[10px] font-bold text-success-dark flex items-center gap-1">
+                <span>Verify Trust Score</span>
+                <ArrowRight className="w-3 h-3" />
+              </div>
             </div>
 
             {/* Step 4 */}
@@ -141,7 +170,7 @@ export const CoreUSP: React.FC = () => {
                 <p className="text-xs text-on-surface-variant mb-4">
                   Standardized results are delivered directly to chosen company HR dashboards.
                 </p>
-                <div className="space-y-2">
+                <div className="space-y-2 mb-4">
                   {selectedCompanies.map((comp) => (
                     <div key={comp} className="p-2 rounded-xl bg-surface border border-surface-container flex items-center justify-between text-xs font-bold text-on-surface">
                       <span>{comp}</span>
@@ -150,6 +179,13 @@ export const CoreUSP: React.FC = () => {
                   ))}
                 </div>
               </div>
+              <button
+                onClick={handleStartUnifiedTest}
+                className="w-full py-2.5 px-3 rounded-xl bg-indigo-brand hover:bg-indigo-brand-dark text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <span>Dispatch Verified Profile</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
 
