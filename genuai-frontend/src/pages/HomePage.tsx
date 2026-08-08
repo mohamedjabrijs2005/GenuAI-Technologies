@@ -54,6 +54,25 @@ export default function HomePage() {
     }
   };
 
+  // Handle hash navigation (e.g. #terms-and-conditions) on mount or hash change
+  React.useEffect(() => {
+    const scrollToHash = () => {
+      const hash = window.location.hash || (window.location.href.includes('#') ? '#' + window.location.href.split('#')[1] : '');
+      if (hash) {
+        const id = hash.replace('#', '');
+        const el = document.getElementById(id);
+        if (el) {
+          setTimeout(() => {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 150);
+        }
+      }
+    };
+    scrollToHash();
+    window.addEventListener('hashchange', scrollToHash);
+    return () => window.removeEventListener('hashchange', scrollToHash);
+  }, []);
+
   // Protected actions on the Home Page
   const handleProtectedAction = (config: ProtectedActionConfig) => {
     // 1. Check if user is already authenticated

@@ -119,6 +119,7 @@ export default function App() {
     <Routes>
       {/* Public Home Page & Auth Routes */}
       <Route path="/" element={<HomePage />} />
+      <Route path="/home" element={<HomePage />} />
       <Route path="/auth" element={user ? <Navigate to="/dashboard" replace /> : <Auth onLogin={handleLogin} />} />
 
       {/* Candidate dashboard hub */}

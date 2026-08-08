@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { login, register, sendOtp, verifyOtp, requestPasswordReset, resetPassword } from "../services/api";
 
 interface Props { onLogin: (user: any) => void; }
@@ -6,6 +7,7 @@ interface Props { onLogin: (user: any) => void; }
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export default function Auth({ onLogin }: Props) {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "github" | "linkedin" | "microsoft" | null>(null);
@@ -526,7 +528,7 @@ export default function Auth({ onLogin }: Props) {
                   className="mt-0.5 w-4 h-4 rounded text-indigo-brand focus:ring-indigo-brand border-surface-container cursor-pointer accent-indigo-600 shrink-0"
                 />
                 <label htmlFor="agree-terms-checkbox" className="text-xs text-on-surface-variant leading-relaxed cursor-pointer">
-                  I agree to the <a href="/#terms-and-conditions" className="text-indigo-600 font-semibold underline hover:text-indigo-800 transition-colors cursor-pointer" onClick={(e) => e.stopPropagation()}>Terms and Conditions</a> and candidate assessment policies.
+                  I agree to the <span onClick={(e) => { e.stopPropagation(); navigate("/home#terms-and-conditions"); }} className="text-indigo-600 font-semibold underline hover:text-indigo-800 transition-colors cursor-pointer">Terms and Conditions</span> and candidate assessment policies.
                 </label>
               </div>
 
