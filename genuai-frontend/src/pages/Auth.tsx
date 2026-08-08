@@ -171,23 +171,23 @@ export default function Auth({ onLogin }: Props) {
   const lbl: any = { color: "#64748B", fontSize: "13px", fontWeight: "600", display: "block", marginBottom: "8px" };
 
   const STATS = [
-    { val: "Quantum", label: "AI Evaluation", icon: "psychology", color: "text-indigo-brand", bg: "bg-indigo-brand/10", border: "border-indigo-brand/20", desc: "Adaptive neural models" },
-    { val: "6D", label: "Assessment Vector", icon: "view_in_ar", color: "text-accent-gold", bg: "bg-accent-gold/10", border: "border-accent-gold/20", desc: "Comprehensive profiling" },
-    { val: "Real-Time", label: "Dynamic Scoring", icon: "bolt", color: "text-success-emerald", bg: "bg-success-emerald/10", border: "border-success-emerald/20", desc: "Instant live feedback" },
-    { val: "Zero", label: "Human Bias", icon: "balance", color: "text-[#EC4899]", bg: "bg-[#EC4899]/10", border: "border-[#EC4899]/20", desc: "100% objective filtering" },
+    { val: "AI-Powered", label: "Evaluation", icon: "psychology", color: "text-indigo-brand", bg: "bg-indigo-brand/10", border: "border-indigo-brand/20", desc: "Multi-dimensional candidate profiling" },
+    { val: "6D", label: "Assessment Profile", icon: "view_in_ar", color: "text-accent-gold", bg: "bg-accent-gold/10", border: "border-accent-gold/20", desc: "Comprehensive skill & behavior evaluation" },
+    { val: "Real-Time", label: "Dynamic Scoring", icon: "bolt", color: "text-success-emerald", bg: "bg-success-emerald/10", border: "border-success-emerald/20", desc: "Instant assessment insights" },
+    { val: "AI-Assisted", label: "Fair Evaluation", icon: "shield", color: "text-[#10B981]", bg: "bg-[#10B981]/10", border: "border-[#10B981]/20", desc: "Consistent, data-driven candidate assessment" },
   ];
 
   const TESTIMONIALS: { quote: any; name: string; role: string; initial: string; photo?: string }[] = [
     {
-      quote: <>GenuAI helped us reduce hiring time by <span style={{ color: "#FFD700", fontWeight: "700" }}>60%</span>. The AI evaluation is incredibly accurate — we found our best engineers through this platform.</>,
+      quote: <>GenuAI helped us reduce hiring turnaround significantly. The multi-dimensional evaluation provides actionable insights — we found our best engineers through this platform.</>,
       name: "Rahul Mehta", role: "HR Director · TechCorp India", initial: "R"
     },
     {
-      quote: <>The 6-dimension scoring gives us a complete picture of the candidate. We've seen a <span style={{ color: "#FFD700", fontWeight: "700" }}>40% increase</span> in employee retention since switching.</>,
+      quote: <>The 6-dimension scoring gives us a complete picture of technical and communication ability. It provides clear, consistent signal across candidate pools.</>,
       name: "Sarah Jenkins", role: "Talent Acquisition · GlobalNet", initial: "S"
     },
     {
-      quote: <>Anti-cheat features are <span style={{ color: "#FFD700", fontWeight: "700" }}>rock solid</span>. We can now confidently conduct remote assessments without worrying about integrity issues.</>,
+      quote: <>Verification and proctoring features are reliable. We can confidently conduct remote assessments with verifiable candidate integrity.</>,
       name: "Arjun Desai", role: "Engineering Manager · Innovate", initial: "A"
     }
   ];
@@ -217,17 +217,19 @@ export default function Auth({ onLogin }: Props) {
           Hire Smarter.<br/>
           <span className="text-accent-gold">Get Hired Faster.</span>
         </h1>
-        <p className="text-sm text-on-surface-variant/80 leading-relaxed max-w-xs">
-          Evaluating candidates across <span className="text-accent-gold font-bold">6 dimensions</span> using quantum-inspired AI.
+        <p className="text-sm text-on-surface-variant/90 leading-relaxed max-w-xs mb-3">
+          AI-powered recruitment intelligence for verified, skill-based hiring.
         </p>
+
+        {/* USP on mobile */}
+        <div className="glass px-3 py-2 rounded-xl border border-indigo-brand/20 bg-indigo-brand/5 max-w-xs text-left mb-4">
+          <div className="text-[11px] font-bold text-on-surface">One Assessment → Multiple Companies</div>
+          <div className="text-[10px] text-on-surface-variant">Complete one verified assessment and unlock multiple relevant opportunities.</div>
+        </div>
+
         {/* Mini stats on mobile */}
-        <div className="grid grid-cols-2 gap-3 mt-6 w-full max-w-xs">
-          {[
-            { val: "Quantum", label: "AI Evaluation", icon: "psychology", color: "text-indigo-brand" },
-            { val: "6D", label: "Assessment", icon: "view_in_ar", color: "text-accent-gold" },
-            { val: "Real-Time", label: "Scoring", icon: "bolt", color: "text-success-emerald" },
-            { val: "Zero", label: "Human Bias", icon: "balance", color: "text-[#EC4899]" },
-          ].map((s, i) => (
+        <div className="grid grid-cols-2 gap-3 mt-2 w-full max-w-xs">
+          {STATS.map((s, i) => (
             <div key={i} className="glass px-3 py-3 rounded-xl flex items-center gap-2 border border-surface-container">
               <span className={`material-symbols-outlined text-[18px] ${s.color} shrink-0`}>{s.icon}</span>
               <div>
@@ -266,11 +268,22 @@ export default function Auth({ onLogin }: Props) {
             <span className="text-accent-gold">Get Hired Faster.</span>
           </h1>
           
-          <p className="text-body-lg font-body-lg text-on-surface-variant/80 mb-xl leading-relaxed max-w-xl">
-            Evaluating candidates across <span className="text-accent-gold font-bold">6 dimensions</span> using quantum-inspired AI.
+          <p className="text-body-lg font-body-lg text-on-surface-variant/90 mb-md leading-relaxed max-w-xl">
+            AI-powered recruitment intelligence for verified, skill-based hiring.
           </p>
 
-          {/* Stats Grid - Uniquely Refined Exposure */}
+          {/* Core USP Ribbon Card */}
+          <div className="glass p-4 rounded-2xl border border-indigo-brand/20 bg-indigo-brand/5 mb-lg flex items-start gap-3.5 shadow-xs">
+            <span className="material-symbols-outlined text-indigo-brand text-[24px] shrink-0 mt-0.5">hub</span>
+            <div>
+              <div className="text-sm font-bold text-on-surface">One Assessment → Multiple Companies</div>
+              <div className="text-[12px] text-on-surface-variant leading-relaxed">
+                Complete one verified assessment and unlock multiple relevant opportunities across participating employers.
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Grid - Credible & Value-Driven */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-md mb-xl">
             {STATS.map((s, i) => (
               <div key={i} className={`glass p-md rounded-2xl hover:-translate-y-1 transition-all duration-300 group cursor-default border border-surface-container hover:shadow-lg hover:border-surface-container-high relative overflow-hidden`}>
