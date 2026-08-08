@@ -17,7 +17,6 @@ import { AdminSection } from '../components/home/AdminSection';
 import { LearningHub } from '../components/home/LearningHub';
 import { RecruitmentIntelligence } from '../components/home/RecruitmentIntelligence';
 import { Comparison } from '../components/home/Comparison';
-import { TechStack } from '../components/home/TechStack';
 import { WhyGenuAI } from '../components/home/WhyGenuAI';
 import { Roadmap } from '../components/home/Roadmap';
 import { SubscriptionPricing } from '../components/home/SubscriptionPricing';
@@ -176,10 +175,7 @@ export default function HomePage() {
         {/* 17. Traditional vs GenuAI Comparison */}
         <Comparison />
 
-        {/* 18. Modern Technology Stack */}
-        <TechStack />
-
-        {/* 19. Why GenuAI (5 Core Pillars) */}
+        {/* 18. Why GenuAI (5 Core Pillars) */}
         <WhyGenuAI />
 
         {/* 20. Future Roadmap */}
