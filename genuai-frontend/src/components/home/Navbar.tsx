@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ShieldAlert } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -13,8 +13,14 @@ export const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToTop = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.history.replaceState({}, document.title, window.location.pathname);
+  };
+
   const navLinks = [
-    { label: 'Experience', href: '#hero' },
+    { label: 'Home', href: '/', onClick: scrollToTop },
     { label: 'Problem', href: '#problem' },
     { label: 'Solution', href: '#solution' },
     { label: 'One Assessment', href: '#core-usp' },
@@ -36,8 +42,12 @@ export const Navbar: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4">
-          {/* Brand Logo & Prominent Title */}
-          <a href="#hero" className="flex items-center gap-3.5 group shrink-0">
+          {/* Brand Logo & Prominent Title - Clean root link */}
+          <a
+            href="/"
+            onClick={scrollToTop}
+            className="flex items-center gap-3.5 group shrink-0 cursor-pointer"
+          >
             <div className="relative">
               <img
                 src="/logo.png"
@@ -68,7 +78,8 @@ export const Navbar: React.FC = () => {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-xs font-semibold text-on-surface-variant hover:text-indigo-brand transition-colors whitespace-nowrap"
+                onClick={link.onClick}
+                className="text-xs font-semibold text-on-surface-variant hover:text-indigo-brand transition-colors whitespace-nowrap cursor-pointer"
               >
                 {link.label}
               </a>
@@ -96,8 +107,11 @@ export const Navbar: React.FC = () => {
               <a
                 key={link.label}
                 href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="px-3.5 py-2.5 rounded-xl text-sm font-semibold text-on-surface hover:bg-indigo-brand/10 hover:text-indigo-brand transition-colors"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  if (link.onClick) link.onClick(e);
+                }}
+                className="px-3.5 py-2.5 rounded-xl text-sm font-semibold text-on-surface hover:bg-indigo-brand/10 hover:text-indigo-brand transition-colors cursor-pointer"
               >
                 {link.label}
               </a>

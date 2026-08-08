@@ -24,7 +24,7 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore }) => {
   ];
 
   return (
-    <section id="hero" className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 lg:pt-48 lg:pb-36 overflow-hidden bg-background">
+    <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 lg:pt-48 lg:pb-36 overflow-hidden bg-background">
       {/* Dynamic Background Gradient Orbs */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-gradient-to-tr from-indigo-brand/15 to-accent-gold/10 blur-[130px] rounded-full pointer-events-none -z-10" />
       <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-indigo-brand/10 blur-[110px] rounded-full pointer-events-none -z-10" />
