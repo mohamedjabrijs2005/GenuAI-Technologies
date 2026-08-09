@@ -157,6 +157,10 @@ export default function Auth({ onLogin }: Props) {
 
     try {
       if (isLogin) {
+        // Clear any old or stale tokens before attempting authentication
+        localStorage.removeItem("genuai_user");
+        sessionStorage.clear();
+
         // Real Login against Supabase / Backend
         const user = await signIn(form.email.trim(), form.password);
         setSuccess("Signed in successfully!");
@@ -180,6 +184,9 @@ export default function Auth({ onLogin }: Props) {
         setShowOtp(true);
       }
     } catch (e: any) {
+      // On ANY failure, ensure storage is completely wiped
+      localStorage.removeItem("genuai_user");
+      sessionStorage.clear();
       const msg = e.response?.data?.error || e.message || "Invalid email or password.";
       setError(msg);
     } finally {
