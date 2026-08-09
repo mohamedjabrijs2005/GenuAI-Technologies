@@ -28,9 +28,11 @@ import { FounderSection } from '../components/home/FounderSection';
 import { FinalCTA } from '../components/home/FinalCTA';
 import { Footer } from '../components/home/Footer';
 import { LoginRequiredModal, ProtectedActionConfig } from '../components/home/LoginRequiredModal';
+import { useAuth } from '../context/AuthContext';
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // State for Login Required Modal over Home Page
   const [modalState, setModalState] = useState<{
@@ -75,25 +77,19 @@ export default function HomePage() {
 
   // Protected actions on the Home Page
   const handleProtectedAction = (config: ProtectedActionConfig) => {
-    // 1. Check if user is already authenticated
-    const saved = localStorage.getItem('genuai_user');
-    if (saved) {
-      try {
-        const ud = JSON.parse(saved);
-        const role = ud?.user?.role || ud?.role;
-        if (config.intent === 'company' || role === 'company') {
-          navigate('/company');
-          return;
-        }
-        if (config.intent === 'admin' || config.intent === 'genuai' || role === 'admin') {
-          navigate('/admin');
-          return;
-        }
-        navigate('/dashboard');
+    // 1. Check if user is already authenticated with real verified session
+    if (user) {
+      const role = user.role;
+      if (config.intent === 'company' || role === 'company') {
+        navigate('/company');
         return;
-      } catch {
-        localStorage.removeItem('genuai_user');
       }
+      if (config.intent === 'admin' || config.intent === 'genuai' || role === 'admin') {
+        navigate('/admin');
+        return;
+      }
+      navigate('/dashboard');
+      return;
     }
 
     // 2. Not logged in: Show Login Required Modal OVER Home Page, preserving scroll position

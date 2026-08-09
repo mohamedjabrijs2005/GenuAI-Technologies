@@ -1,6 +1,6 @@
 /**
  * Auth Service — all authentication-related API calls.
- * No raw axios usage should exist in Auth UI components.
+ * Interacts with backend authentication endpoints backed by Supabase PostgreSQL.
  */
 import apiClient from './apiClient';
 
@@ -17,6 +17,9 @@ export const register = (data: {
 
 export const login = (data: { email: string; password: string }) =>
   apiClient.post('/auth/login', data);
+
+export const getMe = () =>
+  apiClient.get('/auth/me');
 
 export const sendOtp = (data: {
   email: string;
