@@ -47,8 +47,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const parsed = JSON.parse(saved);
       const userToken = parsed.token || parsed.user?.token;
-      if (!userToken) {
+      
+      // Wipe any legacy fake sessions or malformed storage
+      if (!userToken || parsed.user?.id === 101 || parsed.id === 101) {
         localStorage.removeItem('genuai_user');
+        sessionStorage.clear();
         setUser(null);
         setToken(null);
         setLoading(false);
@@ -58,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Verify token authenticity against backend session endpoint
       try {
         const res = await getMe();
-        if (res.data?.user) {
+        if (res.data?.user && res.data.user.id !== 101) {
           const verifiedUser: AuthUser = {
             ...res.data.user,
             token: userToken,
@@ -69,9 +72,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else {
           throw new Error('Invalid user payload');
         }
-      } catch (verifyErr) {
+      } catch {
         // If verification fails with 401 or user not found, clear invalid session
-        console.warn('[Auth] Session validation failed. Clearing unauthenticated state.');
         localStorage.removeItem('genuai_user');
         sessionStorage.clear();
         setUser(null);
@@ -93,7 +95,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string): Promise<AuthUser> => {
     const res = await apiLogin({ email, password });
     if (!res.data || !res.data.user || !res.data.token) {
-      throw new Error('Invalid authentication response.');
+      throw new Error('Invalid email or password.');
+    }
+
+    // Explicitly reject any legacy mock sessions from stale caches
+    if (res.data.user.id === 101) {
+      throw new Error('Invalid email or password.');
     }
 
     const authenticatedUser: AuthUser = {
@@ -113,7 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const verifyOtpAndRegister = async (email: string, otp: string): Promise<AuthUser> => {
     const res = await apiVerifyOtp({ email, otp });
-    if (!res.data || !res.data.user || !res.data.token) {
+    if (!res.data || !res.data.user || !res.data.token || res.data.user.id === 101) {
       throw new Error('Invalid registration response.');
     }
 
@@ -144,6 +151,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const handleOAuthLogin = (userData: any) => {
+    if (!userData || userData.id === 101) return;
+
     const authenticatedUser: AuthUser = {
       id: userData.id || userData.user?.id,
       name: userData.name || userData.user?.name || 'User',
