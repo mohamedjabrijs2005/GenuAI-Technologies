@@ -3,7 +3,10 @@
   "private": true,
   "version": "2.0.0",
   "scripts": {
-    "build": "cd genuai-frontend && npm install && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd genuai-backend && npm install && npm run build",
+    "build:frontend": "cd genuai-frontend && npm install && npm run build",
+    "start": "cd genuai-backend && npm start",
     "dev": "cd genuai-frontend && npm run dev"
   }
 }
