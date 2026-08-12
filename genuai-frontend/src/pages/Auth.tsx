@@ -88,6 +88,40 @@ export default function Auth({ onLogin }: Props) {
     }
   }, [handleOAuthLogin, onLogin]);
 
+  const handleTabSwitch = (loginMode: boolean) => {
+    setIsLogin(loginMode);
+    setError("");
+    setSuccess("");
+    setShowOtp(false);
+    setIsForgotPassword(false);
+    setResetOtpSent(false);
+    setOtpCode("");
+    setDevOtp(null);
+    setAgreedTerms(false);
+    setForm((p) => ({
+      name: "",
+      email: loginMode ? p.email : "",
+      password: "",
+      confirmPassword: "",
+      role: "candidate",
+      phone: "",
+      college: "",
+      github: "",
+      linkedin: "",
+    }));
+  };
+
+  const handleBackToLogin = () => {
+    setShowOtp(false);
+    setIsForgotPassword(false);
+    setResetOtpSent(false);
+    setOtpCode("");
+    setDevOtp(null);
+    setError("");
+    setSuccess("");
+    setForm((p) => ({ ...p, password: "", confirmPassword: "" }));
+  };
+
   const set = (k: string, v: string) => {
     setForm((p) => ({ ...p, [k]: v }));
     if (error) setError("");
@@ -470,11 +504,7 @@ export default function Auth({ onLogin }: Props) {
                   <button
                     key={t}
                     type="button"
-                    onClick={() => {
-                      setIsLogin(t === "Login");
-                      setError("");
-                      setSuccess("");
-                    }}
+                    onClick={() => handleTabSwitch(t === "Login")}
                     className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       (t === "Login") === isLogin
                         ? "bg-white text-slate-900 shadow-xs"
@@ -536,6 +566,7 @@ export default function Auth({ onLogin }: Props) {
                     placeholder="000000"
                     value={otpCode}
                     maxLength={6}
+                    autoComplete="one-time-code"
                     onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ""))}
                     className="w-full p-3 bg-white border border-slate-300 rounded-xl text-center text-xl tracking-[0.4em] font-bold text-slate-900 outline-none focus:border-indigo-600 transition-all font-mono"
                   />
@@ -553,7 +584,7 @@ export default function Auth({ onLogin }: Props) {
                 <div className="flex items-center justify-between pt-2">
                   <button
                     type="button"
-                    onClick={() => setShowOtp(false)}
+                    onClick={handleBackToLogin}
                     className="text-slate-600 font-bold text-xs hover:text-slate-900 transition-colors cursor-pointer"
                   >
                     ← Change Details
@@ -588,6 +619,7 @@ export default function Auth({ onLogin }: Props) {
                       <input
                         placeholder="your@email.com"
                         type="email"
+                        autoComplete="email"
                         value={form.email}
                         onChange={(e) => set("email", e.target.value)}
                         className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -610,6 +642,7 @@ export default function Auth({ onLogin }: Props) {
                         placeholder="000000"
                         value={otpCode}
                         maxLength={6}
+                        autoComplete="one-time-code"
                         onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ""))}
                         className="w-full p-3 bg-white border border-slate-300 rounded-xl text-center text-xl tracking-[0.4em] font-bold text-slate-900 outline-none focus:border-indigo-600 text-sm"
                       />
@@ -619,6 +652,7 @@ export default function Auth({ onLogin }: Props) {
                       <input
                         placeholder="Enter new password (min 6 chars)"
                         type="password"
+                        autoComplete="new-password"
                         value={form.password}
                         onChange={(e) => set("password", e.target.value)}
                         className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -637,10 +671,7 @@ export default function Auth({ onLogin }: Props) {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsForgotPassword(false);
-                    setResetOtpSent(false);
-                  }}
+                  onClick={handleBackToLogin}
                   className="w-full text-slate-600 font-bold text-xs py-2 hover:text-slate-900 transition-colors cursor-pointer text-center"
                 >
                   ← Back to Sign In
@@ -656,6 +687,7 @@ export default function Auth({ onLogin }: Props) {
                         <label className="text-xs font-bold text-slate-700 mb-1 block">Full Name *</label>
                         <input
                           placeholder="John Doe"
+                          autoComplete="name"
                           value={form.name}
                           onChange={(e) => set("name", e.target.value)}
                           className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -665,6 +697,7 @@ export default function Auth({ onLogin }: Props) {
                         <label className="text-xs font-bold text-slate-700 mb-1 block">Phone *</label>
                         <input
                           placeholder="+1 234 567 8900"
+                          autoComplete="tel"
                           value={form.phone}
                           onChange={(e) => set("phone", e.target.value)}
                           className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -676,6 +709,7 @@ export default function Auth({ onLogin }: Props) {
                       <label className="text-xs font-bold text-slate-700 mb-1 block">College / Company *</label>
                       <input
                         placeholder="University / Organization Inc."
+                        autoComplete="organization"
                         value={form.college}
                         onChange={(e) => set("college", e.target.value)}
                         className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -688,6 +722,7 @@ export default function Auth({ onLogin }: Props) {
                           <label className="text-xs font-bold text-slate-700 mb-1 block">GitHub Profile</label>
                           <input
                             placeholder="github.com/username"
+                            autoComplete="off"
                             value={form.github}
                             onChange={(e) => set("github", e.target.value)}
                             className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -697,6 +732,7 @@ export default function Auth({ onLogin }: Props) {
                           <label className="text-xs font-bold text-slate-700 mb-1 block">LinkedIn Profile</label>
                           <input
                             placeholder="linkedin.com/in/username"
+                            autoComplete="off"
                             value={form.linkedin}
                             onChange={(e) => set("linkedin", e.target.value)}
                             className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -726,6 +762,7 @@ export default function Auth({ onLogin }: Props) {
                   <input
                     placeholder="your@email.com"
                     type="email"
+                    autoComplete="email"
                     value={form.email}
                     onChange={(e) => set("email", e.target.value)}
                     className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -749,6 +786,7 @@ export default function Auth({ onLogin }: Props) {
                     <input
                       placeholder="Enter password"
                       type={showPassword ? "text" : "password"}
+                      autoComplete={isLogin ? "current-password" : "new-password"}
                       value={form.password}
                       onChange={(e) => set("password", e.target.value)}
                       className="w-full p-3 pr-10 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
@@ -772,6 +810,7 @@ export default function Auth({ onLogin }: Props) {
                       <input
                         placeholder="Re-enter password"
                         type={showConfirmPassword ? "text" : "password"}
+                        autoComplete="new-password"
                         value={form.confirmPassword}
                         onChange={(e) => set("confirmPassword", e.target.value)}
                         className="w-full p-3 pr-10 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
