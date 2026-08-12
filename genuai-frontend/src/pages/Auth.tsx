@@ -41,6 +41,11 @@ export default function Auth({ onLogin }: Props) {
     return () => clearTimeout(timer);
   }, [resendCountdown]);
 
+  // Pre-warm backend connection on auth page load
+  useEffect(() => {
+    fetch(`${API_URL}/health`).catch(() => {});
+  }, []);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -209,9 +214,7 @@ export default function Auth({ onLogin }: Props) {
         const user = await signIn(form.email.trim(), form.password);
         setSuccess("Signed in successfully!");
         if (onLogin) onLogin(user);
-        setTimeout(() => {
-          dispatchPostAuth(user);
-        }, 300);
+        dispatchPostAuth(user);
       } else {
         // Real Registration via OTP
         const res = await signUp({

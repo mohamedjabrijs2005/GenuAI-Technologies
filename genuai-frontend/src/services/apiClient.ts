@@ -9,6 +9,7 @@ const LAMBDA_URL = import.meta.env.VITE_LAMBDA_URL || 'http://localhost:3000';
 
 const apiClient = axios.create({
   baseURL: API_URL,
+  timeout: 15000,
 });
 
 // Attach JWT token to every outgoing request
