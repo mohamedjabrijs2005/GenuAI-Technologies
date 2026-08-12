@@ -69,7 +69,7 @@ export default function DashboardLayout({
   const userRole = user?.user?.role || user?.role || portalType;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900 antialiased overflow-x-hidden">
+    <div className="min-h-screen bg-background flex font-body-base text-on-surface antialiased overflow-x-hidden">
       {/* ── TOAST NOTIFICATIONS OVERLAY ── */}
       <div className="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-4">
         {toasts.map((toast) => (

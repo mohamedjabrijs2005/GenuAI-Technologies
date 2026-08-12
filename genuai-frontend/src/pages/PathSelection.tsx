@@ -78,7 +78,7 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
   const aiInsight = candidateData?.aiInsight || "Complete your profile to maximize recruiter discovery.";
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-background quantum-gradient font-body-base text-on-background relative overflow-x-hidden selection:bg-indigo-brand selection:text-white">
       
       {/* ─────────────────────────────────────────────
           1. TOP NAVBAR

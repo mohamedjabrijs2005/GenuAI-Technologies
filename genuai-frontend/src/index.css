@@ -17,9 +17,18 @@
     touch-action: manipulation;
   }
 
-  /* Responsive typography balance */
-  h1, h2, h3, h4 {
+  /* Responsive typography balance with previous GenuAI fonts */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
     text-wrap: balance;
+  }
+
+  body, p, span, button, input, select, textarea, td, th, div {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-headline {
+    font-family: 'Montserrat', sans-serif;
   }
 
   p {
