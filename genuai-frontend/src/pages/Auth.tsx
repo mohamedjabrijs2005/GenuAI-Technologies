@@ -649,14 +649,24 @@ export default function Auth({ onLogin }: Props) {
                     </div>
                     <div>
                       <label className="text-xs font-bold text-slate-700 mb-1 block">New Password *</label>
-                      <input
-                        placeholder="Enter new password (min 6 chars)"
-                        type="password"
-                        autoComplete="new-password"
-                        value={form.password}
-                        onChange={(e) => set("password", e.target.value)}
-                        className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
-                      />
+                      <div className="relative">
+                        <input
+                          placeholder="Enter new password (min 6 chars)"
+                          type={showPassword ? "text" : "password"}
+                          autoComplete="new-password"
+                          value={form.password}
+                          onChange={(e) => set("password", e.target.value)}
+                          className="w-full p-3 pr-10 bg-white border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-600 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
                     </div>
                     <button
                       type="button"
