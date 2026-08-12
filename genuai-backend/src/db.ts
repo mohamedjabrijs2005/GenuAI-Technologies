@@ -13,7 +13,7 @@ pool.connect(async (err, client, release) => {
   } else {
     console.log('[DB] Connected to Supabase PostgreSQL successfully!');
     try {
-      // Ensure the users table exists
+      // Ensure the users table exists with all required columns
       await client?.query(`
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
@@ -27,8 +27,12 @@ pool.connect(async (err, client, release) => {
           linkedin VARCHAR(255),
           created_at TIMESTAMP DEFAULT NOW()
         );
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50);
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS college VARCHAR(255);
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS github VARCHAR(255);
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin VARCHAR(255);
       `);
-      console.log('[DB] Verified users table structure in Supabase PostgreSQL.');
+      console.log('[DB] Verified users table structure and columns in Supabase PostgreSQL.');
     } catch (tableErr: any) {
       console.error('[DB] Error verifying users table:', tableErr.message);
     } finally {
