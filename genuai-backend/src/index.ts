@@ -19,6 +19,7 @@ import networkRoutes from './routes/network';
 import newsRoutes from './routes/news';
 import aiRoutes from './routes/ai';
 import companyRoutes from './routes/company';
+import candidateRoutes from './routes/candidate';
 import { initSocket } from './socket';
 
 dotenv.config();
@@ -40,6 +41,7 @@ app.use('/upload', uploadRoutes);
 app.use('/email', emailRoutes);
 app.use('/admin', adminRoutes);
 app.use('/company', companyRoutes);
+app.use('/candidate', candidateRoutes);
 app.use('/skill', skillRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/coach', coachRoutes);
