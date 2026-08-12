@@ -330,38 +330,16 @@ router.post('/verify-otp', async (req, res) => {
     const { name, password, role, phone, college, github, linkedin } = record.data;
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    let newUser: any = null;
-    try {
-      const result = await pool.query(
-        'INSERT INTO users (name, email, password_hash, role, phone, college, github, linkedin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name, email, role, phone, college',
-        [name, trimmedEmail, hashedPassword, role || 'candidate', phone || '', college || '', github || '', linkedin || '']
-      );
-      newUser = result.rows[0];
-    } catch (insertErr: any) {
-      // If table lacks newer columns, dynamically alter table and retry
-      if (insertErr.message?.includes('github') || insertErr.message?.includes('linkedin') || insertErr.message?.includes('column')) {
-        try {
-          await pool.query(`
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50);
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS college VARCHAR(255);
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS github VARCHAR(255);
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin VARCHAR(255);
-          `);
-          const retryResult = await pool.query(
-            'INSERT INTO users (name, email, password_hash, role, phone, college, github, linkedin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name, email, role, phone, college',
-            [name, trimmedEmail, hashedPassword, role || 'candidate', phone || '', college || '', github || '', linkedin || '']
-          );
-          newUser = retryResult.rows[0];
-        } catch {
-          const basicResult = await pool.query(
-            'INSERT INTO users (name, email, password_hash, role, phone, college) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role, phone, college',
-            [name, trimmedEmail, hashedPassword, role || 'candidate', phone || '', college || '']
-          );
-          newUser = basicResult.rows[0];
-        }
-      } else {
-        throw insertErr;
-      }
+    // Core database insertion using guaranteed standard columns
+    const result = await pool.query(
+      'INSERT INTO users (name, email, password_hash, role, phone, college) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role, phone, college',
+      [name, trimmedEmail, hashedPassword, role || 'candidate', phone || '', college || '']
+    );
+    const newUser = result.rows[0];
+
+    // Asynchronously attempt to store extra social fields if available
+    if (github || linkedin) {
+      pool.query('UPDATE users SET github = $1, linkedin = $2 WHERE id = $3', [github || '', linkedin || '', newUser.id]).catch(() => {});
     }
 
     delete otpStore[trimmedEmail];
@@ -386,37 +364,14 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    let newUser: any = null;
-    try {
-      const result = await pool.query(
-        'INSERT INTO users (name, email, password_hash, role, phone, college, github, linkedin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name, email, role, phone, college',
-        [name, trimmedEmail, hashedPassword, role || 'candidate', phone || '', college || '', github || '', linkedin || '']
-      );
-      newUser = result.rows[0];
-    } catch (insertErr: any) {
-      if (insertErr.message?.includes('github') || insertErr.message?.includes('linkedin') || insertErr.message?.includes('column')) {
-        try {
-          await pool.query(`
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50);
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS college VARCHAR(255);
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS github VARCHAR(255);
-            ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin VARCHAR(255);
-          `);
-          const retryResult = await pool.query(
-            'INSERT INTO users (name, email, password_hash, role, phone, college, github, linkedin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, name, email, role, phone, college',
-            [name, trimmedEmail, hashedPassword, role || 'candidate', phone || '', college || '', github || '', linkedin || '']
-          );
-          newUser = retryResult.rows[0];
-        } catch {
-          const basicResult = await pool.query(
-            'INSERT INTO users (name, email, password_hash, role, phone, college) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role, phone, college',
-            [name, trimmedEmail, hashedPassword, role || 'candidate', phone || '', college || '']
-          );
-          newUser = basicResult.rows[0];
-        }
-      } else {
-        throw insertErr;
-      }
+    const result = await pool.query(
+      'INSERT INTO users (name, email, password_hash, role, phone, college) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role, phone, college',
+      [name, trimmedEmail, hashedPassword, role || 'candidate', phone || '', college || '']
+    );
+    const newUser = result.rows[0];
+
+    if (github || linkedin) {
+      pool.query('UPDATE users SET github = $1, linkedin = $2 WHERE id = $3', [github || '', linkedin || '', newUser.id]).catch(() => {});
     }
 
     const token = jwt.sign({ id: newUser.id, role: newUser.role, email: newUser.email }, JWT_SECRET, { expiresIn: '7d' });
