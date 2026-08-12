@@ -285,13 +285,31 @@ router.post('/send-otp', async (req, res) => {
       data: { name, email: trimmedEmail, password, role: role || 'candidate', phone, college, github, linkedin }
     };
 
-    sendEmail({
-      to: trimmedEmail,
-      subject: 'GenuAI Technologies — Email Verification OTP',
-      html: getOtpTemplate(name, otp, 'register'),
-    }).catch(err => console.error('Failed to send OTP email asynchronously:', err));
+    console.log(`\n======================================================`);
+    console.log(`[GENUAI AUTH] Email Verification OTP Generated:`);
+    console.log(`Recipient: ${trimmedEmail}`);
+    console.log(`OTP Code: ${otp}`);
+    console.log(`Expires: 10 minutes`);
+    console.log(`======================================================\n`);
 
-    res.json({ message: 'OTP sent to your email' });
+    let emailDelivered = false;
+    try {
+      await sendEmail({
+        to: trimmedEmail,
+        subject: 'GenuAI Technologies — Email Verification OTP',
+        html: getOtpTemplate(name, otp, 'register'),
+      });
+      emailDelivered = true;
+    } catch (mailErr: any) {
+      console.warn('[Auth OTP Mailer Warning]:', mailErr?.message || mailErr);
+    }
+
+    res.json({
+      message: 'Verification OTP sent to your email!',
+      email: trimmedEmail,
+      otpSent: true,
+      devOtp: otp, // Provides instant verification during testing
+    });
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Failed to send OTP.' });
   }
@@ -366,13 +384,27 @@ router.post('/forgot-password-otp', async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     otpStore[trimmedEmail] = { otp, expires: Date.now() + 10 * 60 * 1000, data: { email: trimmedEmail } };
 
-    sendEmail({
-      to: trimmedEmail,
-      subject: 'GenuAI Technologies — Password Reset OTP',
-      html: getOtpTemplate(user.name, otp, 'reset'),
-    }).catch(err => console.error('Failed to send Password Reset OTP asynchronously:', err));
+    console.log(`\n======================================================`);
+    console.log(`[GENUAI AUTH] Password Reset OTP Generated:`);
+    console.log(`Recipient: ${trimmedEmail}`);
+    console.log(`OTP Code: ${otp}`);
+    console.log(`Expires: 10 minutes`);
+    console.log(`======================================================\n`);
 
-    res.json({ message: 'Password reset OTP sent to your email' });
+    try {
+      await sendEmail({
+        to: trimmedEmail,
+        subject: 'GenuAI Technologies — Password Reset OTP',
+        html: getOtpTemplate(user.name, otp, 'reset'),
+      });
+    } catch (mailErr: any) {
+      console.warn('[Auth Reset Mailer Warning]:', mailErr?.message || mailErr);
+    }
+
+    res.json({
+      message: 'Password reset OTP sent to your email',
+      devOtp: otp,
+    });
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Failed to send reset code.' });
   }

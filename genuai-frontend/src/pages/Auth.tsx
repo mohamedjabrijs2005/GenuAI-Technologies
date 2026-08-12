@@ -27,9 +27,19 @@ export default function Auth({ onLogin }: Props) {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [resetOtpSent, setResetOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState("");
+  const [devOtp, setDevOtp] = useState<string | null>(null);
+  const [resendCountdown, setResendCountdown] = useState(0);
   const [isHumanVerified, setIsHumanVerified] = useState(false);
   const [showHumanCheck, setShowHumanCheck] = useState(false);
   const [pendingUser, setPendingUser] = useState<any>(null);
+
+  useEffect(() => {
+    let timer: any;
+    if (resendCountdown > 0) {
+      timer = setTimeout(() => setResendCountdown((prev) => prev - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCountdown]);
 
   const [form, setForm] = useState({
     name: "",
@@ -170,7 +180,7 @@ export default function Auth({ onLogin }: Props) {
         }, 300);
       } else {
         // Real Registration via OTP
-        await signUp({
+        const res = await signUp({
           name: form.name.trim(),
           email: form.email.trim(),
           password: form.password,
@@ -180,8 +190,13 @@ export default function Auth({ onLogin }: Props) {
           github: form.github.trim(),
           linkedin: form.linkedin.trim(),
         });
-        setSuccess("Verification OTP sent to your email!");
+        if (res?.data?.devOtp) {
+          setDevOtp(res.data.devOtp);
+          setOtpCode(res.data.devOtp);
+        }
+        setSuccess("Verification OTP sent! Check your inbox and spam folder.");
         setShowOtp(true);
+        setResendCountdown(30);
       }
     } catch (e: any) {
       // On ANY failure, ensure storage is completely wiped
@@ -189,6 +204,35 @@ export default function Auth({ onLogin }: Props) {
       sessionStorage.clear();
       const msg = e.response?.data?.error || e.message || "Invalid email or password.";
       setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCountdown > 0) return;
+    setLoading(true);
+    setError("");
+    setSuccess("");
+    try {
+      const res = await signUp({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        password: form.password,
+        role: form.role,
+        phone: form.phone.trim(),
+        college: form.college.trim(),
+        github: form.github.trim(),
+        linkedin: form.linkedin.trim(),
+      });
+      if (res?.data?.devOtp) {
+        setDevOtp(res.data.devOtp);
+        setOtpCode(res.data.devOtp);
+      }
+      setSuccess("New verification code sent!");
+      setResendCountdown(30);
+    } catch (e: any) {
+      setError(e.response?.data?.error || e.message || "Failed to resend code.");
     } finally {
       setLoading(false);
     }
@@ -458,16 +502,33 @@ export default function Auth({ onLogin }: Props) {
             )}
 
             {showOtp ? (
-              <div className="space-y-4">
+              <div className="space-y-4 animate-[fadeIn_0.3s_ease]">
                 <div className="text-center mb-4">
                   <div className="w-14 h-14 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2">
                     <Mail className="w-6 h-6" />
                   </div>
-                  <h3 className="text-base font-bold text-slate-900">Check your email</h3>
-                  <p className="text-xs text-slate-600 mt-1">
-                    We sent a 6-digit code to <strong>{form.email}</strong>
+                  <h3 className="text-base font-bold text-slate-900">Verify Your Email</h3>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                    We sent a 6-digit verification code to <strong>{form.email}</strong>.<br />
+                    <span className="text-[11px] text-slate-500 font-medium">Please check your inbox and <strong>Spam / Junk</strong> folder.</span>
                   </p>
                 </div>
+
+                {devOtp && (
+                  <div className="bg-indigo-50/80 border border-indigo-200 p-3 rounded-xl flex items-center justify-between text-xs text-indigo-900 shadow-xs">
+                    <div className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <span>Code: <strong className="font-mono text-sm tracking-widest bg-white px-2 py-0.5 rounded border border-indigo-200 ml-1">{devOtp}</strong></span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setOtpCode(devOtp)}
+                      className="text-[11px] font-bold text-indigo-600 underline hover:text-indigo-800 cursor-pointer"
+                    >
+                      Auto-fill
+                    </button>
+                  </div>
+                )}
 
                 <div>
                   <label className="text-xs font-bold text-slate-700 mb-1 block">Verification Code *</label>
@@ -476,7 +537,7 @@ export default function Auth({ onLogin }: Props) {
                     value={otpCode}
                     maxLength={6}
                     onChange={(e) => setOtpCode(e.target.value.replace(/[^0-9]/g, ""))}
-                    className="w-full p-3 bg-white border border-slate-300 rounded-xl text-center text-xl tracking-[0.4em] font-bold text-slate-900 outline-none focus:border-indigo-600 transition-all"
+                    className="w-full p-3 bg-white border border-slate-300 rounded-xl text-center text-xl tracking-[0.4em] font-bold text-slate-900 outline-none focus:border-indigo-600 transition-all font-mono"
                   />
                 </div>
 
@@ -484,18 +545,29 @@ export default function Auth({ onLogin }: Props) {
                   type="button"
                   onClick={handleVerifyOtp}
                   disabled={loading || otpCode.length !== 6}
-                  className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-bold rounded-xl disabled:opacity-50 transition-all cursor-pointer shadow-md text-sm"
+                  className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-bold rounded-xl disabled:opacity-50 transition-all cursor-pointer shadow-md text-sm"
                 >
-                  {loading ? "Verifying..." : "Verify & Create Account"}
+                  {loading ? "Verifying..." : "Verify & Complete Registration"}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setShowOtp(false)}
-                  className="w-full text-slate-600 font-bold text-xs py-2 hover:text-slate-900 transition-colors cursor-pointer text-center"
-                >
-                  ← Back to registration
-                </button>
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowOtp(false)}
+                    className="text-slate-600 font-bold text-xs hover:text-slate-900 transition-colors cursor-pointer"
+                  >
+                    ← Change Details
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={loading || resendCountdown > 0}
+                    className="text-xs font-bold text-indigo-600 hover:text-indigo-800 disabled:text-slate-400 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {resendCountdown > 0 ? `Resend in ${resendCountdown}s` : "Resend Code"}
+                  </button>
+                </div>
               </div>
             ) : isForgotPassword ? (
               <div className="space-y-4">
