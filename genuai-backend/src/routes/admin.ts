@@ -444,7 +444,43 @@ router.get('/companies', async (req, res) => {
 });
 
 // ─────────────────────────────────────────────
-// 13. Role Analytics
+// 13. Platform Jobs Management
+// ─────────────────────────────────────────────
+router.get('/jobs', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT j.*, u.name as company_name, u.email as company_email,
+        (SELECT COUNT(*) FROM assessments a WHERE a.role = j.title AND (a.active_company_id = j.company_id OR j.company_id = ANY(a.company_ids))) as applicants_count
+       FROM jobs j
+       LEFT JOIN users u ON j.company_id = u.id
+       ORDER BY j.created_at DESC`
+    );
+    res.json({ jobs: result.rows });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/jobs/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, adminEmail } = req.body;
+    const result = await pool.query(
+      `UPDATE jobs SET status = $1 WHERE id = $2 RETURNING *`,
+      [status, id]
+    );
+    await pool.query(
+      `INSERT INTO audit_logs (user_email, action, resource, details, status) VALUES ($1, $2, $3, $4, 'success')`,
+      [adminEmail || 'admin@genuai.tech', 'UPDATE_JOB_STATUS', `Job #${id}`, `Status changed to ${status}`]
+    ).catch(() => {});
+    res.json({ success: true, job: result.rows[0] });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+// 14. Role Analytics
 // ─────────────────────────────────────────────
 router.get('/role-analytics', async (req, res) => {
   try {
