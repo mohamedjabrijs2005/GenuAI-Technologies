@@ -1,6 +1,10 @@
 import { useState } from 'react';
 
-interface Props { user: any; onSelect: (path: 'practice' | 'search' | 'test' | 'career-profile') => void; onLogout: () => void; }
+interface Props {
+  user: any;
+  onSelect: (path: 'practice' | 'search' | 'test' | 'career-profile') => void;
+  onLogout: () => void;
+}
 
 export default function PathSelection({ user, onSelect, onLogout }: Props) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -10,387 +14,444 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
     <div className="min-h-screen bg-background quantum-gradient font-body-base text-on-background relative overflow-hidden">
       
       {/* Decorative background orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent-gold/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-indigo-brand/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-accent-gold/10 blur-[140px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[700px] h-[700px] bg-indigo-brand/10 blur-[140px] rounded-full pointer-events-none" />
 
       {/* Navbar */}
-      <nav className="h-16 border-b border-surface-container/50 bg-surface/80 backdrop-blur-xl px-margin-mobile md:px-margin-desktop flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-sm">
-          <img src="/logo.png" alt="GenuAI" className="w-11 h-11 object-contain gold-glow-subtle" />
-          <div className="hidden sm:block">
-            <div className="font-headline-md text-on-surface text-[16px] leading-tight">GenuAI Technologies</div>
-            <div className="text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest">Recruitment Intelligence</div>
+      <nav className="h-16 border-b border-surface-container/50 bg-surface/85 backdrop-blur-xl px-4 sm:px-8 lg:px-12 flex items-center justify-between sticky top-0 z-50">
+        <div className="flex items-center gap-3">
+          <img src="/logo.png" alt="GenuAI" className="w-10 h-10 object-contain drop-shadow-sm" />
+          <div>
+            <div className="font-extrabold text-on-surface text-sm sm:text-base leading-tight tracking-tight">
+              Genu<span className="text-indigo-brand">AI</span> Technologies
+            </div>
+            <div className="text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest hidden sm:block">
+              Recruitment Intelligence
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-sm">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-brand to-indigo-brand-dark flex items-center justify-center text-white font-bold text-sm shadow-sm">{name[0]?.toUpperCase()}</div>
-          <div className="text-sm font-bold text-on-surface hidden sm:block">{name}</div>
-          <button onClick={onLogout} className="px-sm py-[6px] border border-error-crimson/30 text-error-crimson rounded-lg font-bold text-xs hover:bg-error-crimson/10 transition-colors ml-sm">Logout</button>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-brand to-indigo-brand-dark flex items-center justify-center text-white font-bold text-xs shadow-sm">
+            {name[0]?.toUpperCase()}
+          </div>
+          <div className="text-xs font-bold text-on-surface hidden sm:block">{name}</div>
+          <button
+            type="button"
+            onClick={onLogout}
+            className="px-3 py-1.5 border border-error-crimson/30 text-error-crimson rounded-xl font-bold text-xs hover:bg-error-crimson/10 transition-colors cursor-pointer"
+          >
+            Logout
+          </button>
         </div>
       </nav>
 
-      {/* Hero */}
-      <div className="max-w-[1000px] mx-auto px-margin-mobile md:px-margin-desktop py-xxl relative z-10">
-        <div className="text-center mb-xxl animate-[fadeIn_0.5s_ease]">
-          <div className="inline-flex items-center gap-2 bg-indigo-brand/10 border border-indigo-brand/20 rounded-full px-sm py-[6px] mb-md shadow-sm">
+      {/* Hero & Broader Container */}
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10 space-y-10">
+        
+        {/* Header Title */}
+        <div className="text-center max-w-3xl mx-auto space-y-3 animate-[fadeIn_0.4s_ease]">
+          <div className="inline-flex items-center gap-2 bg-indigo-brand/10 border border-indigo-brand/20 rounded-full px-4 py-1 shadow-2xs">
             <span className="w-2 h-2 rounded-full bg-indigo-brand animate-pulse"></span>
             <span className="text-[11px] font-bold text-indigo-brand uppercase tracking-wider">Welcome, {name}</span>
           </div>
-          <h1 className="text-[40px] md:text-[56px] font-display-md text-on-surface mb-sm hero-title-weight">Choose Your Path</h1>
-          <p className="text-body-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">Select how you'd like to use the GenuAI platform today. Take your time to explore.</p>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-on-surface tracking-tight leading-tight">
+            Choose Your Candidate Path
+          </h1>
+          <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+            Select how you would like to leverage the GenuAI ecosystem today. Take your time to practice, evaluate, or discover opportunities.
+          </p>
         </div>
 
-        {/* Cards — Spacious Vertical Layout */}
-        <div className="flex flex-col gap-xl">
+        {/* 4 Broader Spacious Path Cards */}
+        <div className="grid grid-cols-1 gap-8">
 
-          {/* 1. Practice Path */}
+          {/* ─────────────────────────────────────────────
+              1. PRACTICE PATH
+          ───────────────────────────────────────────── */}
           <div
             onMouseEnter={() => setHovered('practice')}
             onMouseLeave={() => setHovered(null)}
             onClick={() => onSelect('practice')}
-            className={`glass p-xl md:p-xxl rounded-[32px] cursor-pointer transition-all duration-500 transform ${hovered === 'practice' ? '-translate-y-2 ring-2 ring-indigo-brand/50 shadow-[0_20px_50px_rgba(79,70,229,0.15)] bg-indigo-brand/5' : 'hover:shadow-xl border border-surface-container'}`}
+            className={`glass p-6 sm:p-8 lg:p-10 rounded-[32px] cursor-pointer transition-all duration-300 transform ${
+              hovered === 'practice'
+                ? '-translate-y-1.5 ring-2 ring-indigo-brand/50 shadow-2xl bg-indigo-brand/5'
+                : 'hover:shadow-xl border border-surface-container/80'
+            }`}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-xl items-center w-full">
-              <div className="flex-1 flex flex-col justify-between md:pr-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
+              
+              {/* Left Details Column (6 Cols) */}
+              <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
                 <div>
-                  <div className="flex items-center justify-between w-full mb-xl gap-2 md:gap-4">
-                    <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center transition-colors ${hovered === 'practice' ? 'bg-indigo-brand text-white shadow-lg shadow-indigo-brand/30' : 'bg-surface-bright text-indigo-brand border border-surface-container'}`}>
-                      <span className="material-symbols-outlined text-4xl">psychology</span>
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors shrink-0 ${
+                      hovered === 'practice'
+                        ? 'bg-indigo-brand text-white shadow-lg shadow-indigo-brand/30'
+                        : 'bg-surface-bright text-indigo-brand border border-surface-container'
+                    }`}>
+                      <span className="material-symbols-outlined text-3xl">psychology</span>
                     </div>
-                    <span className="px-3 md:px-4 py-2 rounded-full bg-indigo-brand/10 text-indigo-brand text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-indigo-brand/20 whitespace-nowrap text-center">Most Popular</span>
-                    <span className="px-3 md:px-4 py-2 rounded-full bg-surface-container text-on-surface-variant text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-surface-container-high/50 whitespace-nowrap text-center">6 Modules</span>
+                    <span className="px-3.5 py-1.5 rounded-full bg-indigo-brand/10 text-indigo-brand text-xs font-bold uppercase tracking-wider border border-indigo-brand/20">
+                      Most Popular
+                    </span>
+                    <span className="px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-xs font-bold uppercase tracking-wider border border-surface-container-high/50">
+                      6 Modules Included
+                    </span>
                   </div>
-                  
-                  <h2 className="text-[32px] md:text-[40px] font-headline-md text-on-surface mb-sm leading-tight tracking-tight">Practice Path</h2>
-                  <p className="text-body-lg text-on-surface-variant leading-relaxed mb-xl">
-                    Build skills at your own pace with AI-powered tools, mock interviews, and inclusive learning. 
-                    This comprehensive suite of practice modules is designed to bridge your skill gaps and prepare you for top-tier tech roles.
+
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-on-surface mb-3 tracking-tight">
+                    Practice Path
+                  </h2>
+                  <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-6">
+                    Build skills at your own pace with AI-powered mock interviews, adaptive coding tests, SVAR verbal fluency, and inclusive learning tracks designed to bridge your skill gaps.
                   </p>
 
-                  <div className="space-y-md mb-xl md:mb-0">
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'practice' ? 'bg-indigo-brand text-white shadow-md shadow-indigo-brand/20' : 'bg-indigo-brand/10 text-indigo-brand'}`}>
-                        <span className="material-symbols-outlined text-[18px]">insights</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    {[
+                      { icon: "insights", title: "Data Insights", desc: "Identify skill gaps with AI." },
+                      { icon: "psychology_alt", title: "Confidence", desc: "Realistic interview prep." },
+                      { icon: "speed", title: "24/7 Access", desc: "Learn at your own pace." },
+                    ].map((feat, idx) => (
+                      <div key={idx} className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/70 shadow-2xs space-y-1">
+                        <span className="material-symbols-outlined text-indigo-brand text-xl">{feat.icon}</span>
+                        <div className="text-xs font-bold text-on-surface">{feat.title}</div>
+                        <div className="text-[11px] text-on-surface-variant leading-snug">{feat.desc}</div>
                       </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'practice' ? 'text-indigo-brand' : 'text-on-surface'}`}>Data-Driven Insights</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Identify and bridge your skill gaps using AI analytics.</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'practice' ? 'bg-indigo-brand text-white shadow-md shadow-indigo-brand/20' : 'bg-indigo-brand/10 text-indigo-brand'}`}>
-                        <span className="material-symbols-outlined text-[18px]">psychology_alt</span>
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'practice' ? 'text-indigo-brand' : 'text-on-surface'}`}>Confidence Building</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Gain confidence for real interviews through simulations.</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'practice' ? 'bg-indigo-brand text-white shadow-md shadow-indigo-brand/20' : 'bg-indigo-brand/10 text-indigo-brand'}`}>
-                        <span className="material-symbols-outlined text-[18px]">speed</span>
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'practice' ? 'text-indigo-brand' : 'text-on-surface'}`}>Flexible Pacing</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Learn at your own pace with 24/7 access to AI tutors.</div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
+
+                <div className="pt-4 flex items-center gap-3">
+                  <div className={`flex-1 h-[2px] transition-colors ${hovered === 'practice' ? 'bg-indigo-brand/40' : 'bg-surface-container'}`} />
+                  <span className={`text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors ${
+                    hovered === 'practice' ? 'text-indigo-brand' : 'text-on-surface-variant'
+                  }`}>
+                    Start Practice Hub <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  </span>
+                </div>
               </div>
-              
-              <div className="flex-1 w-full border-t md:border-t-0 md:border-l border-surface-container/50 pt-lg md:pt-0 md:pl-xl flex flex-col justify-between">
-                <div className="flex flex-col gap-sm mb-xl">
+
+              {/* Right Modules Grid (6 Cols) */}
+              <div className="lg:col-span-6 border-t lg:border-t-0 lg:border-l border-surface-container/60 pt-6 lg:pt-0 lg:pl-8 flex flex-col justify-between">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {[
-                    {text: 'AI Mock Interview', icon: 'smart_toy', desc: 'Simulated technical & behavioral interviews with AI feedback.'},
-                    {text: 'Skill Test Practice', icon: 'code', desc: 'Mock assessments for coding, aptitude, and automata.'},
-                    {text: 'Project Building', icon: 'developer_board', desc: 'Hands-on practice building full-stack projects.'},
-                    {text: 'Group Discussion', icon: 'groups', desc: 'AI-moderated group discussions to test leadership.'},
-                    {text: 'SVAR Speaking', icon: 'record_voice_over', desc: 'Verbal communication and fluency exercises.'},
-                    {text: 'Inclusive Learning', icon: 'school', desc: 'Curated courses, DSA sheets, and interview prep.'}
+                    { text: 'AI Mock Interview', icon: 'smart_toy', desc: 'Simulated technical & behavioral interviews with real-time feedback.' },
+                    { text: 'Skill Test Practice', icon: 'code', desc: 'Coding, quantitative aptitude, and automata test simulations.' },
+                    { text: 'Project Building', icon: 'developer_board', desc: 'Hands-on full-stack development challenges and reviews.' },
+                    { text: 'Group Discussion', icon: 'groups', desc: 'AI-moderated group leadership and communication rooms.' },
+                    { text: 'SVAR Speaking', icon: 'record_voice_over', desc: 'Verbal communication clarity and pronunciation evaluation.' },
+                    { text: 'Inclusive Learning', icon: 'school', desc: 'Curated DSA sheets, theory courses, and prep roadmaps.' },
                   ].map((item, i) => (
-                    <div key={i} className={`rounded-2xl p-sm flex items-start gap-md transition-colors ${hovered === 'practice' ? 'bg-white/60 shadow-sm border border-white' : 'bg-surface-bright border border-surface-container/50'}`}>
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${hovered === 'practice' ? 'bg-indigo-brand/10 text-indigo-brand' : 'bg-surface-container text-on-surface-variant'}`}>
-                        <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                    <div
+                      key={i}
+                      className={`p-3.5 rounded-2xl flex items-start gap-3 transition-all ${
+                        hovered === 'practice'
+                          ? 'bg-white shadow-xs border border-indigo-100'
+                          : 'bg-surface-bright/80 border border-surface-container/60'
+                      }`}
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-lg">{item.icon}</span>
                       </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'practice' ? 'text-indigo-brand' : 'text-on-surface'}`}>{item.text}</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">{item.desc}</div>
+                      <div className="space-y-0.5">
+                        <div className="text-xs font-bold text-on-surface">{item.text}</div>
+                        <div className="text-[11px] text-on-surface-variant leading-snug">{item.desc}</div>
                       </div>
                     </div>
                   ))}
-                </div>
-                
-                <div className="flex items-center gap-md">
-                  <div className={`flex-1 h-[2px] transition-colors ${hovered === 'practice' ? 'bg-indigo-brand/30' : 'bg-surface-container'}`} />
-                  <span className={`text-sm font-bold flex items-center gap-2 transition-colors ${hovered === 'practice' ? 'text-indigo-brand' : 'text-on-surface-variant'}`}>
-                    Start Learning <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 2. Search Path */}
+          {/* ─────────────────────────────────────────────
+              2. SEARCH PATH / JOB & NETWORK HUB
+          ───────────────────────────────────────────── */}
           <div
             onMouseEnter={() => setHovered('search')}
             onMouseLeave={() => setHovered(null)}
             onClick={() => onSelect('search')}
-            className={`glass p-xl md:p-xxl rounded-[32px] cursor-pointer transition-all duration-500 transform ${hovered === 'search' ? '-translate-y-2 ring-2 ring-accent-gold/50 shadow-[0_20px_50px_rgba(245,158,11,0.15)] bg-accent-gold/5' : 'hover:shadow-xl border border-surface-container'}`}
+            className={`glass p-6 sm:p-8 lg:p-10 rounded-[32px] cursor-pointer transition-all duration-300 transform ${
+              hovered === 'search'
+                ? '-translate-y-1.5 ring-2 ring-accent-gold/50 shadow-2xl bg-accent-gold/5'
+                : 'hover:shadow-xl border border-surface-container/80'
+            }`}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-xl items-center w-full">
-              <div className="flex-1 flex flex-col justify-between md:pr-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
+              
+              {/* Left Details Column */}
+              <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
                 <div>
-                  <div className="flex items-center justify-between w-full mb-xl gap-2 md:gap-4">
-                    <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center transition-colors ${hovered === 'search' ? 'bg-accent-gold text-on-tertiary shadow-lg shadow-accent-gold/30' : 'bg-surface-bright text-accent-gold border border-surface-container'}`}>
-                      <span className="material-symbols-outlined text-4xl">public</span>
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors shrink-0 ${
+                      hovered === 'search'
+                        ? 'bg-accent-gold text-white shadow-lg shadow-accent-gold/30'
+                        : 'bg-surface-bright text-accent-gold border border-surface-container'
+                    }`}>
+                      <span className="material-symbols-outlined text-3xl">public</span>
                     </div>
-                    <span className="px-3 md:px-4 py-2 rounded-full bg-accent-gold/10 text-accent-gold-dark text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-accent-gold/20 whitespace-nowrap text-center">Live Network</span>
-                    <span className="px-3 md:px-4 py-2 rounded-full bg-surface-container text-on-surface-variant text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-surface-container-high/50 whitespace-nowrap text-center">4 Features</span>
+                    <span className="px-3.5 py-1.5 rounded-full bg-accent-gold/10 text-accent-gold-dark text-xs font-bold uppercase tracking-wider border border-accent-gold/20">
+                      Live Network
+                    </span>
+                    <span className="px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-xs font-bold uppercase tracking-wider border border-surface-container-high/50">
+                      4 Features Included
+                    </span>
                   </div>
-                  
-                  <h2 className="text-[32px] md:text-[40px] font-headline-md text-on-surface mb-sm leading-tight tracking-tight">Search Hub</h2>
-                  <p className="text-body-lg text-on-surface-variant leading-relaxed mb-xl">
-                    Step into the GenuAI professional ecosystem. Connect directly with hiring managers, discover curated remote and hybrid opportunities, and stay ahead of the curve.
+
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-on-surface mb-3 tracking-tight">
+                    Search Hub
+                  </h2>
+                  <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-6">
+                    Connect directly with top tech recruiters, explore AI-matched remote and hybrid job openings, and participate in industry hackathons.
                   </p>
 
-                  <div className="space-y-md mb-xl md:mb-0">
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'search' ? 'bg-accent-gold text-on-tertiary shadow-md shadow-accent-gold/20' : 'bg-accent-gold/10 text-accent-gold-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">troubleshoot</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    {[
+                      { icon: "troubleshoot", title: "AI Matching", desc: "Matched by verified skills." },
+                      { icon: "diversity_3", title: "Direct Connect", desc: "Message hiring managers." },
+                      { icon: "trending_up", title: "Competitions", desc: "Hackathons & live events." },
+                    ].map((feat, idx) => (
+                      <div key={idx} className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/70 shadow-2xs space-y-1">
+                        <span className="material-symbols-outlined text-accent-gold-dark text-xl">{feat.icon}</span>
+                        <div className="text-xs font-bold text-on-surface">{feat.title}</div>
+                        <div className="text-[11px] text-on-surface-variant leading-snug">{feat.desc}</div>
                       </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'search' ? 'text-accent-gold-dark' : 'text-on-surface'}`}>AI Role Matching</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Get instantly matched to roles that fit your exact skill profile.</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'search' ? 'bg-accent-gold text-on-tertiary shadow-md shadow-accent-gold/20' : 'bg-accent-gold/10 text-accent-gold-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">diversity_3</span>
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'search' ? 'text-accent-gold-dark' : 'text-on-surface'}`}>Direct Networking</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Cut through the noise and chat directly with top recruiters.</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'search' ? 'bg-accent-gold text-on-tertiary shadow-md shadow-accent-gold/20' : 'bg-accent-gold/10 text-accent-gold-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">trending_up</span>
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'search' ? 'text-accent-gold-dark' : 'text-on-surface'}`}>Career Growth</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Stay updated with industry trends, events, and hackathons.</div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
+
+                <div className="pt-4 flex items-center gap-3">
+                  <div className={`flex-1 h-[2px] transition-colors ${hovered === 'search' ? 'bg-accent-gold/40' : 'bg-surface-container'}`} />
+                  <span className={`text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors ${
+                    hovered === 'search' ? 'text-accent-gold-dark' : 'text-on-surface-variant'
+                  }`}>
+                    Enter Search Hub <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  </span>
+                </div>
               </div>
-              
-              <div className="flex-1 w-full border-t md:border-t-0 md:border-l border-surface-container/50 pt-lg md:pt-0 md:pl-xl flex flex-col justify-between">
-                <div className="flex flex-col gap-sm mb-xl">
+
+              {/* Right Modules Grid */}
+              <div className="lg:col-span-6 border-t lg:border-t-0 lg:border-l border-surface-container/60 pt-6 lg:pt-0 lg:pl-8 flex flex-col justify-between">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {[
-                    {text: 'Professional Network', icon: 'hub', desc: 'Connect with peers, recruiters, and industry leaders.'},
-                    {text: 'Global Job Board', icon: 'work', desc: 'Explore AI-matched remote, hybrid, and on-site roles.'},
-                    {text: 'Competitions & Events', icon: 'emoji_events', desc: 'Participate in hackathons and tech competitions.'},
-                    {text: 'Instant Connect', icon: 'forum', desc: 'Directly message recruiters and hiring managers.'}
+                    { text: 'Professional Network', icon: 'hub', desc: 'Connect with peers, recruiters, and engineering leaders.' },
+                    { text: 'Global Job Board', icon: 'work', desc: 'Explore AI-curated openings with salary benchmarks.' },
+                    { text: 'Competitions & Hackathons', icon: 'emoji_events', desc: 'Participate in prize hackathons and tech contests.' },
+                    { text: 'Instant Recruiter Connect', icon: 'forum', desc: 'Direct chat and application inquiries with employers.' },
                   ].map((item, i) => (
-                    <div key={i} className={`rounded-2xl p-sm flex items-start gap-md transition-colors ${hovered === 'search' ? 'bg-white/60 shadow-sm border border-white' : 'bg-surface-bright border border-surface-container/50'}`}>
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${hovered === 'search' ? 'bg-accent-gold/10 text-accent-gold-dark' : 'bg-surface-container text-on-surface-variant'}`}>
-                        <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                    <div
+                      key={i}
+                      className={`p-3.5 rounded-2xl flex items-start gap-3 transition-all ${
+                        hovered === 'search'
+                          ? 'bg-white shadow-xs border border-amber-200'
+                          : 'bg-surface-bright/80 border border-surface-container/60'
+                      }`}
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-accent-gold/10 text-accent-gold-dark flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-lg">{item.icon}</span>
                       </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'search' ? 'text-accent-gold-dark' : 'text-on-surface'}`}>{item.text}</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">{item.desc}</div>
+                      <div className="space-y-0.5">
+                        <div className="text-xs font-bold text-on-surface">{item.text}</div>
+                        <div className="text-[11px] text-on-surface-variant leading-snug">{item.desc}</div>
                       </div>
                     </div>
                   ))}
-                </div>
-                
-                <div className="flex items-center gap-md">
-                  <div className={`flex-1 h-[2px] transition-colors ${hovered === 'search' ? 'bg-accent-gold/30' : 'bg-surface-container'}`} />
-                  <span className={`text-sm font-bold flex items-center gap-2 transition-colors ${hovered === 'search' ? 'text-accent-gold' : 'text-on-surface-variant'}`}>
-                    Enter Search Hub <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 3. Assessment Test */}
+          {/* ─────────────────────────────────────────────
+              3. OFFICIAL ASSESSMENT PIPELINE
+          ───────────────────────────────────────────── */}
           <div
             onMouseEnter={() => setHovered('test')}
             onMouseLeave={() => setHovered(null)}
             onClick={() => onSelect('test')}
-            className={`glass p-xl md:p-xxl rounded-[32px] cursor-pointer transition-all duration-500 transform ${hovered === 'test' ? '-translate-y-2 ring-2 ring-success-emerald/50 shadow-[0_20px_50px_rgba(16,185,129,0.15)] bg-success-emerald/5' : 'hover:shadow-xl border border-surface-container'}`}
+            className={`glass p-6 sm:p-8 lg:p-10 rounded-[32px] cursor-pointer transition-all duration-300 transform ${
+              hovered === 'test'
+                ? '-translate-y-1.5 ring-2 ring-emerald-500/50 shadow-2xl bg-emerald-50/20'
+                : 'hover:shadow-xl border border-surface-container/80'
+            }`}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-xl items-center w-full">
-              <div className="flex-1 flex flex-col justify-between md:pr-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
+              
+              {/* Left Details Column */}
+              <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
                 <div>
-                  <div className="flex items-center justify-between w-full mb-xl gap-2 md:gap-4">
-                    <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center transition-colors ${hovered === 'test' ? 'bg-success-emerald text-white shadow-lg shadow-success-emerald/30' : 'bg-surface-bright text-success-emerald border border-surface-container'}`}>
-                      <span className="material-symbols-outlined text-4xl">timer</span>
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors shrink-0 ${
+                      hovered === 'test'
+                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
+                        : 'bg-surface-bright text-emerald-600 border border-surface-container'
+                    }`}>
+                      <span className="material-symbols-outlined text-3xl">verified</span>
                     </div>
-                    <span className="px-3 md:px-4 py-2 rounded-full bg-success-emerald/10 text-success-emerald-dark text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-success-emerald/20 whitespace-nowrap text-center">Official</span>
-                    <span className="px-3 md:px-4 py-2 rounded-full bg-surface-container text-on-surface-variant text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-surface-container-high/50 whitespace-nowrap text-center">Proctored</span>
+                    <span className="px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider border border-emerald-200">
+                      Official Evaluation
+                    </span>
+                    <span className="px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-xs font-bold uppercase tracking-wider border border-surface-container-high/50">
+                      Proctored Pipeline
+                    </span>
                   </div>
-                  
-                  <h2 className="text-[32px] md:text-[40px] font-headline-md text-on-surface mb-sm leading-tight tracking-tight">Assessment Test</h2>
-                  <p className="text-body-lg text-on-surface-variant leading-relaxed mb-xl">
-                    Take the definitive GenuAI evaluation. Our AI-proctored, multi-stage assessment strictly measures your technical, verbal, and behavioral competencies.
+
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-on-surface mb-3 tracking-tight">
+                    Assessment Pipeline
+                  </h2>
+                  <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-6">
+                    Take the official GenuAI 6-module assessment. Prove your verified capabilities to multiple top companies through a single rigorous evaluation.
                   </p>
 
-                  <div className="space-y-md mb-xl md:mb-0">
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'test' ? 'bg-success-emerald text-white shadow-md shadow-success-emerald/20' : 'bg-success-emerald/10 text-success-emerald-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">verified</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    {[
+                      { icon: "shield", title: "Verified Trust", desc: "Authentic credentials." },
+                      { icon: "score", title: "Universal Score", desc: "One score for all jobs." },
+                      { icon: "rocket_launch", title: "Fast-Track", desc: "Skip initial resume screening." },
+                    ].map((feat, idx) => (
+                      <div key={idx} className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/70 shadow-2xs space-y-1">
+                        <span className="material-symbols-outlined text-emerald-600 text-xl">{feat.icon}</span>
+                        <div className="text-xs font-bold text-on-surface">{feat.title}</div>
+                        <div className="text-[11px] text-on-surface-variant leading-snug">{feat.desc}</div>
                       </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'test' ? 'text-success-emerald-dark' : 'text-on-surface'}`}>Verified Credentials</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Prove your authentic skills to top employers definitively.</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'test' ? 'bg-success-emerald text-white shadow-md shadow-success-emerald/20' : 'bg-success-emerald/10 text-success-emerald-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">score</span>
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'test' ? 'text-success-emerald-dark' : 'text-on-surface'}`}>Comprehensive Score</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Receive a multi-dimensional GenuAI evaluation score.</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'test' ? 'bg-success-emerald text-white shadow-md shadow-success-emerald/20' : 'bg-success-emerald/10 text-success-emerald-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'test' ? 'text-success-emerald-dark' : 'text-on-surface'}`}>Fast-Track Hiring</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Top scorers skip initial screening rounds at partner companies.</div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
+
+                <div className="pt-4 flex items-center gap-3">
+                  <div className={`flex-1 h-[2px] transition-colors ${hovered === 'test' ? 'bg-emerald-500/40' : 'bg-surface-container'}`} />
+                  <span className={`text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors ${
+                    hovered === 'test' ? 'text-emerald-700' : 'text-on-surface-variant'
+                  }`}>
+                    Begin Assessment <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  </span>
+                </div>
               </div>
-              
-              <div className="flex-1 w-full border-t md:border-t-0 md:border-l border-surface-container/50 pt-lg md:pt-0 md:pl-xl flex flex-col justify-between">
-                <div className="flex flex-col gap-sm mb-xl">
+
+              {/* Right Modules Grid */}
+              <div className="lg:col-span-6 border-t lg:border-t-0 lg:border-l border-surface-container/60 pt-6 lg:pt-0 lg:pl-8 flex flex-col justify-between">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {[
-                    {text: 'Profile & Resume', icon: 'badge', desc: 'Initial screening based on your verified professional profile.'},
-                    {text: 'GenuAI Skill Test', icon: 'quiz', desc: 'Timed coding and aptitude test with anti-cheat monitoring.'},
-                    {text: 'SVAR Verbal', icon: 'record_voice_over', desc: 'Automated evaluation of spoken English and clarity.'},
-                    {text: 'Hackathon', icon: 'terminal', desc: 'Real-world project building under a strict time limit.'},
-                    {text: 'AI Interview', icon: 'videocam', desc: 'Final round technical and cultural fit interview with AI.'},
-                    {text: 'Group Discussion', icon: 'groups', desc: 'Collaborative problem-solving with other candidates.'}
+                    { text: 'Profile & Resume Screening', icon: 'badge', desc: 'Automated skill and portfolio verification.' },
+                    { text: 'AMCAT Skill Test', icon: 'quiz', desc: 'Timed coding, logical, and quantitative evaluation.' },
+                    { text: 'SVAR Verbal Assessment', icon: 'record_voice_over', desc: 'Professional spoken English and fluency testing.' },
+                    { text: 'Hackathon Project', icon: 'terminal', desc: 'Timed hands-on full-stack application development.' },
+                    { text: 'AI Technical Interview', icon: 'videocam', desc: 'In-depth domain questions and behavioral assessment.' },
+                    { text: 'Group Discussion', icon: 'groups', desc: 'Collaborative problem solving and teamwork analysis.' },
                   ].map((item, i) => (
-                    <div key={i} className={`rounded-2xl p-sm flex items-start gap-md transition-colors ${hovered === 'test' ? 'bg-white/60 shadow-sm border border-white' : 'bg-surface-bright border border-surface-container/50'}`}>
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${hovered === 'test' ? 'bg-success-emerald/10 text-success-emerald-dark' : 'bg-surface-container text-on-surface-variant'}`}>
-                        <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                    <div
+                      key={i}
+                      className={`p-3.5 rounded-2xl flex items-start gap-3 transition-all ${
+                        hovered === 'test'
+                          ? 'bg-white shadow-xs border border-emerald-200'
+                          : 'bg-surface-bright/80 border border-surface-container/60'
+                      }`}
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-lg">{item.icon}</span>
                       </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'test' ? 'text-success-emerald-dark' : 'text-on-surface'}`}>{item.text}</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">{item.desc}</div>
+                      <div className="space-y-0.5">
+                        <div className="text-xs font-bold text-on-surface">{item.text}</div>
+                        <div className="text-[11px] text-on-surface-variant leading-snug">{item.desc}</div>
                       </div>
                     </div>
                   ))}
-                </div>
-                
-                <div className="flex items-center gap-md">
-                  <div className={`flex-1 h-[2px] transition-colors ${hovered === 'test' ? 'bg-success-emerald/30' : 'bg-surface-container'}`} />
-                  <span className={`text-sm font-bold flex items-center gap-2 transition-colors ${hovered === 'test' ? 'text-success-emerald' : 'text-on-surface-variant'}`}>
-                    Begin Assessment <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 4. Career Profile Hub */}
+          {/* ─────────────────────────────────────────────
+              4. CAREER PROFILE HUB
+          ───────────────────────────────────────────── */}
           <div
             onMouseEnter={() => setHovered('career')}
             onMouseLeave={() => setHovered(null)}
             onClick={() => onSelect('career-profile')}
-            className={`glass p-xl md:p-xxl rounded-[32px] cursor-pointer transition-all duration-500 transform ${hovered === 'career' ? '-translate-y-2 ring-2 ring-indigo-brand-dark/50 shadow-[0_20px_50px_rgba(49,46,129,0.15)] bg-indigo-brand-dark/5' : 'hover:shadow-xl border border-surface-container'}`}
+            className={`glass p-6 sm:p-8 lg:p-10 rounded-[32px] cursor-pointer transition-all duration-300 transform ${
+              hovered === 'career'
+                ? '-translate-y-1.5 ring-2 ring-indigo-900/50 shadow-2xl bg-indigo-900/5'
+                : 'hover:shadow-xl border border-surface-container/80'
+            }`}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-xl items-center w-full">
-              <div className="flex-1 flex flex-col justify-between md:pr-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
+              
+              {/* Left Details Column */}
+              <div className="lg:col-span-6 flex flex-col justify-between space-y-6">
                 <div>
-                  <div className="flex items-center justify-between w-full mb-xl gap-2 md:gap-4">
-                    <div className={`w-16 h-16 shrink-0 rounded-2xl flex items-center justify-center transition-colors ${hovered === 'career' ? 'bg-indigo-brand-dark text-white shadow-lg shadow-indigo-brand-dark/30' : 'bg-surface-bright text-indigo-brand-dark border border-surface-container'}`}>
-                      <span className="material-symbols-outlined text-4xl">badge</span>
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors shrink-0 ${
+                      hovered === 'career'
+                        ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/30'
+                        : 'bg-surface-bright text-slate-800 border border-surface-container'
+                    }`}>
+                      <span className="material-symbols-outlined text-3xl">badge</span>
                     </div>
-                    <span className="px-3 md:px-4 py-2 rounded-full bg-indigo-brand-dark/10 text-indigo-brand-dark text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-indigo-brand-dark/20 whitespace-nowrap text-center">Personal Brand</span>
-                    <span className="px-3 md:px-4 py-2 rounded-full bg-surface-container text-on-surface-variant text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-surface-container-high/50 whitespace-nowrap text-center">4 Tools</span>
+                    <span className="px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-800 text-xs font-bold uppercase tracking-wider border border-slate-200">
+                      Personal Brand
+                    </span>
+                    <span className="px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-xs font-bold uppercase tracking-wider border border-surface-container-high/50">
+                      4 AI Tools Included
+                    </span>
                   </div>
-                  
-                  <h2 className="text-[32px] md:text-[40px] font-headline-md text-on-surface mb-sm leading-tight tracking-tight">Career Profile Hub</h2>
-                  <p className="text-body-lg text-on-surface-variant leading-relaxed mb-xl">
-                    Your professional identity, elevated. Use our AI drafting engines to instantly generate perfectly tailored resumes, cover letters, and portfolios.
+
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-on-surface mb-3 tracking-tight">
+                    Career Profile Hub
+                  </h2>
+                  <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed mb-6">
+                    Elevate your professional presence. Generate ATS-optimized resumes, tailor cover letters, and build a unified technical portfolio.
                   </p>
 
-                  <div className="space-y-md mb-xl md:mb-0">
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'career' ? 'bg-indigo-brand-dark text-white shadow-md shadow-indigo-brand-dark/20' : 'bg-indigo-brand-dark/10 text-indigo-brand-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">document_scanner</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    {[
+                      { icon: "document_scanner", title: "ATS Ready", desc: "Pass recruiter scans." },
+                      { icon: "edit_note", title: "Tailored Pitch", desc: "Role-specific letters." },
+                      { icon: "branding_watermark", title: "Unified Brand", desc: "Showcase code & credentials." },
+                    ].map((feat, idx) => (
+                      <div key={idx} className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/70 shadow-2xs space-y-1">
+                        <span className="material-symbols-outlined text-slate-800 text-xl">{feat.icon}</span>
+                        <div className="text-xs font-bold text-on-surface">{feat.title}</div>
+                        <div className="text-[11px] text-on-surface-variant leading-snug">{feat.desc}</div>
                       </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'career' ? 'text-indigo-brand-dark' : 'text-on-surface'}`}>ATS Optimization</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Stand out automatically with system-friendly resumes.</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'career' ? 'bg-indigo-brand-dark text-white shadow-md shadow-indigo-brand-dark/20' : 'bg-indigo-brand-dark/10 text-indigo-brand-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">edit_note</span>
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'career' ? 'text-indigo-brand-dark' : 'text-on-surface'}`}>Tailored Pitching</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Impress hiring managers with context-aware cover letters.</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-md">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${hovered === 'career' ? 'bg-indigo-brand-dark text-white shadow-md shadow-indigo-brand-dark/20' : 'bg-indigo-brand-dark/10 text-indigo-brand-dark'}`}>
-                        <span className="material-symbols-outlined text-[18px]">branding_watermark</span>
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'career' ? 'text-indigo-brand-dark' : 'text-on-surface'}`}>Unified Branding</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">Showcase a cohesive, highly professional brand.</div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
+
+                <div className="pt-4 flex items-center gap-3">
+                  <div className={`flex-1 h-[2px] transition-colors ${hovered === 'career' ? 'bg-slate-900/40' : 'bg-surface-container'}`} />
+                  <span className={`text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors ${
+                    hovered === 'career' ? 'text-slate-900' : 'text-on-surface-variant'
+                  }`}>
+                    Manage Career Profile <span className="material-symbols-outlined text-base">arrow_forward</span>
+                  </span>
+                </div>
               </div>
-              
-              <div className="flex-1 w-full border-t md:border-t-0 md:border-l border-surface-container/50 pt-lg md:pt-0 md:pl-xl flex flex-col justify-between">
-                <div className="flex flex-col gap-sm mb-xl">
+
+              {/* Right Modules Grid */}
+              <div className="lg:col-span-6 border-t lg:border-t-0 lg:border-l border-surface-container/60 pt-6 lg:pt-0 lg:pl-8 flex flex-col justify-between">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {[
-                    {text: 'AI Resume Builder', icon: 'document_scanner', desc: 'Generate ATS-friendly markdown resumes instantly.'},
-                    {text: 'Cover Letter Gen', icon: 'edit_document', desc: 'Draft highly tailored cover letters for specific roles.'},
-                    {text: 'ATS Checker', icon: 'fact_check', desc: 'Analyze your resume against job descriptions.'},
-                    {text: 'Portfolio Manager', icon: 'folder_special', desc: 'Showcase your GitHub projects and certifications.'}
+                    { text: 'AI Resume Builder', icon: 'document_scanner', desc: 'Generate ATS-friendly markdown resumes instantly.' },
+                    { text: 'Cover Letter Generator', icon: 'edit_document', desc: 'Draft tailored cover letters matching job descriptions.' },
+                    { text: 'ATS Compatibility Checker', icon: 'fact_check', desc: 'Score your resume against industry benchmarks.' },
+                    { text: 'Portfolio & Certifications', icon: 'folder_special', desc: 'Showcase verified GitHub projects and scores.' },
                   ].map((item, i) => (
-                    <div key={i} className={`rounded-2xl p-sm flex items-start gap-md transition-colors ${hovered === 'career' ? 'bg-white/60 shadow-sm border border-white' : 'bg-surface-bright border border-surface-container/50'}`}>
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${hovered === 'career' ? 'bg-indigo-brand-dark/10 text-indigo-brand-dark' : 'bg-surface-container text-on-surface-variant'}`}>
-                        <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                    <div
+                      key={i}
+                      className={`p-3.5 rounded-2xl flex items-start gap-3 transition-all ${
+                        hovered === 'career'
+                          ? 'bg-white shadow-xs border border-slate-300'
+                          : 'bg-surface-bright/80 border border-surface-container/60'
+                      }`}
+                    >
+                      <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-lg">{item.icon}</span>
                       </div>
-                      <div>
-                        <div className={`text-sm font-bold mb-0.5 transition-colors ${hovered === 'career' ? 'text-indigo-brand-dark' : 'text-on-surface'}`}>{item.text}</div>
-                        <div className="text-xs text-on-surface-variant font-medium leading-relaxed">{item.desc}</div>
+                      <div className="space-y-0.5">
+                        <div className="text-xs font-bold text-on-surface">{item.text}</div>
+                        <div className="text-[11px] text-on-surface-variant leading-snug">{item.desc}</div>
                       </div>
                     </div>
                   ))}
-                </div>
-                
-                <div className="flex items-center gap-md">
-                  <div className={`flex-1 h-[2px] transition-colors ${hovered === 'career' ? 'bg-indigo-brand-dark/30' : 'bg-surface-container'}`} />
-                  <span className={`text-sm font-bold flex items-center gap-2 transition-colors ${hovered === 'career' ? 'text-indigo-brand-dark' : 'text-on-surface-variant'}`}>
-                    Manage Profile <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                  </span>
                 </div>
               </div>
             </div>
@@ -398,8 +459,8 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
 
         </div>
 
-        {/* Footer note */}
-        <p className="text-center text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest mt-xxl pb-xl">
+        {/* Footer */}
+        <p className="text-center text-[11px] font-bold text-on-surface-variant/60 uppercase tracking-widest pt-6 pb-8">
           © 2026 GenuAI Technologies · All Rights Reserved
         </p>
       </div>
