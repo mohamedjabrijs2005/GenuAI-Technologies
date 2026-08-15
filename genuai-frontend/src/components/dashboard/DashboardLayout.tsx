@@ -137,14 +137,11 @@ export default function DashboardLayout({
             <img src="/logo.png" alt="GenuAI" className="w-9 h-9 object-contain shrink-0 drop-shadow-xs" />
             {!sidebarCollapsed && (
               <div className="truncate">
-                <div className="font-headline-md font-extrabold text-sm text-on-surface tracking-tight flex items-center gap-1.5">
-                  Genu<span className="text-indigo-brand">AI</span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20">
-                    {portalType === "admin" ? "Control" : "Command"}
-                  </span>
+                <div className="font-headline-md font-extrabold text-sm text-on-surface tracking-tight leading-tight">
+                  Genu<span className="text-indigo-brand">AI</span> Technologies
                 </div>
-                <div className="text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-wider truncate">
-                  {portalType === "admin" ? "Platform Command" : "Recruitment Intelligence"}
+                <div className="text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest truncate">
+                  Recruitment Intelligence
                 </div>
               </div>
             )}
@@ -236,8 +233,8 @@ export default function DashboardLayout({
             <div className="h-16 px-4 border-b border-surface-container/60 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img src="/logo.png" alt="GenuAI" className="w-8 h-8 object-contain" />
-                <span className="font-extrabold text-sm text-on-surface">
-                  Genu<span className="text-indigo-brand">AI</span>
+                <span className="font-headline-md font-extrabold text-sm text-on-surface">
+                  Genu<span className="text-indigo-brand">AI</span> Technologies
                 </span>
               </div>
               <button
@@ -402,6 +399,11 @@ export default function DashboardLayout({
                   <div className="px-4 py-2.5 border-b border-surface-container/50">
                     <div className="text-xs font-bold text-on-surface truncate">{userName}</div>
                     <div className="text-[10px] text-on-surface-variant truncate">{userEmail}</div>
+                    <div className="mt-1">
+                      <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20">
+                        {userRole}
+                      </span>
+                    </div>
                   </div>
                   <button
                     type="button"
@@ -409,27 +411,9 @@ export default function DashboardLayout({
                       onTabChange(portalType === "admin" ? "settings" : "profile");
                       setProfileDropdownOpen(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors cursor-pointer"
+                    className="w-full text-left px-4 py-2.5 text-xs font-bold text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors cursor-pointer"
                   >
                     {portalType === "admin" ? "Admin Settings" : "Company Profile"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onTabChange("subscription");
-                      setProfileDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface hover:bg-surface-bright transition-colors cursor-pointer"
-                  >
-                    Subscription &amp; Quotas
-                  </button>
-                  <div className="border-t border-surface-container/50 my-1" />
-                  <button
-                    type="button"
-                    onClick={onLogout}
-                    className="w-full text-left px-4 py-2 text-xs font-bold text-error-crimson hover:bg-error-crimson/10 transition-colors cursor-pointer"
-                  >
-                    Sign Out
                   </button>
                 </div>
               )}
