@@ -125,14 +125,14 @@ export default function DashboardLayout({
         ))}
       </div>
 
-      {/* ── DESKTOP FIXED SIDEBAR (EXPANDED FULL HEIGHT) ── */}
+      {/* ── DESKTOP SIDEBAR (EXPANDED FULL PAGE HEIGHT, NO INNER SCROLLBAR) ── */}
       <aside
-        className={`hidden lg:flex flex-col border-r border-surface-container/80 bg-white/95 backdrop-blur-2xl transition-all duration-300 z-30 sticky top-0 h-screen shrink-0 shadow-2xs ${
+        className={`hidden lg:flex flex-col border-r border-surface-container/80 bg-white/95 backdrop-blur-2xl transition-all duration-300 z-30 self-stretch min-h-screen shrink-0 shadow-2xs ${
           sidebarCollapsed ? "w-[88px]" : "w-[288px]"
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 px-4 border-b border-surface-container/50 flex items-center justify-between">
+        <div className="h-16 px-4 border-b border-surface-container/50 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-md z-10">
           <div className="flex items-center gap-3 overflow-hidden">
             <img src="/logo.png" alt="GenuAI" className="w-9 h-9 object-contain shrink-0 drop-shadow-xs" />
             {!sidebarCollapsed && (
@@ -157,8 +157,8 @@ export default function DashboardLayout({
           </button>
         </div>
 
-        {/* Navigation List */}
-        <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1.5 scrollbar-thin">
+        {/* Navigation List (All items visible at once, no scrollbar) */}
+        <div className="flex-1 py-3 px-3 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -167,7 +167,7 @@ export default function DashboardLayout({
                 key={item.id}
                 type="button"
                 onClick={() => onTabChange(item.id)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-bold text-xs transition-all cursor-pointer group ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer group ${
                   isActive
                     ? "bg-indigo-brand text-white shadow-md shadow-indigo-brand/25"
                     : "text-on-surface-variant hover:text-on-surface hover:bg-surface-bright"
@@ -192,8 +192,8 @@ export default function DashboardLayout({
           })}
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="p-3 border-t border-surface-container/50 space-y-2">
+        {/* Sidebar Footer (Pinned at bottom of sidebar) */}
+        <div className="p-3 border-t border-surface-container/50 space-y-2 sticky bottom-0 bg-white/95 backdrop-blur-md">
           {!sidebarCollapsed && (
             <div className="p-3 rounded-2xl bg-surface-bright/80 border border-surface-container/60 flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-brand to-indigo-brand-dark text-white flex items-center justify-center font-bold text-xs uppercase shadow-xs shrink-0">
