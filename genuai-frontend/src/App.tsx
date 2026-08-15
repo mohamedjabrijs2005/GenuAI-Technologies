@@ -4,6 +4,7 @@ import { useAuth } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 const HomePage             = lazy(() => import("./pages/HomePage"));
+const EcosystemOverviewPage = lazy(() => import("./pages/EcosystemOverviewPage"));
 const Auth                 = lazy(() => import("./features/auth").then(m => ({ default: m.AuthPage })));
 const PathSelection        = lazy(() => import("./features/dashboard").then(m => ({ default: m.PathSelectionPage })));
 const CompanyOverview      = lazy(() => import("./features/company").then(m => ({ default: m.CompanyOverviewPage })));
@@ -54,6 +55,7 @@ export default function App() {
         {/* Public Home Page & Auth Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/ecosystem" element={<EcosystemOverviewPage />} />
         <Route
           path="/auth"
           element={

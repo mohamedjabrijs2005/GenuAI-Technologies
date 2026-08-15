@@ -33,7 +33,20 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
     }
   };
 
+  const handleNavClick = (e: React.MouseEvent, href: string, isRoute?: boolean) => {
+    if (isRoute || href.startsWith('/')) {
+      e.preventDefault();
+      navigate(href);
+      setMobileMenuOpen(false);
+    } else if (window.location.pathname !== '/' && window.location.pathname !== '/home') {
+      e.preventDefault();
+      navigate(`/${href}`);
+      setMobileMenuOpen(false);
+    }
+  };
+
   const navLinks = [
+    { label: 'Ecosystem', href: '/ecosystem', isRoute: true },
     { label: 'Experience', href: '#about' },
     { label: 'Problem', href: '#problem' },
     { label: 'Solution', href: '#solution' },
@@ -75,12 +88,9 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
             <div>
               <div className="font-black text-lg sm:text-xl tracking-tight text-on-surface flex items-center gap-1.5 leading-none">
                 <span>Genu<span className="text-accent-gold">AI</span> Technologies</span>
-                <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20">
-                  Ecosystem
-                </span>
               </div>
               <div className="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest mt-1">
-                AI Recruitment Intelligence Ecosystem
+                AI Recruitment Intelligence Platform
               </div>
             </div>
           </a>
@@ -91,7 +101,12 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-xs font-semibold text-on-surface-variant hover:text-indigo-brand transition-colors whitespace-nowrap cursor-pointer"
+                onClick={(e) => handleNavClick(e, link.href, link.isRoute)}
+                className={`text-xs font-semibold transition-colors whitespace-nowrap cursor-pointer ${
+                  link.isRoute
+                    ? 'text-indigo-brand font-bold bg-indigo-50 border border-indigo-200/80 px-2.5 py-1 rounded-lg hover:bg-indigo-100'
+                    : 'text-on-surface-variant hover:text-indigo-brand'
+                }`}
               >
                 {link.label}
               </a>
@@ -136,8 +151,12 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
               <a
                 key={link.label}
                 href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="px-3.5 py-2.5 rounded-xl text-sm font-semibold text-on-surface hover:bg-indigo-brand/10 hover:text-indigo-brand transition-colors cursor-pointer"
+                onClick={(e) => handleNavClick(e, link.href, link.isRoute)}
+                className={`px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                  link.isRoute
+                    ? 'text-indigo-brand font-bold bg-indigo-50 border border-indigo-200'
+                    : 'text-on-surface hover:bg-indigo-brand/10 hover:text-indigo-brand'
+                }`}
               >
                 {link.label}
               </a>
