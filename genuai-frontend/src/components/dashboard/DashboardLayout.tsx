@@ -157,8 +157,8 @@ export default function DashboardLayout({
           </button>
         </div>
 
-        {/* Navigation List (All items visible at once, no scrollbar) */}
-        <div className="flex-1 py-3 px-3 space-y-1">
+        {/* Navigation List (Expanded one by one down the sidebar) */}
+        <div className="flex-1 py-4 px-3.5 space-y-1.5 flex flex-col">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -167,16 +167,16 @@ export default function DashboardLayout({
                 key={item.id}
                 type="button"
                 onClick={() => onTabChange(item.id)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer group ${
+                className={`w-full flex items-center gap-3.5 px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs transition-all duration-200 cursor-pointer group relative ${
                   isActive
                     ? "bg-indigo-brand text-white shadow-md shadow-indigo-brand/25"
-                    : "text-on-surface-variant hover:text-on-surface hover:bg-surface-bright"
+                    : "text-on-surface-variant hover:text-on-surface hover:bg-surface-bright/90"
                 }`}
                 title={sidebarCollapsed ? item.label : undefined}
               >
-                <Icon className={`w-4 h-4 shrink-0 transition-transform ${isActive ? "text-white" : "text-on-surface-variant group-hover:text-on-surface"}`} />
+                <Icon className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isActive ? "text-white scale-105" : "text-on-surface-variant group-hover:text-on-surface group-hover:scale-105"}`} />
                 {!sidebarCollapsed && (
-                  <span className="truncate flex-1 text-left">{item.label}</span>
+                  <span className="truncate flex-1 text-left tracking-tight">{item.label}</span>
                 )}
                 {!sidebarCollapsed && item.badge !== undefined && (
                   <span
