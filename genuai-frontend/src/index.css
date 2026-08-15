@@ -13,11 +13,10 @@
     @apply bg-background text-on-background font-body-base antialiased;
     overflow-x: hidden;
     width: 100%;
-    min-height: 100vh;
+    min-height: 100dvh;
     touch-action: manipulation;
   }
 
-  /* Responsive typography balance with previous GenuAI fonts */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Montserrat', sans-serif;
     text-wrap: balance;
@@ -35,12 +34,11 @@
     text-wrap: pretty;
   }
 
-  /* Prevent mobile tap highlight gray box on touch */
   * {
     -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
   }
 
-  /* Disable browser default password reveal eye icon (Edge, Chrome, Safari) */
   input::-ms-reveal,
   input::-ms-clear {
     display: none !important;
@@ -52,19 +50,69 @@
 }
 
 @layer utilities {
-  .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-  }
-  
-  /* White realistic positive adaptation for glassmorphism */
+  /* ── Scrollbar Hiding ── */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Glass effect ── */
   .glass {
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255,255,255,0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(226, 232, 240, 0.85);
-    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(226,232,240,0.85);
+    box-shadow: 0 1px 3px rgba(15,23,42,0.04), 0 1px 2px rgba(15,23,42,0.03);
   }
-  
+
+  /* ── Dashboard Card — the unified card standard ── */
+  .dash-card {
+    @apply bg-white border border-slate-200 rounded-2xl shadow-sm;
+  }
+
+  /* ── Stat Section Label ── */
+  .stat-label {
+    @apply text-[11px] font-semibold text-slate-400 uppercase tracking-widest;
+  }
+
+  /* ── Stat Number ── */
+  .stat-number {
+    @apply text-4xl font-bold text-slate-900 tracking-tight leading-none;
+  }
+
+  /* ── Stat Sub Text ── */
+  .stat-sub {
+    @apply text-sm text-slate-500 font-medium mt-1;
+  }
+
+  /* ── Attention Item (Linear style left-border card) ── */
+  .attention-card {
+    @apply bg-white border border-slate-200 rounded-xl p-4 cursor-pointer
+           hover:shadow-sm hover:border-slate-300 transition-all duration-150;
+  }
+
+  /* ── Gradient utilities for Auth/Marketing pages ── */
+  .gradient-button {
+    background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.28);
+  }
+
+  .gold-glow-subtle {
+    filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.22));
+  }
+
+  .quantum-gradient {
+    background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+  }
+
+  .hero-title-weight {
+    font-weight: 900;
+    letter-spacing: -0.035em;
+  }
+
+  .pill-active {
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+  }
+
   .glass-gold {
     background: rgba(212, 175, 55, 0.06);
     backdrop-filter: blur(20px);
@@ -72,43 +120,42 @@
     border: 1px solid rgba(212, 175, 55, 0.35);
     box-shadow: 0 8px 32px rgba(212, 175, 55, 0.06);
   }
-  
-  .gradient-button {
-    background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.28);
-  }
-  
-  .gold-glow-subtle {
-    filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.22));
-  }
-  
-  .quantum-gradient {
-    background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
-  }
-  
-  .hero-title-weight {
-    font-weight: 900;
-    letter-spacing: -0.035em;
-  }
-  
-  .pill-active {
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
-  }
 
-  /* Responsive image scaling */
   .responsive-container {
     width: 100%;
     max-width: 100vw;
     overflow-x: hidden;
   }
 
-  /* Hide scrollbars cleanly */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  /* ── Safe area padding for mobile ── */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+}
+
+/* ── Global Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+/* ── Prevent horizontal overflow at page level ── */
+#root {
+  overflow-x: hidden;
+  width: 100%;
 }

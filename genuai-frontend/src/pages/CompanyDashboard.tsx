@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+﻿import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import {
   LayoutDashboard,
@@ -472,9 +472,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       toasts={toasts}
       onDismissToast={removeToast}
     >
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           1. MAIN DASHBOARD OVERVIEW (VERTICALLY SPACIOUS)
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {activeTab === "overview" && (
         <div className="space-y-8 animate-[fadeIn_0.2s_ease]">
           
@@ -791,153 +791,132 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 </div>
               </div>
 
+
               <div
                 onClick={() => setActiveTab("assessments")}
-                className="p-5 rounded-2xl bg-rose-50/70 border border-rose-200/90 hover:bg-rose-100/60 transition-all cursor-pointer flex flex-col justify-between space-y-3"
+                className="attention-card border-l-2 border-l-rose-400 flex flex-col gap-2"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-rose-700">Proctoring Telemetry</span>
-                    <span className="w-2 h-2 rounded-full bg-rose-600" />
-                  </div>
-                  <div className="text-base font-black text-rose-950">{todayActions.verificationRequired} integrity signals</div>
-                  <div className="text-xs text-rose-800/80 leading-relaxed mt-1">Review face match and liveness signals</div>
+                <div className="flex items-center justify-between">
+                  <span className="stat-label text-rose-500">Proctoring</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-rose-400" />
                 </div>
-                <div className="flex items-center text-xs font-bold text-rose-900 gap-1 pt-1">
-                  <span>Verify Signals</span> <ChevronRight className="w-3.5 h-3.5" />
+                <div className="text-base font-bold text-slate-900">{todayActions.verificationRequired} integrity signal{todayActions.verificationRequired !== 1 ? "s" : ""}</div>
+                <div className="text-xs text-slate-500">Face match &amp; liveness review</div>
+                <div className="flex items-center gap-1 text-xs font-semibold text-rose-600 mt-auto pt-1">
+                  Verify Signals <ChevronRight className="w-3.5 h-3.5" />
                 </div>
               </div>
 
             </div>
           </div>
 
-          {/* TIER 4: VISUAL INTERACTIVE RECRUITMENT PIPELINE FUNNEL */}
-          <div className="bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ PIPELINE FUNNEL Ã¢â€â‚¬Ã¢â€â‚¬ */}
+          <div className="dash-card p-5 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-5">
               <div>
-                <h3 className="text-sm font-black text-on-surface">Recruitment Pipeline Funnel</h3>
-                <p className="text-xs text-on-surface-variant">Real-time candidate progression and stage conversion drop-offs</p>
+                <p className="stat-label mb-0.5">Recruitment Pipeline</p>
+                <p className="text-sm font-semibold text-slate-900">Candidate stage progression</p>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveTab("pipeline")}
-                className="text-xs font-bold text-indigo-brand hover:text-indigo-brand-dark cursor-pointer flex items-center gap-1.5"
+                className="text-xs font-semibold text-indigo-brand hover:underline cursor-pointer flex items-center gap-1"
               >
-                <span>Interactive Board View</span>
-                <ChevronRight className="w-4 h-4" />
+                Full Board View <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-3">
+            <div className="space-y-2">
               {PIPELINE_STAGES.map((stg) => {
                 const count = (pipeline as any)[stg.key] || 0;
-                const percent = Math.min(100, Math.round((count / Math.max(1, pipeline.applied || 1)) * 100));
+                const total = pipeline.applied || 1;
+                const pct   = Math.min(100, Math.round((count / total) * 100));
                 return (
-                  <div
+                  <button
                     key={stg.key}
-                    onClick={() => {
-                      setActiveTab("candidates");
-                      setPipelineFilterStage(stg.key);
-                    }}
-                    className="p-3.5 rounded-2xl bg-surface-bright/70 border border-surface-container/70 hover:border-indigo-brand hover:shadow-xs transition-all cursor-pointer text-center space-y-2 group"
+                    type="button"
+                    onClick={() => { setActiveTab("candidates"); setPipelineFilterStage(stg.key); }}
+                    className="w-full flex items-center gap-3 sm:gap-4 group cursor-pointer"
                   >
-                    <div className="text-[10px] font-extrabold text-on-surface-variant uppercase tracking-wider truncate">
+                    <div className="w-32 sm:w-40 text-right text-[11px] font-medium text-slate-500 group-hover:text-slate-700 transition-colors shrink-0 truncate">
                       {stg.label}
                     </div>
-                    <div className="text-xl font-black text-on-surface group-hover:text-indigo-brand transition-colors">
-                      {count}
+                    <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="h-2 rounded-full bg-indigo-brand transition-all duration-500"
+                        style={{ width: `${pct}%` }}
+                      />
                     </div>
-                    <div className="space-y-1">
-                      <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
-                        <div
-                          className="bg-indigo-brand h-1.5 rounded-full transition-all duration-500"
-                          style={{ width: `${percent}%` }}
-                        />
-                      </div>
-                      <div className="text-[9px] text-on-surface-variant font-mono">
-                        {percent}% pool
-                      </div>
-                    </div>
-                  </div>
+                    <div className="w-8 text-xs font-bold text-slate-900 shrink-0 text-right">{count}</div>
+                    <div className="w-10 text-[10px] text-slate-400 shrink-0 hidden sm:block">{pct}%</div>
+                  </button>
                 );
               })}
             </div>
           </div>
 
-          {/* TIER 5: TWO-COLUMN POWER GRID (ACTIVE JOBS & UPCOMING INTERVIEWS) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Left: Active Jobs & Applicants (7 Cols) */}
-            <div className="lg:col-span-7 bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-5">
-              <div className="flex items-center justify-between">
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ 2-COL: ACTIVE JOBS + UPCOMING INTERVIEWS Ã¢â€â‚¬Ã¢â€â‚¬ */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
+
+            {/* Active Jobs Ã¢â‚¬â€ 3 cols */}
+            <div className="lg:col-span-3 dash-card p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-sm font-black text-on-surface">Active Job Openings</h3>
-                  <p className="text-xs text-on-surface-variant">Live openings and applicant counts</p>
+                  <p className="stat-label mb-0.5">Openings</p>
+                  <p className="text-sm font-semibold text-slate-900">Active Job Posts</p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setJobWizardStep(1);
-                    setShowJobWizard(true);
-                  }}
-                  className="text-xs font-bold text-indigo-brand hover:text-indigo-brand-dark cursor-pointer flex items-center gap-1"
+                  onClick={() => { setJobWizardStep(1); setShowJobWizard(true); }}
+                  className="flex items-center gap-1 text-xs font-semibold text-indigo-brand hover:text-indigo-brand-dark cursor-pointer"
                 >
-                  <Plus className="w-4 h-4" /> Post Job
+                  <Plus className="w-3.5 h-3.5" /> Post Job
                 </button>
               </div>
 
               {jobs.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {jobs.slice(0, 4).map((job) => (
                     <div
                       key={job.id}
-                      className="p-4 rounded-2xl bg-surface-bright/60 border border-surface-container/70 flex flex-wrap items-center justify-between gap-3 hover:bg-surface-bright transition-all"
+                      className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors"
                     >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-xs sm:text-sm font-bold text-on-surface">{job.title}</h4>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-semibold text-slate-900 truncate">{job.title}</span>
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
                             {job.status || "Active"}
                           </span>
                         </div>
-                        <div className="text-[11px] text-on-surface-variant">
-                          {job.department || "Engineering"} • {job.location || "Remote"} • {job.employment_type || "Full-time"}
+                        <div className="text-xs text-slate-400 mt-0.5 truncate">
+                          {job.department || "Engineering"} Ã‚Â· {job.location || "Remote"} Ã‚Â· {job.employment_type || "Full-time"}
                         </div>
                       </div>
-
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 shrink-0">
                         <div className="text-right">
-                          <div className="text-xs font-black text-indigo-brand">{job.applicants_count || 0}</div>
-                          <div className="text-[9px] text-on-surface-variant font-bold uppercase">Applicants</div>
+                          <div className="text-sm font-bold text-indigo-brand">{job.applicants_count || 0}</div>
+                          <div className="text-[9px] text-slate-400 uppercase font-semibold">applicants</div>
                         </div>
                         <button
                           type="button"
-                          onClick={() => {
-                            setActiveTab("candidates");
-                            setSearchQuery(job.title);
-                          }}
-                          className="px-3.5 py-1.5 bg-indigo-brand/10 hover:bg-indigo-brand/20 text-indigo-brand rounded-xl font-bold text-xs cursor-pointer transition-colors"
+                          onClick={() => { setActiveTab("candidates"); setSearchQuery(job.title); }}
+                          className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-brand border border-indigo-100 rounded-lg font-semibold text-xs cursor-pointer transition-colors"
                         >
-                          View Pool →
+                          View Ã¢â€ â€™
                         </button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-8 rounded-2xl bg-surface-bright/50 border border-dashed border-surface-container text-center space-y-3">
-                  <Briefcase className="w-8 h-8 text-on-surface-variant/40 mx-auto" />
-                  <div className="text-xs font-bold text-on-surface">No active job postings</div>
-                  <p className="text-[11px] text-on-surface-variant max-w-xs mx-auto">
-                    Publish your job posting using the 6-step wizard to begin receiving verified candidates.
-                  </p>
+                <div className="py-10 text-center space-y-2 border border-dashed border-slate-300 rounded-xl">
+                  <Briefcase className="w-7 h-7 text-slate-300 mx-auto" />
+                  <div className="text-sm font-semibold text-slate-700">No active job postings</div>
+                  <p className="text-xs text-slate-400 max-w-xs mx-auto">Post your first job to start receiving verified candidates</p>
                   <button
                     type="button"
-                    onClick={() => {
-                      setJobWizardStep(1);
-                      setShowJobWizard(true);
-                    }}
-                    className="px-4 py-2 bg-indigo-brand text-white font-bold rounded-xl text-xs cursor-pointer shadow-xs"
+                    onClick={() => { setJobWizardStep(1); setShowJobWizard(true); }}
+                    className="mt-2 px-4 py-2 bg-indigo-brand text-white font-semibold rounded-lg text-xs cursor-pointer shadow-sm"
                   >
                     Post First Job
                   </button>
@@ -945,52 +924,43 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               )}
             </div>
 
-            {/* Right: Upcoming Interviews & Live Room Access (5 Cols) */}
-            <div className="lg:col-span-5 bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-5">
-              <div className="flex items-center justify-between">
+            {/* Upcoming Interviews Ã¢â‚¬â€ 2 cols */}
+            <div className="lg:col-span-2 dash-card p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-sm font-black text-on-surface">Upcoming Interviews</h3>
-                  <p className="text-xs text-on-surface-variant">Scheduled rounds with direct room links</p>
+                  <p className="stat-label mb-0.5">Schedule</p>
+                  <p className="text-sm font-semibold text-slate-900">Upcoming Interviews</p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (candidates.length > 0) setShowScheduleModal(candidates[0]);
-                    else setActiveTab("interviews");
-                  }}
-                  className="text-xs font-bold text-purple-600 hover:text-purple-700 cursor-pointer flex items-center gap-1"
+                  onClick={() => { if (candidates.length > 0) setShowScheduleModal(candidates[0]); else setActiveTab("interviews"); }}
+                  className="flex items-center gap-1 text-xs font-semibold text-purple-600 hover:text-purple-700 cursor-pointer"
                 >
-                  <Plus className="w-4 h-4" /> Schedule
+                  <Plus className="w-3.5 h-3.5" /> Schedule
                 </button>
               </div>
 
               {interviews.length > 0 ? (
                 <div className="space-y-3">
                   {interviews.slice(0, 3).map((iv) => (
-                    <div
-                      key={iv.id}
-                      className="p-4 rounded-2xl bg-surface-bright/60 border border-surface-container/70 space-y-3"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs">
-                            {iv.candidate_name?.charAt(0) || "C"}
-                          </div>
-                          <div>
-                            <div className="text-xs font-bold text-on-surface">{iv.candidate_name}</div>
-                            <div className="text-[10px] text-on-surface-variant">{iv.job_title || "Software Engineer"}</div>
-                          </div>
+                    <div key={iv.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs shrink-0">
+                          {iv.candidate_name?.charAt(0) || "C"}
                         </div>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold text-slate-900 truncate">{iv.candidate_name}</div>
+                          <div className="text-[11px] text-slate-400 truncate">{iv.job_title || "Software Engineer"}</div>
+                        </div>
+                        <span className="ml-auto text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 shrink-0">
                           {iv.interview_type || "Technical"}
                         </span>
                       </div>
-
-                      <div className="flex items-center justify-between text-xs bg-white p-2.5 rounded-xl border border-surface-container">
-                        <div className="flex items-center gap-1.5 text-on-surface-variant">
+                      <div className="flex items-center justify-between bg-white rounded-lg border border-slate-200 px-3 py-2">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500">
                           <Clock className="w-3.5 h-3.5 text-indigo-brand" />
-                          <span className="font-mono font-semibold">
-                            {new Date(iv.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          <span className="font-mono font-semibold text-slate-800">
+                            {new Date(iv.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                           </span>
                         </div>
                         {iv.meeting_link ? (
@@ -998,15 +968,15 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                             href={iv.meeting_link}
                             target="_blank"
                             rel="noreferrer"
-                            className="px-3 py-1 bg-indigo-brand text-white font-bold rounded-lg text-xs hover:bg-indigo-brand-dark flex items-center gap-1 shadow-2xs"
+                            className="flex items-center gap-1 px-2.5 py-1 bg-indigo-brand text-white font-semibold rounded-lg text-xs hover:bg-indigo-brand-dark shadow-sm"
                           >
-                            <Video className="w-3.5 h-3.5" /> Join Room
+                            <Video className="w-3 h-3" /> Join
                           </a>
                         ) : (
                           <button
                             type="button"
                             onClick={() => setShowScorecardModal(iv)}
-                            className="text-xs font-bold text-indigo-brand hover:underline"
+                            className="text-xs font-semibold text-indigo-brand hover:underline cursor-pointer"
                           >
                             Scorecard
                           </button>
@@ -1016,70 +986,75 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   ))}
                 </div>
               ) : (
-                <div className="p-8 rounded-2xl bg-surface-bright/50 border border-dashed border-surface-container text-center space-y-2">
-                  <Calendar className="w-7 h-7 text-on-surface-variant/40 mx-auto" />
-                  <div className="text-xs font-bold text-on-surface">No upcoming interviews today</div>
-                  <p className="text-[11px] text-on-surface-variant">Schedule rounds with candidates to see live rooms.</p>
+                <div className="py-10 text-center space-y-2 border border-dashed border-slate-300 rounded-xl">
+                  <Calendar className="w-7 h-7 text-slate-300 mx-auto" />
+                  <div className="text-sm font-semibold text-slate-700">No interviews today</div>
+                  <p className="text-xs text-slate-400">Schedule rounds with candidates to see rooms here</p>
                 </div>
               )}
             </div>
 
           </div>
 
-          {/* TIER 6: LIVE ACTIVITY STREAM & CANDIDATE PERFORMANCE BENCHMARKS */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Left: Live Activity Feed (5 Cols) */}
-            <div className="lg:col-span-5 bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-4">
-              <div className="flex items-center justify-between">
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ 2-COL: ACTIVITY + PERFORMANCE BENCHMARKS Ã¢â€â‚¬Ã¢â€â‚¬ */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
+
+            {/* Live Activity Ã¢â‚¬â€ 2 cols */}
+            <div className="lg:col-span-2 dash-card p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-sm font-black text-on-surface">Live Activity Stream</h3>
-                  <p className="text-xs text-on-surface-variant">Real-time candidate submissions &amp; evaluations</p>
+                  <p className="stat-label mb-0.5">Activity</p>
+                  <p className="text-sm font-semibold text-slate-900">Live Feed</p>
                 </div>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
 
-              <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+              <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1 no-scrollbar">
                 {activityFeed.length > 0 ? (
                   activityFeed.slice(0, 6).map((act: any, i: number) => (
-                    <div key={i} className="p-3 rounded-2xl bg-surface-bright/60 border border-surface-container/60 text-xs space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-on-surface">{act.name || "Candidate"}</span>
-                        <span className="text-[10px] text-on-surface-variant font-mono">
-                          {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <div key={i} className="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-semibold text-slate-900 truncate">{act.name || "Candidate"}</span>
+                        <span className="text-[10px] text-slate-400 font-mono shrink-0">
+                          {new Date(act.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         </span>
                       </div>
-                      <p className="text-[11px] text-on-surface-variant leading-relaxed">
-                        Completed assessment for <span className="font-semibold text-on-surface">{act.role || "Role"}</span> (Score: <span className="font-bold text-indigo-brand">{act.overall_score || 82}%</span>)
+                      <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                        Completed assessment Ã‚Â· Score: <span className="font-bold text-indigo-brand">{act.overall_score || 82}%</span>
                       </p>
                     </div>
                   ))
                 ) : (
-                  <div className="py-8 text-center text-xs text-on-surface-variant">No recent activity.</div>
+                  <div className="py-8 text-center text-xs text-slate-400">No recent activity</div>
                 )}
               </div>
             </div>
 
-            {/* Right: Performance Benchmark Breakdown (7 Cols) */}
-            <div className="lg:col-span-7 bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-4">
-              <div>
-                <h3 className="text-sm font-black text-on-surface">Candidate Cohort Benchmark Breakdown</h3>
-                <p className="text-xs text-on-surface-variant">Average skill distribution across active applications</p>
+            {/* Performance Benchmarks Ã¢â‚¬â€ 3 cols */}
+            <div className="lg:col-span-3 dash-card p-5 sm:p-6">
+              <div className="mb-4">
+                <p className="stat-label mb-0.5">Performance</p>
+                <p className="text-sm font-semibold text-slate-900">Cohort Benchmark Breakdown</p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-center">
+              <div className="space-y-2.5">
                 {[
-                  { label: "Overall Score", score: performanceAverages.avg_overall || 78, color: "text-indigo-brand" },
-                  { label: "Coding & Logic", score: performanceAverages.avg_coding || 85, color: "text-blue-600" },
-                  { label: "Aptitude Domain", score: performanceAverages.avg_technical || 82, color: "text-cyan-600" },
-                  { label: "SVAR Verbal", score: performanceAverages.avg_communication || 76, color: "text-amber-600" },
-                  { label: "AI Interview", score: performanceAverages.avg_interview || 80, color: "text-purple-600" },
-                  { label: "ATS Resume", score: performanceAverages.avg_ats || 79, color: "text-emerald-600" },
-                ].map((bench, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-surface-bright/70 border border-surface-container/70 space-y-1">
-                    <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">{bench.label}</div>
-                    <div className={`text-2xl font-black ${bench.color}`}>{bench.score}%</div>
-                    <div className="text-[10px] text-on-surface-variant">Cohort average</div>
+                  { label: "Overall Score",   score: performanceAverages.avg_overall      || 78 },
+                  { label: "Coding & Logic",  score: performanceAverages.avg_coding       || 85 },
+                  { label: "Aptitude Domain", score: performanceAverages.avg_technical    || 82 },
+                  { label: "SVAR Verbal",     score: performanceAverages.avg_communication|| 76 },
+                  { label: "AI Interview",    score: performanceAverages.avg_interview    || 80 },
+                  { label: "ATS Resume",      score: performanceAverages.avg_ats          || 79 },
+                ].map((b, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-28 text-xs font-medium text-slate-500 shrink-0 truncate">{b.label}</div>
+                    <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="h-1.5 rounded-full bg-indigo-brand transition-all duration-700"
+                        style={{ width: `${b.score}%` }}
+                      />
+                    </div>
+                    <div className="w-10 text-xs font-bold text-slate-900 text-right shrink-0">{b.score}%</div>
                   </div>
                 ))}
               </div>
@@ -1087,79 +1062,75 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
 
           </div>
 
-          {/* TIER 7: RECENT CANDIDATE APPLICATIONS TABLE */}
-          <div className="bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-4">
-            <div className="flex items-center justify-between">
+          {/* Ã¢â€â‚¬Ã¢â€â‚¬ RECENT CANDIDATES TABLE Ã¢â€â‚¬Ã¢â€â‚¬ */}
+          <div className="dash-card overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-5 sm:px-6 py-4 border-b border-slate-200">
               <div>
-                <h3 className="text-sm font-black text-on-surface">Recent Candidate Submissions</h3>
-                <p className="text-xs text-on-surface-variant">Candidates ready for evaluation, shortlisting, or scheduling</p>
+                <p className="stat-label mb-0.5">Candidates</p>
+                <p className="text-sm font-semibold text-slate-900">Recent Submissions</p>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveTab("candidates")}
-                className="text-xs font-bold text-indigo-brand hover:underline cursor-pointer"
+                className="text-xs font-semibold text-indigo-brand hover:underline cursor-pointer"
               >
-                View Complete Directory ({candidates.length}) →
+                View all ({candidates.length}) Ã¢â€ â€™
               </button>
             </div>
 
             {candidates.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-surface-bright/80 border-b border-surface-container text-on-surface font-bold uppercase tracking-wider text-[10px]">
-                    <tr>
-                      <th className="p-4">Candidate</th>
-                      <th className="p-4">Target Role</th>
-                      <th className="p-4">Overall Score</th>
-                      <th className="p-4">Integrity Signals</th>
-                      <th className="p-4">Verdict Status</th>
-                      <th className="p-4 text-right">Actions</th>
+                <table className="w-full text-left min-w-[600px]">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200">
+                      {["Candidate", "Role", "Score", "Integrity", "Status", ""].map((h, i) => (
+                        <th key={i} className="px-4 sm:px-6 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">
+                          {h}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-surface-container/50">
+                  <tbody className="divide-y divide-slate-100">
                     {candidates.slice(0, 5).map((c) => (
-                      <tr key={c.id} className="hover:bg-surface-bright/50 transition-colors">
-                        <td className="p-4 font-bold text-on-surface">
+                      <tr key={c.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="px-4 sm:px-6 py-3.5">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center font-bold text-xs">
+                            <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-brand flex items-center justify-center font-bold text-xs shrink-0">
                               {c.name?.charAt(0) || "C"}
                             </div>
                             <div>
-                              <div>{c.name}</div>
-                              <div className="text-[10px] text-on-surface-variant font-normal">{c.email}</div>
+                              <div className="text-sm font-semibold text-slate-900">{c.name}</div>
+                              <div className="text-[11px] text-slate-400">{c.email}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="p-4 text-on-surface-variant font-medium">{c.role || "Software Engineer"}</td>
-                        <td className="p-4 font-black text-indigo-brand text-sm">{c.overall_score ?? "—"}%</td>
-                        <td className="p-4">
-                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1 w-fit">
+                        <td className="px-4 sm:px-6 py-3.5 text-sm text-slate-600 whitespace-nowrap">{c.role || "Software Engineer"}</td>
+                        <td className="px-4 sm:px-6 py-3.5">
+                          <span className="text-sm font-bold text-indigo-brand">{c.overall_score ?? "Ã¢â‚¬â€"}%</span>
+                        </td>
+                        <td className="px-4 sm:px-6 py-3.5">
+                          <span className="flex items-center gap-1 w-fit text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                             <ShieldCheck className="w-3 h-3" />
                             {c.triangle_status || "Verified"}
                           </span>
                         </td>
-                        <td className="p-4">
-                          <span
-                            className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                              c.verdict === "HIRE"
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                : c.verdict === "SHORTLIST"
-                                ? "bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20"
-                                : c.verdict === "REJECT"
-                                ? "bg-rose-50 text-rose-700 border border-rose-200"
-                                : "bg-surface-container text-on-surface-variant"
-                            }`}
-                          >
+                        <td className="px-4 sm:px-6 py-3.5">
+                          <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
+                            c.verdict === "HIRE"      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : c.verdict === "SHORTLIST" ? "bg-indigo-50 text-indigo-brand border-indigo-100"
+                            : c.verdict === "REJECT"    ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : "bg-slate-100 text-slate-500 border-slate-200"
+                          }`}>
                             {c.verdict || "Under Review"}
                           </span>
                         </td>
-                        <td className="p-4 text-right space-x-2">
+                        <td className="px-4 sm:px-6 py-3.5 text-right">
                           <button
                             type="button"
                             onClick={() => setSelectedCandidate(c)}
-                            className="px-3 py-1.5 bg-indigo-brand/10 hover:bg-indigo-brand/20 text-indigo-brand font-bold text-xs rounded-xl cursor-pointer transition-colors"
+                            className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-xs rounded-lg cursor-pointer transition-colors"
                           >
-                            View Report
+                            View Ã¢â€ â€™
                           </button>
                         </td>
                       </tr>
@@ -1168,8 +1139,8 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 </table>
               </div>
             ) : (
-              <div className="p-8 text-center text-xs text-on-surface-variant">
-                No candidates available yet. Post a job opening to start receiving applicants.
+              <div className="py-12 text-center text-sm text-slate-400">
+                No candidates yet. Post a job to start receiving applicants.
               </div>
             )}
           </div>
@@ -1177,9 +1148,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           TAB: RECRUITMENT PIPELINE
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {activeTab === "pipeline" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs flex flex-wrap items-center justify-between gap-3">
@@ -1192,7 +1163,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               onClick={() => setActiveTab("candidates")}
               className="px-4 py-2 bg-surface-bright hover:bg-surface-container text-on-surface font-bold text-xs rounded-xl border border-surface-container cursor-pointer"
             >
-              Table Directory →
+              Table Directory Ã¢â€ â€™
             </button>
           </div>
 
@@ -1224,9 +1195,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           TAB: JOBS MANAGEMENT
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {activeTab === "jobs" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
@@ -1284,7 +1255,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                             }}
                             className="text-indigo-brand hover:underline font-bold text-xs cursor-pointer"
                           >
-                            View Candidates →
+                            View Candidates Ã¢â€ â€™
                           </button>
                         </td>
                       </tr>
@@ -1315,9 +1286,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           TAB: CANDIDATES MANAGEMENT
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {activeTab === "candidates" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
@@ -1372,9 +1343,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                           </div>
                         </td>
                         <td className="p-4 text-on-surface-variant">{c.role || "Software Engineer"}</td>
-                        <td className="p-4 font-black text-indigo-brand text-sm">{c.overall_score ?? "—"}%</td>
-                        <td className="p-4 font-bold text-on-surface">{c.test_score ?? "—"}%</td>
-                        <td className="p-4 font-bold text-on-surface">{c.interview_score ?? "—"}%</td>
+                        <td className="p-4 font-black text-indigo-brand text-sm">{c.overall_score ?? "Ã¢â‚¬â€"}%</td>
+                        <td className="p-4 font-bold text-on-surface">{c.test_score ?? "Ã¢â‚¬â€"}%</td>
+                        <td className="p-4 font-bold text-on-surface">{c.interview_score ?? "Ã¢â‚¬â€"}%</td>
                         <td className="p-4">
                           <span
                             className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
@@ -1426,9 +1397,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           TAB: INTERVIEWS
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {activeTab === "interviews" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="flex items-center justify-between bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
@@ -1505,9 +1476,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           TAB: ASSESSMENTS
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {activeTab === "assessments" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
@@ -1525,7 +1496,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                       <p className="text-[11px] text-on-surface-variant">{a.role || "Software Engineer"}</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-base font-black text-indigo-brand">{a.overall_score ?? "—"}%</div>
+                      <div className="text-base font-black text-indigo-brand">{a.overall_score ?? "Ã¢â‚¬â€"}%</div>
                       <span className="text-[9px] font-bold text-on-surface-variant uppercase">Overall</span>
                     </div>
                   </div>
@@ -1533,15 +1504,15 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   <div className="grid grid-cols-3 gap-2.5 text-center text-xs">
                     <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container/60">
                       <div className="text-[10px] text-on-surface-variant font-bold">ATS Resume</div>
-                      <div className="font-bold text-on-surface">{a.ats_score ?? "—"}%</div>
+                      <div className="font-bold text-on-surface">{a.ats_score ?? "Ã¢â‚¬â€"}%</div>
                     </div>
                     <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container/60">
                       <div className="text-[10px] text-on-surface-variant font-bold">Coding Test</div>
-                      <div className="font-bold text-on-surface">{a.test_score ?? "—"}%</div>
+                      <div className="font-bold text-on-surface">{a.test_score ?? "Ã¢â‚¬â€"}%</div>
                     </div>
                     <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container/60">
                       <div className="text-[10px] text-on-surface-variant font-bold">AI Interview</div>
-                      <div className="font-bold text-on-surface">{a.interview_score ?? "—"}%</div>
+                      <div className="font-bold text-on-surface">{a.interview_score ?? "Ã¢â‚¬â€"}%</div>
                     </div>
                   </div>
 
@@ -1555,7 +1526,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                       onClick={() => setSelectedCandidate(a)}
                       className="text-xs font-bold text-indigo-brand hover:underline cursor-pointer"
                     >
-                      View Full Breakdown →
+                      View Full Breakdown Ã¢â€ â€™
                     </button>
                   </div>
                 </div>
@@ -1573,9 +1544,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           TAB: ANALYTICS, PROFILE, SETTINGS
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {activeTab === "analytics" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
@@ -1667,9 +1638,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           6-STEP JOB CREATION FLOW WIZARD MODAL
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {showJobWizard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
           <div className="bg-white max-w-xl w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-6 animate-[scaleUp_0.2s_ease]">
@@ -1813,7 +1784,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               <div className="space-y-3 text-xs">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-on-surface mb-1 block">Min Salary (Annual ₹)</label>
+                    <label className="font-bold text-on-surface mb-1 block">Min Salary (Annual Ã¢â€šÂ¹)</label>
                     <input
                       type="number"
                       placeholder="800000"
@@ -1823,7 +1794,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     />
                   </div>
                   <div>
-                    <label className="font-bold text-on-surface mb-1 block">Max Salary (Annual ₹)</label>
+                    <label className="font-bold text-on-surface mb-1 block">Max Salary (Annual Ã¢â€šÂ¹)</label>
                     <input
                       type="number"
                       placeholder="1800000"
@@ -1859,7 +1830,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               <div className="space-y-3 text-xs bg-surface-bright/80 p-5 rounded-2xl border border-surface-container">
                 <div className="font-bold text-sm text-on-surface">{jobWizardForm.title}</div>
                 <div className="text-on-surface-variant font-medium">
-                  {jobWizardForm.department} • {jobWizardForm.location} • {jobWizardForm.employment_type}
+                  {jobWizardForm.department} Ã¢â‚¬Â¢ {jobWizardForm.location} Ã¢â‚¬Â¢ {jobWizardForm.employment_type}
                 </div>
                 <div className="text-[11px] text-on-surface-variant leading-relaxed">{jobWizardForm.description}</div>
               </div>
@@ -1899,9 +1870,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           STRUCTURED INTERVIEW SCORECARD MODAL
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {showScorecardModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
           <div className="bg-white max-w-lg w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-5">
@@ -2012,9 +1983,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           SCHEDULE INTERVIEW MODAL
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {showScheduleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
           <div className="bg-white max-w-md w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-5">
@@ -2085,9 +2056,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* ─────────────────────────────────────────────
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           CANDIDATE DETAIL DRAWER MODAL
-      ───────────────────────────────────────────── */}
+      Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       {selectedCandidate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
           <div className="bg-white max-w-2xl w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-6 animate-[scaleUp_0.2s_ease] max-h-[90vh] overflow-y-auto">
@@ -2134,19 +2105,19 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container">
                     <div className="text-[10px] text-on-surface-variant uppercase font-bold">Overall Score</div>
-                    <div className="text-xl font-black text-indigo-brand">{selectedCandidate.overall_score ?? "—"}%</div>
+                    <div className="text-xl font-black text-indigo-brand">{selectedCandidate.overall_score ?? "Ã¢â‚¬â€"}%</div>
                   </div>
                   <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container">
                     <div className="text-[10px] text-on-surface-variant uppercase font-bold">ATS Score</div>
-                    <div className="text-xl font-black text-on-surface">{selectedCandidate.ats_score ?? "—"}%</div>
+                    <div className="text-xl font-black text-on-surface">{selectedCandidate.ats_score ?? "Ã¢â‚¬â€"}%</div>
                   </div>
                   <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container">
                     <div className="text-[10px] text-on-surface-variant uppercase font-bold">Coding Test</div>
-                    <div className="text-xl font-black text-on-surface">{selectedCandidate.test_score ?? "—"}%</div>
+                    <div className="text-xl font-black text-on-surface">{selectedCandidate.test_score ?? "Ã¢â‚¬â€"}%</div>
                   </div>
                   <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container">
                     <div className="text-[10px] text-on-surface-variant uppercase font-bold">AI Interview</div>
-                    <div className="text-xl font-black text-on-surface">{selectedCandidate.interview_score ?? "—"}%</div>
+                    <div className="text-xl font-black text-on-surface">{selectedCandidate.interview_score ?? "Ã¢â‚¬â€"}%</div>
                   </div>
                 </div>
 
@@ -2154,8 +2125,8 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   <div className="font-bold text-on-surface">Candidate Contact &amp; Background</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-on-surface-variant">
                     <div><span className="font-semibold text-on-surface">Email:</span> {selectedCandidate.email}</div>
-                    <div><span className="font-semibold text-on-surface">Phone:</span> {selectedCandidate.phone || "—"}</div>
-                    <div><span className="font-semibold text-on-surface">College / Univ:</span> {selectedCandidate.college || "—"}</div>
+                    <div><span className="font-semibold text-on-surface">Phone:</span> {selectedCandidate.phone || "Ã¢â‚¬â€"}</div>
+                    <div><span className="font-semibold text-on-surface">College / Univ:</span> {selectedCandidate.college || "Ã¢â‚¬â€"}</div>
                     <div><span className="font-semibold text-on-surface">Verdict Status:</span> {selectedCandidate.verdict || "Pending Review"}</div>
                   </div>
                 </div>
@@ -2251,3 +2222,4 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
     </DashboardLayout>
   );
 }
+
