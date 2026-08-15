@@ -125,10 +125,10 @@ export default function DashboardLayout({
         ))}
       </div>
 
-      {/* ── DESKTOP FIXED SIDEBAR ── */}
+      {/* ── DESKTOP FIXED SIDEBAR (EXPANDED FULL HEIGHT) ── */}
       <aside
-        className={`hidden lg:flex flex-col border-r border-surface-container/80 bg-white/90 backdrop-blur-xl transition-all duration-300 z-30 sticky top-0 h-screen shrink-0 ${
-          sidebarCollapsed ? "w-[80px]" : "w-[260px]"
+        className={`hidden lg:flex flex-col border-r border-surface-container/80 bg-white/95 backdrop-blur-2xl transition-all duration-300 z-30 sticky top-0 h-screen shrink-0 shadow-2xs ${
+          sidebarCollapsed ? "w-[88px]" : "w-[288px]"
         }`}
       >
         {/* Brand Header */}
