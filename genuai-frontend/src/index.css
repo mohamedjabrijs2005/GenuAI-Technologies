@@ -102,4 +102,13 @@
     max-width: 100vw;
     overflow-x: hidden;
   }
+
+  /* Hide scrollbars cleanly */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
