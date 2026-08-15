@@ -112,7 +112,7 @@ Instructions:
       <div className="flex-1 flex overflow-hidden flex-col md:flex-row">
         
         {/* Left Pane - Form */}
-        <div className="w-full md:w-[35%] md:min-w-[400px] md:max-w-[550px] glass border-r border-surface-container flex flex-col overflow-hidden shadow-md z-10">
+        <div className="w-full md:w-[35%] md:min-w-[300px] lg:min-w-[380px] md:max-w-[550px] glass border-r border-surface-container flex flex-col overflow-hidden shadow-md z-10">
           <div className="flex-1 overflow-y-auto p-lg md:p-xl space-y-md">
             
             <h2 className="text-title-sm font-black text-on-surface border-b border-surface-container pb-xs mb-sm">1. Headers & Details</h2>

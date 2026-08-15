@@ -120,7 +120,7 @@ ${jobDescription}
       <div className="flex-1 flex overflow-hidden flex-col md:flex-row">
         
         {/* Left Side: Input */}
-        <div className="w-full md:w-[45%] md:min-w-[400px] glass border-r border-surface-container flex flex-col p-lg md:p-xl overflow-y-auto">
+        <div className="w-full md:w-[45%] md:min-w-[300px] lg:min-w-[380px] glass border-r border-surface-container flex flex-col p-lg md:p-xl overflow-y-auto">
           <h2 className="text-title-md font-black text-on-surface mb-xs">Input Details</h2>
           <p className="text-sm font-medium text-on-surface-variant mb-xl">Paste your resume content and the target job description to see how an ATS will score you.</p>
           
