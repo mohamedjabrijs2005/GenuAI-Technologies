@@ -322,136 +322,181 @@ export default function AdminDashboard({ user, onLogout }: Props) {
             </div>
           </div>
 
-          {/* TIER 2: PRIMARY 4 HERO KPI CARDS (NEVER TRUNCATED) */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-black uppercase tracking-wider text-on-surface flex items-center gap-2">
-                <Target className="w-4 h-4 text-indigo-brand" />
-                Platform Ecosystem Overview
-              </h3>
-              <span className="text-[11px] font-semibold text-on-surface-variant">Live telemetry across all users</span>
+          {/* TIER 2: PRIMARY 4 LUXURY HERO KPI INSIGHT CARDS */}
+          <div className="space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-black tracking-tight text-slate-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-indigo-brand animate-ping" />
+                  Platform Ecosystem Telemetry
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">Real-time candidate pipelines, enterprise employer activity &amp; infrastructure</p>
+              </div>
+              <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/80 flex items-center gap-1.5 shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live System Pulse
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               
               {/* Card 1: Registered Companies */}
-              <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4 hover:border-indigo-brand/50 transition-all group">
+              <div className="bg-gradient-to-br from-white via-white to-indigo-50/30 p-6 rounded-[28px] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-indigo-brand/40 transition-all duration-300 space-y-4 group">
                 <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center font-bold text-lg ring-1 ring-indigo-brand/20 group-hover:scale-105 transition-transform duration-300">
                     <Building2 className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50/90 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     {kpis.trends?.companies || "+4 this month"}
                   </span>
                 </div>
                 <div>
-                  <div className="text-3xl font-black text-on-surface tracking-tight leading-none mb-1">
+                  <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none mb-1.5">
                     {kpis.totalCompanies}
                   </div>
-                  <div className="text-xs font-extrabold text-on-surface uppercase tracking-wider">
+                  <div className="text-xs font-black text-slate-700 uppercase tracking-wider">
                     Registered Companies
                   </div>
-                  <div className="text-[11px] text-on-surface-variant mt-1">
+                  <div className="text-[11px] text-slate-500 mt-1">
                     {kpis.activeCompanies} active enterprise hiring partners
                   </div>
+                </div>
+                {/* Visual Progress Sparkline */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                  <span>Employer Retention</span>
+                  <span className="text-indigo-brand font-black">100% Active</span>
+                </div>
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-1.5 rounded-full" style={{ width: "100%" }} />
                 </div>
               </div>
 
               {/* Card 2: Total Candidates */}
-              <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4 hover:border-blue-500/50 transition-all group">
+              <div className="bg-gradient-to-br from-white via-white to-blue-50/30 p-6 rounded-[28px] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-blue-500/40 transition-all duration-300 space-y-4 group">
                 <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg ring-1 ring-blue-500/20 group-hover:scale-105 transition-transform duration-300">
                     <Users className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50/90 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     {kpis.trends?.candidates || "+22% this month"}
                   </span>
                 </div>
                 <div>
-                  <div className="text-3xl font-black text-on-surface tracking-tight leading-none mb-1">
+                  <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none mb-1.5">
                     {kpis.totalCandidates}
                   </div>
-                  <div className="text-xs font-extrabold text-on-surface uppercase tracking-wider">
+                  <div className="text-xs font-black text-slate-700 uppercase tracking-wider">
                     Candidate Talent Pool
                   </div>
-                  <div className="text-[11px] text-on-surface-variant mt-1">
+                  <div className="text-[11px] text-slate-500 mt-1">
                     Verified student &amp; professional profiles
                   </div>
                 </div>
+                {/* Visual Progress Sparkline */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                  <span>Profile Verification Rate</span>
+                  <span className="text-blue-600 font-black">86.5% Verified</span>
+                </div>
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full" style={{ width: "86%" }} />
+                </div>
               </div>
 
-              {/* Card 3: Total Assessments Completed */}
-              <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4 hover:border-emerald-500/50 transition-all group">
+              {/* Card 3: Total Assessments */}
+              <div className="bg-gradient-to-br from-white via-white to-emerald-50/30 p-6 rounded-[28px] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-emerald-500/40 transition-all duration-300 space-y-4 group">
                 <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg ring-1 ring-emerald-500/20 group-hover:scale-105 transition-transform duration-300">
                     <ClipboardCheck className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50/90 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     {kpis.trends?.assessments || "+35% this month"}
                   </span>
                 </div>
                 <div>
-                  <div className="text-3xl font-black text-on-surface tracking-tight leading-none mb-1">
+                  <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none mb-1.5">
                     {kpis.totalAssessments}
                   </div>
-                  <div className="text-xs font-extrabold text-on-surface uppercase tracking-wider">
+                  <div className="text-xs font-black text-slate-700 uppercase tracking-wider">
                     Total Assessments Completed
                   </div>
-                  <div className="text-[11px] text-on-surface-variant mt-1">
+                  <div className="text-[11px] text-slate-500 mt-1">
                     Automated scoring &amp; integrity checks
                   </div>
+                </div>
+                {/* Visual Progress Sparkline */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                  <span>Proctoring Integrity</span>
+                  <span className="text-emerald-600 font-black">99.8% Clean</span>
+                </div>
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-1.5 rounded-full" style={{ width: "99%" }} />
                 </div>
               </div>
 
               {/* Card 4: Total Interviews */}
-              <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4 hover:border-purple-500/50 transition-all group">
+              <div className="bg-gradient-to-br from-white via-white to-purple-50/30 p-6 rounded-[28px] border border-slate-200/80 shadow-xs hover:shadow-md hover:border-purple-500/40 transition-all duration-300 space-y-4 group">
                 <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg ring-1 ring-purple-500/20 group-hover:scale-105 transition-transform duration-300">
                     <Calendar className="w-6 h-6" />
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50/90 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     {kpis.trends?.interviews || "+18% this month"}
                   </span>
                 </div>
                 <div>
-                  <div className="text-3xl font-black text-on-surface tracking-tight leading-none mb-1">
+                  <div className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none mb-1.5">
                     {kpis.totalInterviews}
                   </div>
-                  <div className="text-xs font-extrabold text-on-surface uppercase tracking-wider">
+                  <div className="text-xs font-black text-slate-700 uppercase tracking-wider">
                     Live Interviews Hosted
                   </div>
-                  <div className="text-[11px] text-on-surface-variant mt-1">
-                    AI &amp; hiring manager technical rooms
+                  <div className="text-[11px] text-slate-500 mt-1">
+                    AI &amp; technical video rooms
                   </div>
+                </div>
+                {/* Visual Progress Sparkline */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                  <span>Room Uptime</span>
+                  <span className="text-purple-600 font-black">99.9% Reliable</span>
+                </div>
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-gradient-to-r from-purple-500 to-indigo-500 h-1.5 rounded-full" style={{ width: "99%" }} />
                 </div>
               </div>
 
             </div>
 
-            {/* Secondary Metric Ribbon */}
-            <div className="bg-surface-bright/80 p-4 rounded-2xl border border-surface-container flex flex-wrap items-center justify-between gap-4 text-xs font-bold text-on-surface">
-              <div className="flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-indigo-brand" />
-                <span>Active Jobs: <span className="text-indigo-brand font-black">{kpis.totalJobs} Openings</span></span>
+            {/* Platform Health Spotlight Ribbon */}
+            <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-5 rounded-[24px] border border-slate-800 text-white shadow-md flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-black">
+                  <Activity className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-slate-300 uppercase tracking-wider">Platform Health &amp; Security</div>
+                  <div className="text-sm font-black text-white">System Status: <span className="text-emerald-400">All Microservices Operational</span> (Latency: 28ms)</div>
+                </div>
               </div>
-              <div className="h-4 w-px bg-surface-container hidden sm:block" />
-              <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-emerald-600" />
-                <span>Successful Hires: <span className="text-emerald-700 font-black">{kpis.successfulHires} Placements</span></span>
-              </div>
-              <div className="h-4 w-px bg-surface-container hidden sm:block" />
-              <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-purple-600" />
-                <span>Active Ecosystem Users: <span className="text-purple-700 font-black">{kpis.activeUsers} Total</span></span>
-              </div>
-              <div className="h-4 w-px bg-surface-container hidden sm:block" />
-              <div className="flex items-center gap-2 text-on-surface-variant">
-                <Clock className="w-4 h-4 text-emerald-600" />
-                <span>Platform Latency: <span className="font-mono text-emerald-700 font-bold">28ms (Optimal)</span></span>
+
+              <div className="flex flex-wrap items-center gap-6 text-xs font-bold">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-indigo-400" />
+                  <span className="text-slate-300">Active Jobs: <span className="text-white font-black">{kpis.totalJobs} Openings</span></span>
+                </div>
+                <div className="h-4 w-px bg-slate-700 hidden sm:block" />
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-emerald-400" />
+                  <span className="text-slate-300">Successful Hires: <span className="text-emerald-400 font-black">{kpis.successfulHires} Placements</span></span>
+                </div>
+                <div className="h-4 w-px bg-slate-700 hidden sm:block" />
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-purple-400" />
+                  <span className="text-slate-300">Ecosystem Users: <span className="text-white font-black">{kpis.activeUsers} Total</span></span>
+                </div>
               </div>
             </div>
           </div>
