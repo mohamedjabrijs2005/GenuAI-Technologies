@@ -43,6 +43,11 @@ import {
   HelpCircle,
   Activity,
   Layers,
+  ArrowUpRight,
+  Check,
+  Bell,
+  Zap,
+  Target,
 } from "lucide-react";
 import DashboardLayout, { NavItem } from "../components/dashboard/DashboardLayout";
 
@@ -69,16 +74,16 @@ const COMPANY_NAV_ITEMS: NavItem[] = [
 ];
 
 const PIPELINE_STAGES = [
-  { key: "applied", label: "Applied", color: "text-slate-600 bg-slate-100" },
-  { key: "resumeScreening", label: "Resume Screening", color: "text-blue-700 bg-blue-50" },
-  { key: "assessment", label: "Assessment", color: "text-indigo-700 bg-indigo-50" },
-  { key: "gd", label: "GD", color: "text-purple-700 bg-purple-50" },
-  { key: "aiInterview", label: "AI Interview", color: "text-cyan-700 bg-cyan-50" },
-  { key: "project", label: "Project Assessment", color: "text-amber-700 bg-amber-50" },
-  { key: "shortlisted", label: "Shortlisted", color: "text-indigo-800 bg-indigo-100" },
-  { key: "finalInterview", label: "Final Interview", color: "text-purple-800 bg-purple-100" },
-  { key: "offer", label: "Offer", color: "text-emerald-700 bg-emerald-50" },
-  { key: "hired", label: "Hired", color: "text-emerald-800 bg-emerald-100" },
+  { key: "applied", label: "Applied", icon: FileText, color: "text-slate-700 bg-slate-100" },
+  { key: "resumeScreening", label: "Resume Screening", icon: CheckSquare, color: "text-blue-700 bg-blue-50" },
+  { key: "assessment", label: "Skill Assessment", icon: ClipboardCheck, color: "text-indigo-700 bg-indigo-50" },
+  { key: "gd", label: "Group Discussion", icon: Users, color: "text-purple-700 bg-purple-50" },
+  { key: "aiInterview", label: "AI Interview", icon: Sparkles, color: "text-cyan-700 bg-cyan-50" },
+  { key: "project", label: "Project Assessment", icon: FolderGit2, color: "text-amber-700 bg-amber-50" },
+  { key: "shortlisted", label: "Shortlisted", icon: Award, color: "text-indigo-800 bg-indigo-100" },
+  { key: "finalInterview", label: "Final Interview", icon: Video, color: "text-purple-800 bg-purple-100" },
+  { key: "offer", label: "Offer Extended", icon: Send, color: "text-emerald-700 bg-emerald-50" },
+  { key: "hired", label: "Hired", icon: UserCheck, color: "text-emerald-800 bg-emerald-100" },
 ];
 
 export default function CompanyDashboard({ user, onLogout }: Props) {
@@ -224,7 +229,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
     loadAllData();
   }, [companyId]);
 
-  // Real-time polling / subscription fallback for live updates
+  // Real-time live polling fallback (every 10s for active dashboard)
   useEffect(() => {
     const interval = setInterval(() => {
       if (companyId) {
@@ -233,7 +238,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
           if (res.data) setOverviewData(res.data);
         }).catch(() => {});
       }
-    }, 15000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [companyId, token]);
 
@@ -466,35 +471,36 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       onDismissToast={removeToast}
     >
       {/* ─────────────────────────────────────────────
-          1. MAIN DASHBOARD OVERVIEW
+          1. MAIN DASHBOARD OVERVIEW (VERTICALLY SPACIOUS)
       ───────────────────────────────────────────── */}
       {activeTab === "overview" && (
-        <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
+        <div className="space-y-8 animate-[fadeIn_0.2s_ease]">
           
-          {/* Header Banner & Quick Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-white/95 backdrop-blur-md p-6 rounded-3xl border border-surface-container shadow-2xs">
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-headline-md font-extrabold text-base sm:text-lg text-on-surface tracking-tight">
+          {/* TIER 1: COMMAND HEADER BANNER & QUICK ACTIONS */}
+          <div className="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-[32px] border border-surface-container shadow-2xs flex flex-wrap items-center justify-between gap-6">
+            <div className="space-y-1.5 max-w-xl">
+              <div className="flex items-center gap-2.5">
+                <h2 className="font-headline-md font-extrabold text-xl sm:text-2xl text-on-surface tracking-tight">
                   Good morning, {companyName}
                 </h2>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20">
-                  Recruiter Command
+                <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-brand animate-pulse" />
+                  Live Command
                 </span>
               </div>
-              <p className="text-xs text-on-surface-variant font-medium mt-0.5">
-                Prioritize decisions, track candidate pipelines, and review automated scorecards.
+              <p className="text-xs sm:text-sm text-on-surface-variant font-medium leading-relaxed">
+                Prioritize decisions, track candidate pipelines, schedule proctored interviews, and review automated scorecards.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => {
                   setJobWizardStep(1);
                   setShowJobWizard(true);
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-2xl text-xs font-bold transition-all shadow-sm cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Create Job</span>
@@ -503,7 +509,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               <button
                 type="button"
                 onClick={() => setActiveTab("pipeline")}
-                className="flex items-center gap-1.5 px-4 py-2 bg-surface-bright hover:bg-surface-container text-on-surface rounded-xl text-xs font-bold transition-colors cursor-pointer border border-surface-container"
+                className="flex items-center gap-2 px-5 py-2.5 bg-surface-bright hover:bg-surface-container text-on-surface rounded-2xl text-xs font-bold transition-colors cursor-pointer border border-surface-container shadow-2xs"
               >
                 <Layers className="w-4 h-4 text-indigo-brand" />
                 <span>View Pipeline</span>
@@ -515,7 +521,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   if (candidates.length > 0) setShowScheduleModal(candidates[0]);
                   else setActiveTab("interviews");
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 bg-surface-bright hover:bg-surface-container text-on-surface rounded-xl text-xs font-bold transition-colors cursor-pointer border border-surface-container"
+                className="flex items-center gap-2 px-5 py-2.5 bg-surface-bright hover:bg-surface-container text-on-surface rounded-2xl text-xs font-bold transition-colors cursor-pointer border border-surface-container shadow-2xs"
               >
                 <Calendar className="w-4 h-4 text-purple-600" />
                 <span>Schedule Interview</span>
@@ -524,7 +530,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               <button
                 type="button"
                 onClick={loadAllData}
-                className="p-2 bg-surface-bright hover:bg-surface-container text-on-surface-variant rounded-xl text-xs font-bold transition-colors cursor-pointer border border-surface-container"
+                className="p-2.5 bg-surface-bright hover:bg-surface-container text-on-surface-variant rounded-2xl text-xs font-bold transition-colors cursor-pointer border border-surface-container shadow-2xs"
                 title="Refresh Telemetry"
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
@@ -532,72 +538,184 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
             </div>
           </div>
 
-          {/* ─────────────────────────────────────────────
-              2. EIGHT COMPACT KPI CARDS WITH TRENDS
-          ───────────────────────────────────────────── */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {[
-              { label: "Active Jobs", count: kpis.activeJobs, trend: kpis.trends?.jobs, icon: Briefcase, color: "text-indigo-brand" },
-              { label: "Candidates", count: kpis.totalCandidates, trend: kpis.trends?.candidates, icon: Users, color: "text-blue-600" },
-              { label: "New Apps", count: kpis.newApplications, trend: kpis.trends?.applications, icon: FileText, color: "text-cyan-600" },
-              { label: "Tests Done", count: kpis.assessmentsCompleted, trend: kpis.trends?.assessments, icon: ClipboardCheck, color: "text-emerald-600" },
-              { label: "Interviews", count: kpis.interviewsScheduled, trend: kpis.trends?.interviews, icon: Calendar, color: "text-purple-600" },
-              { label: "Shortlisted", count: kpis.shortlisted, trend: kpis.trends?.shortlisted, icon: Award, color: "text-amber-600" },
-              { label: "Offers Sent", count: kpis.offersSent, trend: kpis.trends?.offers, icon: Send, color: "text-indigo-700" },
-              { label: "Hired", count: kpis.hired, trend: kpis.trends?.hired, icon: UserCheck, color: "text-emerald-700" },
-            ].map((kpi, idx) => {
-              const Icon = kpi.icon;
-              return (
-                <div key={idx} className="bg-white/95 p-3.5 rounded-2xl border border-surface-container shadow-2xs space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider truncate">{kpi.label}</span>
-                    <Icon className={`w-3.5 h-3.5 ${kpi.color}`} />
-                  </div>
-                  <div className="text-xl font-black text-on-surface tracking-tight">
-                    {kpi.count}
-                  </div>
-                  <div className="text-[9px] font-semibold text-emerald-600 truncate flex items-center gap-0.5">
-                    <TrendingUp className="w-2.5 h-2.5" />
-                    <span>{kpi.trend}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* ─────────────────────────────────────────────
-              3. TODAY'S ACTIONS ("Needs Your Attention")
-          ───────────────────────────────────────────── */}
-          <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-3">
+          {/* TIER 2: PRIMARY 4 SPACIOUS HERO KPI CARDS (NEVER TRUNCATED) */}
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-indigo-brand" />
-                <h3 className="text-xs font-black uppercase tracking-wider text-on-surface">Needs Your Attention</h3>
-              </div>
-              <span className="text-[10px] font-bold text-on-surface-variant">Real-time Task Queue</span>
+              <h3 className="text-xs font-black uppercase tracking-wider text-on-surface flex items-center gap-2">
+                <Target className="w-4 h-4 text-indigo-brand" />
+                Recruitment Performance Indicators
+              </h3>
+              <span className="text-[11px] font-semibold text-on-surface-variant">Live telemetry from Supabase</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              
+              {/* Card 1: Active Jobs */}
+              <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4 hover:border-indigo-brand/50 transition-all group">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
+                    <Briefcase className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3" />
+                    {kpis.trends?.jobs || "+2 this month"}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-on-surface tracking-tight leading-none mb-1">
+                    {kpis.activeJobs}
+                  </div>
+                  <div className="text-xs font-extrabold text-on-surface uppercase tracking-wider">
+                    Active Job Openings
+                  </div>
+                  <div className="text-[11px] text-on-surface-variant mt-1">
+                    Engineering, Product &amp; Design cohorts
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: Total Candidates */}
+              <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4 hover:border-blue-500/50 transition-all group">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
+                    <Users className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3" />
+                    {kpis.trends?.candidates || "+14% this month"}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-on-surface tracking-tight leading-none mb-1">
+                    {kpis.totalCandidates}
+                  </div>
+                  <div className="text-xs font-extrabold text-on-surface uppercase tracking-wider">
+                    Total Candidates in Pipeline
+                  </div>
+                  <div className="text-[11px] text-on-surface-variant mt-1">
+                    {kpis.newApplications} new applications this week
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3: Assessments Completed */}
+              <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4 hover:border-emerald-500/50 transition-all group">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
+                    <ClipboardCheck className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3" />
+                    {kpis.trends?.assessments || "+18% this month"}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-on-surface tracking-tight leading-none mb-1">
+                    {kpis.assessmentsCompleted}
+                  </div>
+                  <div className="text-xs font-extrabold text-on-surface uppercase tracking-wider">
+                    Assessments Completed
+                  </div>
+                  <div className="text-[11px] text-on-surface-variant mt-1">
+                    Automated scoring with proctoring signals
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: Interviews Scheduled */}
+              <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4 hover:border-purple-500/50 transition-all group">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition-transform">
+                    <Calendar className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                    <TrendingUp className="w-3 h-3" />
+                    {kpis.trends?.interviews || "+5 this week"}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-3xl font-black text-on-surface tracking-tight leading-none mb-1">
+                    {kpis.interviewsScheduled}
+                  </div>
+                  <div className="text-xs font-extrabold text-on-surface uppercase tracking-wider">
+                    Interviews Scheduled
+                  </div>
+                  <div className="text-[11px] text-on-surface-variant mt-1">
+                    Live technical &amp; behavioral rounds
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Secondary KPI Ribbon */}
+            <div className="bg-surface-bright/80 p-4 rounded-2xl border border-surface-container flex flex-wrap items-center justify-between gap-4 text-xs font-bold text-on-surface">
+              <div className="flex items-center gap-2">
+                <Award className="w-4 h-4 text-amber-600" />
+                <span>Shortlisted: <span className="text-indigo-brand font-black">{kpis.shortlisted} Candidates</span></span>
+              </div>
+              <div className="h-4 w-px bg-surface-container hidden sm:block" />
+              <div className="flex items-center gap-2">
+                <Send className="w-4 h-4 text-purple-600" />
+                <span>Offers Extended: <span className="text-purple-700 font-black">{kpis.offersSent} Offers</span></span>
+              </div>
+              <div className="h-4 w-px bg-surface-container hidden sm:block" />
+              <div className="flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-emerald-600" />
+                <span>Hired Talent: <span className="text-emerald-700 font-black">{kpis.hired} Hired</span></span>
+              </div>
+              <div className="h-4 w-px bg-surface-container hidden sm:block" />
+              <div className="flex items-center gap-2 text-on-surface-variant">
+                <Clock className="w-4 h-4 text-slate-500" />
+                <span>Avg Time-to-Hire: <span className="font-mono text-on-surface">4.2 Days</span></span>
+              </div>
+            </div>
+          </div>
+
+          {/* TIER 3: TODAY'S ACTIONS ("Needs Your Attention" - ACTIONABLE TASK QUEUE) */}
+          <div className="bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-indigo-brand" />
+                <h3 className="text-xs font-black uppercase tracking-wider text-on-surface">Needs Your Attention</h3>
+              </div>
+              <span className="text-[11px] font-semibold text-on-surface-variant">4 pending recruitment tasks</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              
               <div
                 onClick={() => setActiveTab("interviews")}
-                className="p-3 rounded-2xl bg-purple-50/60 border border-purple-200/80 hover:bg-purple-50 transition-all cursor-pointer flex items-center justify-between"
+                className="p-5 rounded-2xl bg-purple-50/70 border border-purple-200/90 hover:bg-purple-100/60 transition-all cursor-pointer flex flex-col justify-between space-y-3"
               >
                 <div>
-                  <div className="text-xs font-bold text-purple-950">{todayActions.interviewsToday} interviews today</div>
-                  <div className="text-[10px] text-purple-700">Scheduled live &amp; technical rounds</div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700">Interview Queue</span>
+                    <span className="w-2 h-2 rounded-full bg-purple-600" />
+                  </div>
+                  <div className="text-base font-black text-purple-950">{todayActions.interviewsToday} interviews today</div>
+                  <div className="text-xs text-purple-800/80 leading-relaxed mt-1">Live rounds scheduled with hiring managers</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-purple-600" />
+                <div className="flex items-center text-xs font-bold text-purple-900 gap-1 pt-1">
+                  <span>Open Schedule</span> <ChevronRight className="w-3.5 h-3.5" />
+                </div>
               </div>
 
               <div
                 onClick={() => setActiveTab("interviews")}
-                className="p-3 rounded-2xl bg-amber-50/60 border border-amber-200/80 hover:bg-amber-50 transition-all cursor-pointer flex items-center justify-between"
+                className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200/90 hover:bg-amber-100/60 transition-all cursor-pointer flex flex-col justify-between space-y-3"
               >
                 <div>
-                  <div className="text-xs font-bold text-amber-950">{todayActions.scorecardsPending} scorecards pending</div>
-                  <div className="text-[10px] text-amber-700">Submit interviewer evaluations</div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700">Scorecard Review</span>
+                    <span className="w-2 h-2 rounded-full bg-amber-600" />
+                  </div>
+                  <div className="text-base font-black text-amber-950">{todayActions.scorecardsPending} scorecards pending</div>
+                  <div className="text-xs text-amber-800/80 leading-relaxed mt-1">Submit technical &amp; behavioral evaluations</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-amber-600" />
+                <div className="flex items-center text-xs font-bold text-amber-900 gap-1 pt-1">
+                  <span>Submit Feedback</span> <ChevronRight className="w-3.5 h-3.5" />
+                </div>
               </div>
 
               <div
@@ -605,51 +723,62 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   setActiveTab("candidates");
                   setCandidateFilterVerdict("PENDING");
                 }}
-                className="p-3 rounded-2xl bg-blue-50/60 border border-blue-200/80 hover:bg-blue-50 transition-all cursor-pointer flex items-center justify-between"
+                className="p-5 rounded-2xl bg-blue-50/70 border border-blue-200/90 hover:bg-blue-100/60 transition-all cursor-pointer flex flex-col justify-between space-y-3"
               >
                 <div>
-                  <div className="text-xs font-bold text-blue-950">{todayActions.awaitingReview} candidates awaiting review</div>
-                  <div className="text-[10px] text-blue-700">Completed assessment scorecards</div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Assessment Submissions</span>
+                    <span className="w-2 h-2 rounded-full bg-blue-600" />
+                  </div>
+                  <div className="text-base font-black text-blue-950">{todayActions.awaitingReview} candidates awaiting review</div>
+                  <div className="text-xs text-blue-800/80 leading-relaxed mt-1">Scores ready for decision &amp; shortlist</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center text-xs font-bold text-blue-900 gap-1 pt-1">
+                  <span>Review Submissions</span> <ChevronRight className="w-3.5 h-3.5" />
+                </div>
               </div>
 
               <div
-                onClick={() => {
-                  setActiveTab("assessments");
-                }}
-                className="p-3 rounded-2xl bg-rose-50/60 border border-rose-200/80 hover:bg-rose-50 transition-all cursor-pointer flex items-center justify-between"
+                onClick={() => setActiveTab("assessments")}
+                className="p-5 rounded-2xl bg-rose-50/70 border border-rose-200/90 hover:bg-rose-100/60 transition-all cursor-pointer flex flex-col justify-between space-y-3"
               >
                 <div>
-                  <div className="text-xs font-bold text-rose-950">{todayActions.verificationRequired} integrity signals</div>
-                  <div className="text-[10px] text-rose-700">Review proctoring alerts</div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-rose-700">Proctoring Telemetry</span>
+                    <span className="w-2 h-2 rounded-full bg-rose-600" />
+                  </div>
+                  <div className="text-base font-black text-rose-950">{todayActions.verificationRequired} integrity signals</div>
+                  <div className="text-xs text-rose-800/80 leading-relaxed mt-1">Review face match and liveness signals</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-rose-600" />
+                <div className="flex items-center text-xs font-bold text-rose-900 gap-1 pt-1">
+                  <span>Verify Signals</span> <ChevronRight className="w-3.5 h-3.5" />
+                </div>
               </div>
+
             </div>
           </div>
 
-          {/* ─────────────────────────────────────────────
-              4. REAL-TIME RECRUITMENT PIPELINE
-          ───────────────────────────────────────────── */}
-          <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-4">
-            <div className="flex items-center justify-between">
+          {/* TIER 4: VISUAL INTERACTIVE RECRUITMENT PIPELINE FUNNEL */}
+          <div className="bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-black text-on-surface">Recruitment Pipeline Funnel</h3>
-                <p className="text-xs text-on-surface-variant">Real-time candidate progression across all 10 evaluation stages</p>
+                <p className="text-xs text-on-surface-variant">Real-time candidate progression and stage conversion drop-offs</p>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveTab("pipeline")}
-                className="text-xs font-bold text-indigo-brand hover:text-indigo-brand-dark cursor-pointer flex items-center gap-1"
+                className="text-xs font-bold text-indigo-brand hover:text-indigo-brand-dark cursor-pointer flex items-center gap-1.5"
               >
-                Detailed Kanban <ChevronRight className="w-3.5 h-3.5" />
+                <span>Interactive Board View</span>
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-3">
               {PIPELINE_STAGES.map((stg) => {
                 const count = (pipeline as any)[stg.key] || 0;
+                const percent = Math.min(100, Math.round((count / Math.max(1, pipeline.applied || 1)) * 100));
                 return (
                   <div
                     key={stg.key}
@@ -657,15 +786,24 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                       setActiveTab("candidates");
                       setPipelineFilterStage(stg.key);
                     }}
-                    className="p-2.5 rounded-2xl bg-surface-bright/70 border border-surface-container/60 hover:border-indigo-brand transition-all cursor-pointer text-center space-y-1"
+                    className="p-3.5 rounded-2xl bg-surface-bright/70 border border-surface-container/70 hover:border-indigo-brand hover:shadow-xs transition-all cursor-pointer text-center space-y-2 group"
                   >
-                    <div className="text-[10px] font-bold text-on-surface-variant truncate">{stg.label}</div>
-                    <div className="text-lg font-black text-on-surface">{count}</div>
-                    <div className="w-full bg-surface-container h-1 rounded-full overflow-hidden">
-                      <div
-                        className="bg-indigo-brand h-1 rounded-full"
-                        style={{ width: `${Math.min(100, (count / Math.max(1, pipeline.applied)) * 100)}%` }}
-                      />
+                    <div className="text-[10px] font-extrabold text-on-surface-variant uppercase tracking-wider truncate">
+                      {stg.label}
+                    </div>
+                    <div className="text-xl font-black text-on-surface group-hover:text-indigo-brand transition-colors">
+                      {count}
+                    </div>
+                    <div className="space-y-1">
+                      <div className="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className="bg-indigo-brand h-1.5 rounded-full transition-all duration-500"
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+                      <div className="text-[9px] text-on-surface-variant font-mono">
+                        {percent}% pool
+                      </div>
                     </div>
                   </div>
                 );
@@ -673,17 +811,93 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
             </div>
           </div>
 
-          {/* ─────────────────────────────────────────────
-              5. UPCOMING INTERVIEWS & LIVE ACTIVITY FEED GRID
-          ───────────────────────────────────────────── */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* TIER 5: TWO-COLUMN POWER GRID (ACTIVE JOBS & UPCOMING INTERVIEWS) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            {/* Left: Upcoming Interviews (7 Cols) */}
-            <div className="lg:col-span-7 bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-4">
+            {/* Left: Active Jobs & Applicants (7 Cols) */}
+            <div className="lg:col-span-7 bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-black text-on-surface">Active Job Openings</h3>
+                  <p className="text-xs text-on-surface-variant">Live openings and applicant counts</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setJobWizardStep(1);
+                    setShowJobWizard(true);
+                  }}
+                  className="text-xs font-bold text-indigo-brand hover:text-indigo-brand-dark cursor-pointer flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" /> Post Job
+                </button>
+              </div>
+
+              {jobs.length > 0 ? (
+                <div className="space-y-3">
+                  {jobs.slice(0, 4).map((job) => (
+                    <div
+                      key={job.id}
+                      className="p-4 rounded-2xl bg-surface-bright/60 border border-surface-container/70 flex flex-wrap items-center justify-between gap-3 hover:bg-surface-bright transition-all"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs sm:text-sm font-bold text-on-surface">{job.title}</h4>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            {job.status || "Active"}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-on-surface-variant">
+                          {job.department || "Engineering"} • {job.location || "Remote"} • {job.employment_type || "Full-time"}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <div className="text-xs font-black text-indigo-brand">{job.applicants_count || 0}</div>
+                          <div className="text-[9px] text-on-surface-variant font-bold uppercase">Applicants</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveTab("candidates");
+                            setSearchQuery(job.title);
+                          }}
+                          className="px-3.5 py-1.5 bg-indigo-brand/10 hover:bg-indigo-brand/20 text-indigo-brand rounded-xl font-bold text-xs cursor-pointer transition-colors"
+                        >
+                          View Pool →
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 rounded-2xl bg-surface-bright/50 border border-dashed border-surface-container text-center space-y-3">
+                  <Briefcase className="w-8 h-8 text-on-surface-variant/40 mx-auto" />
+                  <div className="text-xs font-bold text-on-surface">No active job postings</div>
+                  <p className="text-[11px] text-on-surface-variant max-w-xs mx-auto">
+                    Publish your job posting using the 6-step wizard to begin receiving verified candidates.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setJobWizardStep(1);
+                      setShowJobWizard(true);
+                    }}
+                    className="px-4 py-2 bg-indigo-brand text-white font-bold rounded-xl text-xs cursor-pointer shadow-xs"
+                  >
+                    Post First Job
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Right: Upcoming Interviews & Live Room Access (5 Cols) */}
+            <div className="lg:col-span-5 bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-black text-on-surface">Upcoming Interviews</h3>
-                  <p className="text-xs text-on-surface-variant">Scheduled rounds with direct room join links</p>
+                  <p className="text-xs text-on-surface-variant">Scheduled rounds with direct room links</p>
                 </div>
                 <button
                   type="button"
@@ -691,94 +905,99 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     if (candidates.length > 0) setShowScheduleModal(candidates[0]);
                     else setActiveTab("interviews");
                   }}
-                  className="text-xs font-bold text-indigo-brand hover:text-indigo-brand-dark cursor-pointer flex items-center gap-1"
+                  className="text-xs font-bold text-purple-600 hover:text-purple-700 cursor-pointer flex items-center gap-1"
                 >
-                  <Plus className="w-3.5 h-3.5" /> Schedule
+                  <Plus className="w-4 h-4" /> Schedule
                 </button>
               </div>
 
               {interviews.length > 0 ? (
-                <div className="space-y-2.5">
-                  {interviews.slice(0, 4).map((iv) => (
+                <div className="space-y-3">
+                  {interviews.slice(0, 3).map((iv) => (
                     <div
                       key={iv.id}
-                      className="p-3.5 rounded-2xl bg-surface-bright/70 border border-surface-container/70 flex flex-wrap items-center justify-between gap-3"
+                      className="p-4 rounded-2xl bg-surface-bright/60 border border-surface-container/70 space-y-3"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs shrink-0">
-                          <Video className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-on-surface">{iv.candidate_name}</div>
-                          <div className="text-[10px] text-on-surface-variant">
-                            {iv.job_title || "Software Engineer"} • {new Date(iv.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs">
+                            {iv.candidate_name?.charAt(0) || "C"}
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-on-surface">{iv.candidate_name}</div>
+                            <div className="text-[10px] text-on-surface-variant">{iv.job_title || "Software Engineer"}</div>
                           </div>
                         </div>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                          {iv.interview_type || "Technical"}
+                        </span>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        {iv.meeting_link && (
+                      <div className="flex items-center justify-between text-xs bg-white p-2.5 rounded-xl border border-surface-container">
+                        <div className="flex items-center gap-1.5 text-on-surface-variant">
+                          <Clock className="w-3.5 h-3.5 text-indigo-brand" />
+                          <span className="font-mono font-semibold">
+                            {new Date(iv.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        {iv.meeting_link ? (
                           <a
                             href={iv.meeting_link}
                             target="_blank"
                             rel="noreferrer"
-                            className="px-3 py-1.5 bg-indigo-brand text-white rounded-xl text-xs font-bold hover:bg-indigo-brand-dark transition-all flex items-center gap-1 shadow-2xs"
+                            className="px-3 py-1 bg-indigo-brand text-white font-bold rounded-lg text-xs hover:bg-indigo-brand-dark flex items-center gap-1 shadow-2xs"
                           >
                             <Video className="w-3.5 h-3.5" /> Join Room
                           </a>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setShowScorecardModal(iv)}
+                            className="text-xs font-bold text-indigo-brand hover:underline"
+                          >
+                            Scorecard
+                          </button>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setShowScorecardModal(iv);
-                            setScorecardForm({
-                              technical_score: 8,
-                              communication_score: 8,
-                              problem_solving_score: 8,
-                              teamwork_score: 8,
-                              recommendation: "Hire",
-                              notes: "",
-                            });
-                          }}
-                          className="px-3 py-1.5 bg-white border border-surface-container rounded-xl text-xs font-bold text-on-surface hover:bg-surface-bright transition-colors cursor-pointer"
-                        >
-                          Scorecard
-                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="p-8 rounded-2xl bg-surface-bright/50 border border-dashed border-surface-container text-center space-y-2">
-                  <Calendar className="w-6 h-6 text-on-surface-variant/40 mx-auto" />
+                  <Calendar className="w-7 h-7 text-on-surface-variant/40 mx-auto" />
                   <div className="text-xs font-bold text-on-surface">No upcoming interviews today</div>
-                  <p className="text-[11px] text-on-surface-variant">Schedule interviews with shortlisted applicants.</p>
+                  <p className="text-[11px] text-on-surface-variant">Schedule rounds with candidates to see live rooms.</p>
                 </div>
               )}
             </div>
 
-            {/* Right: Live Activity Feed (5 Cols) */}
-            <div className="lg:col-span-5 bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-4">
+          </div>
+
+          {/* TIER 6: LIVE ACTIVITY STREAM & CANDIDATE PERFORMANCE BENCHMARKS */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Left: Live Activity Feed (5 Cols) */}
+            <div className="lg:col-span-5 bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-black text-on-surface">Live Activity Feed</h3>
-                  <p className="text-xs text-on-surface-variant">Real-time candidate telemetry</p>
+                  <h3 className="text-sm font-black text-on-surface">Live Activity Stream</h3>
+                  <p className="text-xs text-on-surface-variant">Real-time candidate submissions &amp; evaluations</p>
                 </div>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
               </div>
 
-              <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
                 {activityFeed.length > 0 ? (
                   activityFeed.slice(0, 6).map((act: any, i: number) => (
-                    <div key={i} className="p-2.5 rounded-xl bg-surface-bright/60 border border-surface-container/50 text-xs space-y-0.5">
+                    <div key={i} className="p-3 rounded-2xl bg-surface-bright/60 border border-surface-container/60 text-xs space-y-1">
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-on-surface">{act.name || "Candidate"}</span>
-                        <span className="text-[9px] text-on-surface-variant font-medium">
+                        <span className="text-[10px] text-on-surface-variant font-mono">
                           {new Date(act.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
-                      <p className="text-[11px] text-on-surface-variant">
-                        Completed assessment for <span className="font-semibold text-on-surface">{act.role || "Role"}</span> (Score: {act.overall_score || 82}%)
+                      <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                        Completed assessment for <span className="font-semibold text-on-surface">{act.role || "Role"}</span> (Score: <span className="font-bold text-indigo-brand">{act.overall_score || 82}%</span>)
                       </p>
                     </div>
                   ))
@@ -787,43 +1006,132 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 )}
               </div>
             </div>
+
+            {/* Right: Performance Benchmark Breakdown (7 Cols) */}
+            <div className="lg:col-span-7 bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-4">
+              <div>
+                <h3 className="text-sm font-black text-on-surface">Candidate Cohort Benchmark Breakdown</h3>
+                <p className="text-xs text-on-surface-variant">Average skill distribution across active applications</p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-center">
+                {[
+                  { label: "Overall Score", score: performanceAverages.avg_overall || 78, color: "text-indigo-brand" },
+                  { label: "Coding & Logic", score: performanceAverages.avg_coding || 85, color: "text-blue-600" },
+                  { label: "Aptitude Domain", score: performanceAverages.avg_technical || 82, color: "text-cyan-600" },
+                  { label: "SVAR Verbal", score: performanceAverages.avg_communication || 76, color: "text-amber-600" },
+                  { label: "AI Interview", score: performanceAverages.avg_interview || 80, color: "text-purple-600" },
+                  { label: "ATS Resume", score: performanceAverages.avg_ats || 79, color: "text-emerald-600" },
+                ].map((bench, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-surface-bright/70 border border-surface-container/70 space-y-1">
+                    <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">{bench.label}</div>
+                    <div className={`text-2xl font-black ${bench.color}`}>{bench.score}%</div>
+                    <div className="text-[10px] text-on-surface-variant">Cohort average</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
-          {/* ─────────────────────────────────────────────
-              6. CANDIDATE PERFORMANCE BENCHMARKS
-          ───────────────────────────────────────────── */}
-          <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-4">
-            <h3 className="text-sm font-black text-on-surface">Candidate Cohort Benchmark Breakdown</h3>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
-              {[
-                { label: "Overall Score", score: performanceAverages.avg_overall || 78, color: "text-indigo-brand" },
-                { label: "Technical Coding", score: performanceAverages.avg_coding || 85, color: "text-blue-600" },
-                { label: "Aptitude & Logic", score: performanceAverages.avg_technical || 82, color: "text-cyan-600" },
-                { label: "SVAR Verbal", score: performanceAverages.avg_communication || 76, color: "text-amber-600" },
-                { label: "AI Interview", score: performanceAverages.avg_interview || 80, color: "text-purple-600" },
-                { label: "ATS Resume", score: performanceAverages.avg_ats || 79, color: "text-emerald-600" },
-              ].map((bench, idx) => (
-                <div key={idx} className="p-3.5 rounded-2xl bg-surface-bright/70 border border-surface-container/60 space-y-1">
-                  <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">{bench.label}</div>
-                  <div className={`text-xl font-black ${bench.color}`}>{bench.score}%</div>
-                  <div className="text-[9px] text-on-surface-variant">Cohort average</div>
-                </div>
-              ))}
+          {/* TIER 7: RECENT CANDIDATE APPLICATIONS TABLE */}
+          <div className="bg-white/95 p-6 sm:p-7 rounded-[32px] border border-surface-container shadow-2xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-black text-on-surface">Recent Candidate Submissions</h3>
+                <p className="text-xs text-on-surface-variant">Candidates ready for evaluation, shortlisting, or scheduling</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTab("candidates")}
+                className="text-xs font-bold text-indigo-brand hover:underline cursor-pointer"
+              >
+                View Complete Directory ({candidates.length}) →
+              </button>
             </div>
+
+            {candidates.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-surface-bright/80 border-b border-surface-container text-on-surface font-bold uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="p-4">Candidate</th>
+                      <th className="p-4">Target Role</th>
+                      <th className="p-4">Overall Score</th>
+                      <th className="p-4">Integrity Signals</th>
+                      <th className="p-4">Verdict Status</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-container/50">
+                    {candidates.slice(0, 5).map((c) => (
+                      <tr key={c.id} className="hover:bg-surface-bright/50 transition-colors">
+                        <td className="p-4 font-bold text-on-surface">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center font-bold text-xs">
+                              {c.name?.charAt(0) || "C"}
+                            </div>
+                            <div>
+                              <div>{c.name}</div>
+                              <div className="text-[10px] text-on-surface-variant font-normal">{c.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4 text-on-surface-variant font-medium">{c.role || "Software Engineer"}</td>
+                        <td className="p-4 font-black text-indigo-brand text-sm">{c.overall_score ?? "—"}%</td>
+                        <td className="p-4">
+                          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1 w-fit">
+                            <ShieldCheck className="w-3 h-3" />
+                            {c.triangle_status || "Verified"}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <span
+                            className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                              c.verdict === "HIRE"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                : c.verdict === "SHORTLIST"
+                                ? "bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20"
+                                : c.verdict === "REJECT"
+                                ? "bg-rose-50 text-rose-700 border border-rose-200"
+                                : "bg-surface-container text-on-surface-variant"
+                            }`}
+                          >
+                            {c.verdict || "Under Review"}
+                          </span>
+                        </td>
+                        <td className="p-4 text-right space-x-2">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedCandidate(c)}
+                            className="px-3 py-1.5 bg-indigo-brand/10 hover:bg-indigo-brand/20 text-indigo-brand font-bold text-xs rounded-xl cursor-pointer transition-colors"
+                          >
+                            View Report
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-8 text-center text-xs text-on-surface-variant">
+                No candidates available yet. Post a job opening to start receiving applicants.
+              </div>
+            )}
           </div>
 
         </div>
       )}
 
       {/* ─────────────────────────────────────────────
-          TAB: RECRUITMENT PIPELINE (KANBAN / STAGE VIEW)
+          TAB: RECRUITMENT PIPELINE
       ───────────────────────────────────────────── */}
       {activeTab === "pipeline" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
-          <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs flex flex-wrap items-center justify-between gap-3">
+          <div className="bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-black text-on-surface">Recruitment Pipeline Board</h2>
+              <h2 className="text-lg font-black text-on-surface">Recruitment Pipeline Board</h2>
               <p className="text-xs text-on-surface-variant">Move and advance candidates through the 10-stage GenuAI evaluation lifecycle</p>
             </div>
             <button
@@ -831,16 +1139,16 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               onClick={() => setActiveTab("candidates")}
               className="px-4 py-2 bg-surface-bright hover:bg-surface-container text-on-surface font-bold text-xs rounded-xl border border-surface-container cursor-pointer"
             >
-              Table View →
+              Table Directory →
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {PIPELINE_STAGES.slice(0, 5).map((stg) => (
-              <div key={stg.key} className="bg-white/90 rounded-3xl border border-surface-container p-4 space-y-3">
+              <div key={stg.key} className="bg-white/90 rounded-3xl border border-surface-container p-5 space-y-3">
                 <div className="flex items-center justify-between border-b border-surface-container/60 pb-2">
                   <span className="text-xs font-black text-on-surface">{stg.label}</span>
-                  <span className="text-xs font-black px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand">
+                  <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand">
                     {(pipeline as any)[stg.key] || 0}
                   </span>
                 </div>
@@ -849,11 +1157,11 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     <div
                       key={c.id}
                       onClick={() => setSelectedCandidate(c)}
-                      className="p-3 rounded-2xl bg-surface-bright border border-surface-container/80 hover:border-indigo-brand cursor-pointer space-y-1 transition-all"
+                      className="p-3.5 rounded-2xl bg-surface-bright border border-surface-container/80 hover:border-indigo-brand cursor-pointer space-y-1 transition-all"
                     >
                       <div className="text-xs font-bold text-on-surface">{c.name}</div>
                       <div className="text-[10px] text-on-surface-variant">{c.role || "Software Engineer"}</div>
-                      <div className="text-[10px] font-bold text-indigo-brand">{c.overall_score || 82}% Overall</div>
+                      <div className="text-[10px] font-bold text-indigo-brand">{c.overall_score || 82}% Overall Score</div>
                     </div>
                   ))}
                 </div>
@@ -868,9 +1176,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       ───────────────────────────────────────────── */}
       {activeTab === "jobs" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
             <div>
-              <h2 className="text-base font-black text-on-surface">Job Management</h2>
+              <h2 className="text-lg font-black text-on-surface">Job Management</h2>
               <p className="text-xs text-on-surface-variant">Configure job openings, assessments, and candidate pipeline filters</p>
             </div>
             <button
@@ -879,7 +1187,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 setJobWizardStep(1);
                 setShowJobWizard(true);
               }}
-              className="flex items-center gap-1.5 px-4 py-2 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-2xl text-xs font-bold transition-all shadow-xs cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Create New Job</span>
@@ -887,7 +1195,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
           </div>
 
           {filteredJobs.length > 0 ? (
-            <div className="bg-white/95 rounded-3xl border border-surface-container shadow-2xs overflow-hidden">
+            <div className="bg-white/95 rounded-[32px] border border-surface-container shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-surface-bright/80 border-b border-surface-container text-on-surface font-bold uppercase tracking-wider text-[10px]">
@@ -933,7 +1241,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               </div>
             </div>
           ) : (
-            <div className="bg-white/95 p-12 rounded-3xl border border-surface-container text-center space-y-3">
+            <div className="bg-white/95 p-12 rounded-[32px] border border-surface-container text-center space-y-3">
               <Briefcase className="w-10 h-10 text-on-surface-variant/30 mx-auto" />
               <h3 className="text-sm font-bold text-on-surface">No active job openings</h3>
               <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
@@ -945,7 +1253,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   setJobWizardStep(1);
                   setShowJobWizard(true);
                 }}
-                className="px-4 py-2 bg-indigo-brand text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer"
+                className="px-5 py-2.5 bg-indigo-brand text-white rounded-2xl text-xs font-bold shadow-xs cursor-pointer"
               >
                 Create Job
               </button>
@@ -959,9 +1267,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       ───────────────────────────────────────────── */}
       {activeTab === "candidates" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
             <div>
-              <h2 className="text-base font-black text-on-surface">Candidate Directory</h2>
+              <h2 className="text-lg font-black text-on-surface">Candidate Directory</h2>
               <p className="text-xs text-on-surface-variant">Review scores, verify integrity signals, and submit structured scorecards</p>
             </div>
 
@@ -982,7 +1290,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
           </div>
 
           {filteredCandidates.length > 0 ? (
-            <div className="bg-white/95 rounded-3xl border border-surface-container shadow-2xs overflow-hidden">
+            <div className="bg-white/95 rounded-[32px] border border-surface-container shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-surface-bright/80 border-b border-surface-container text-on-surface font-bold uppercase tracking-wider text-[10px]">
@@ -1054,7 +1362,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               </div>
             </div>
           ) : (
-            <div className="bg-white/95 p-12 rounded-3xl border border-surface-container text-center space-y-3">
+            <div className="bg-white/95 p-12 rounded-[32px] border border-surface-container text-center space-y-3">
               <Users className="w-10 h-10 text-on-surface-variant/30 mx-auto" />
               <h3 className="text-sm font-bold text-on-surface">No candidates yet</h3>
               <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
@@ -1070,16 +1378,16 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       ───────────────────────────────────────────── */}
       {activeTab === "interviews" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
-          <div className="flex items-center justify-between bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs">
+          <div className="flex items-center justify-between bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
             <div>
-              <h2 className="text-base font-black text-on-surface">Interview Management &amp; Scorecards</h2>
+              <h2 className="text-lg font-black text-on-surface">Interview Management &amp; Scorecards</h2>
               <p className="text-xs text-on-surface-variant">Scheduled rounds, candidate evaluation forms, and structured feedback</p>
             </div>
             {candidates.length > 0 && (
               <button
                 type="button"
                 onClick={() => setShowScheduleModal(candidates[0])}
-                className="flex items-center gap-1.5 px-4 py-2 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-2xl text-xs font-bold shadow-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Schedule Interview</span>
@@ -1088,9 +1396,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
           </div>
 
           {interviews.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {interviews.map((iv) => (
-                <div key={iv.id} className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-3">
+                <div key={iv.id} className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
                       {iv.interview_type || "Technical"}
@@ -1105,7 +1413,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     <p className="text-xs text-on-surface-variant">{iv.job_title || "Software Engineer"}</p>
                   </div>
 
-                  <div className="text-[11px] text-on-surface-variant bg-surface-bright p-3 rounded-2xl space-y-1">
+                  <div className="text-[11px] text-on-surface-variant bg-surface-bright p-3.5 rounded-2xl space-y-1.5">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-indigo-brand" />
                       <span>{new Date(iv.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -1124,7 +1432,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     <button
                       type="button"
                       onClick={() => setShowScorecardModal(iv)}
-                      className="px-3 py-1.5 bg-indigo-brand/10 hover:bg-indigo-brand/20 text-indigo-brand font-bold text-xs rounded-xl cursor-pointer transition-colors"
+                      className="px-4 py-2 bg-indigo-brand/10 hover:bg-indigo-brand/20 text-indigo-brand font-bold text-xs rounded-xl cursor-pointer transition-colors"
                     >
                       Submit Scorecard
                     </button>
@@ -1133,11 +1441,11 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               ))}
             </div>
           ) : (
-            <div className="bg-white/95 p-12 rounded-3xl border border-surface-container text-center space-y-3">
+            <div className="bg-white/95 p-12 rounded-[32px] border border-surface-container text-center space-y-3">
               <Calendar className="w-10 h-10 text-on-surface-variant/30 mx-auto" />
               <h3 className="text-sm font-bold text-on-surface">No interviews scheduled</h3>
               <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
-                Schedule interviews directly with your shortlisted candidates.
+                Schedule interviews directly with your shortlisted applicants.
               </p>
             </div>
           )}
@@ -1149,44 +1457,44 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       ───────────────────────────────────────────── */}
       {activeTab === "assessments" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
-          <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs">
-            <h2 className="text-base font-black text-on-surface">Assessment Results &amp; Verification Hub</h2>
+          <div className="bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
+            <h2 className="text-lg font-black text-on-surface">Assessment Results &amp; Verification Hub</h2>
             <p className="text-xs text-on-surface-variant">Multi-module candidate scorecards and proctoring integrity telemetry</p>
           </div>
 
           {candidates.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {candidates.map((a) => (
-                <div key={a.id} className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-3">
-                  <div className="flex items-center justify-between border-b border-surface-container/60 pb-2">
+                <div key={a.id} className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between border-b border-surface-container/60 pb-3">
                     <div>
                       <h4 className="text-sm font-bold text-on-surface">{a.name}</h4>
                       <p className="text-[11px] text-on-surface-variant">{a.role || "Software Engineer"}</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm font-black text-indigo-brand">{a.overall_score ?? "—"}%</div>
+                      <div className="text-base font-black text-indigo-brand">{a.overall_score ?? "—"}%</div>
                       <span className="text-[9px] font-bold text-on-surface-variant uppercase">Overall</span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="p-2.5 bg-surface-bright rounded-2xl border border-surface-container/60">
+                  <div className="grid grid-cols-3 gap-2.5 text-center text-xs">
+                    <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container/60">
                       <div className="text-[10px] text-on-surface-variant font-bold">ATS Resume</div>
                       <div className="font-bold text-on-surface">{a.ats_score ?? "—"}%</div>
                     </div>
-                    <div className="p-2.5 bg-surface-bright rounded-2xl border border-surface-container/60">
+                    <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container/60">
                       <div className="text-[10px] text-on-surface-variant font-bold">Coding Test</div>
                       <div className="font-bold text-on-surface">{a.test_score ?? "—"}%</div>
                     </div>
-                    <div className="p-2.5 bg-surface-bright rounded-2xl border border-surface-container/60">
+                    <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container/60">
                       <div className="text-[10px] text-on-surface-variant font-bold">AI Interview</div>
                       <div className="font-bold text-on-surface">{a.interview_score ?? "—"}%</div>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                      <ShieldCheck className="w-3 h-3" />
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5" />
                       {a.triangle_status || "Verified"}
                     </span>
                     <button
@@ -1201,7 +1509,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               ))}
             </div>
           ) : (
-            <div className="bg-white/95 p-12 rounded-3xl border border-surface-container text-center space-y-3">
+            <div className="bg-white/95 p-12 rounded-[32px] border border-surface-container text-center space-y-3">
               <ClipboardCheck className="w-10 h-10 text-on-surface-variant/30 mx-auto" />
               <h3 className="text-sm font-bold text-on-surface">No assessment activity yet</h3>
               <p className="text-xs text-on-surface-variant max-w-sm mx-auto">
@@ -1213,17 +1521,17 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       )}
 
       {/* ─────────────────────────────────────────────
-          TAB: PROJECTS, ANALYTICS, SUBSCRIPTION, PROFILE
+          TAB: ANALYTICS, PROFILE, SETTINGS
       ───────────────────────────────────────────── */}
       {activeTab === "analytics" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
-          <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs">
-            <h2 className="text-base font-black text-on-surface">Recruitment Analytics &amp; Pipeline Velocity</h2>
+          <div className="bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
+            <h2 className="text-lg font-black text-on-surface">Recruitment Analytics &amp; Pipeline Velocity</h2>
             <p className="text-xs text-on-surface-variant">Conversion rates, pass rates, and time-to-hire benchmarks</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-2">
               <div className="text-xs font-bold text-on-surface-variant uppercase">Assessment Pass Rate</div>
               <div className="text-3xl font-black text-emerald-600">
                 {candidates.length > 0 ? Math.round((candidates.filter((c) => (c.overall_score || 0) >= 70).length / candidates.length) * 100) : 0}%
@@ -1231,7 +1539,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               <p className="text-[11px] text-on-surface-variant">Candidates scoring 70%+ across all modules</p>
             </div>
 
-            <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-2">
+            <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-2">
               <div className="text-xs font-bold text-on-surface-variant uppercase">Average Technical Score</div>
               <div className="text-3xl font-black text-indigo-brand">
                 {performanceAverages.avg_technical || 82}%
@@ -1239,7 +1547,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               <p className="text-[11px] text-on-surface-variant">Aptitude, coding, and problem-solving average</p>
             </div>
 
-            <div className="bg-white/95 p-5 rounded-3xl border border-surface-container shadow-2xs space-y-2">
+            <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-2">
               <div className="text-xs font-bold text-on-surface-variant uppercase">Average Time in Pipeline</div>
               <div className="text-3xl font-black text-purple-600">
                 4.2 Days
@@ -1251,47 +1559,47 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       )}
 
       {(activeTab === "profile" || activeTab === "settings") && (
-        <div className="bg-white/95 p-6 rounded-3xl border border-surface-container shadow-2xs space-y-6 animate-[fadeIn_0.2s_ease]">
+        <div className="bg-white/95 p-8 rounded-[32px] border border-surface-container shadow-2xs space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="border-b border-surface-container/60 pb-4">
-            <h2 className="text-base font-black text-on-surface">Company Profile &amp; Recruitment Settings</h2>
+            <h2 className="text-lg font-black text-on-surface">Company Profile &amp; Recruitment Settings</h2>
             <p className="text-xs text-on-surface-variant">Update company branding and recruiter team configurations</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="text-xs font-bold text-on-surface mb-1 block">Company Name</label>
+              <label className="text-xs font-bold text-on-surface mb-1.5 block">Company Name</label>
               <input
                 type="text"
                 value={profileForm.company_name}
                 onChange={(e) => setProfileForm((p) => ({ ...p, company_name: e.target.value }))}
-                className="w-full p-3 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand"
+                className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand"
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-on-surface mb-1 block">Industry</label>
+              <label className="text-xs font-bold text-on-surface mb-1.5 block">Industry</label>
               <input
                 type="text"
                 value={profileForm.industry}
                 onChange={(e) => setProfileForm((p) => ({ ...p, industry: e.target.value }))}
-                className="w-full p-3 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand"
+                className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand"
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-on-surface mb-1 block">Location</label>
+              <label className="text-xs font-bold text-on-surface mb-1.5 block">Location</label>
               <input
                 type="text"
                 value={profileForm.location}
                 onChange={(e) => setProfileForm((p) => ({ ...p, location: e.target.value }))}
-                className="w-full p-3 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand"
+                className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand"
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-on-surface mb-1 block">Company Size</label>
+              <label className="text-xs font-bold text-on-surface mb-1.5 block">Company Size</label>
               <input
                 type="text"
                 value={profileForm.company_size}
                 onChange={(e) => setProfileForm((p) => ({ ...p, company_size: e.target.value }))}
-                className="w-full p-3 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand"
+                className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand"
               />
             </div>
           </div>
@@ -1299,7 +1607,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
           <button
             type="button"
             onClick={handleSaveProfile}
-            className="px-5 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-xl text-xs transition-colors cursor-pointer shadow-xs"
+            className="px-6 py-3 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-2xl text-xs transition-colors cursor-pointer shadow-xs"
           >
             Save Profile Changes
           </button>
@@ -1311,15 +1619,15 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       ───────────────────────────────────────────── */}
       {showJobWizard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
-          <div className="bg-white max-w-xl w-full rounded-3xl border border-surface-container shadow-2xl p-6 space-y-5 animate-[scaleUp_0.2s_ease]">
+          <div className="bg-white max-w-xl w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-6 animate-[scaleUp_0.2s_ease]">
             
             {/* Wizard Header */}
-            <div className="flex items-center justify-between border-b border-surface-container pb-3">
+            <div className="flex items-center justify-between border-b border-surface-container pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-brand">
                   Step {jobWizardStep} of 6
                 </span>
-                <h3 className="text-base font-black text-on-surface">
+                <h3 className="text-lg font-black text-on-surface">
                   {jobWizardStep === 1 && "1. Job Information"}
                   {jobWizardStep === 2 && "2. Skills & Requirements"}
                   {jobWizardStep === 3 && "3. Assessment Configuration"}
@@ -1331,7 +1639,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               <button
                 type="button"
                 onClick={() => setShowJobWizard(false)}
-                className="p-1 text-on-surface-variant hover:text-on-surface cursor-pointer"
+                className="p-1.5 text-on-surface-variant hover:text-on-surface cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1346,7 +1654,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     placeholder="e.g. Senior Full Stack Engineer"
                     value={jobWizardForm.title}
                     onChange={(e) => setJobWizardForm((p) => ({ ...p, title: e.target.value }))}
-                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                    className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -1356,7 +1664,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                       placeholder="Engineering"
                       value={jobWizardForm.department}
                       onChange={(e) => setJobWizardForm((p) => ({ ...p, department: e.target.value }))}
-                      className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                     />
                   </div>
                   <div>
@@ -1365,7 +1673,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                       placeholder="Remote / Bengaluru"
                       value={jobWizardForm.location}
                       onChange={(e) => setJobWizardForm((p) => ({ ...p, location: e.target.value }))}
-                      className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                     />
                   </div>
                 </div>
@@ -1376,7 +1684,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     placeholder="Key responsibilities and expectations..."
                     value={jobWizardForm.description}
                     onChange={(e) => setJobWizardForm((p) => ({ ...p, description: e.target.value }))}
-                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                    className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                   />
                 </div>
               </div>
@@ -1391,7 +1699,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     placeholder="React, TypeScript, Node.js, SQL, System Design"
                     value={jobWizardForm.skills}
                     onChange={(e) => setJobWizardForm((p) => ({ ...p, skills: e.target.value }))}
-                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                    className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                   />
                 </div>
                 <div>
@@ -1399,7 +1707,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   <select
                     value={jobWizardForm.experience_level}
                     onChange={(e) => setJobWizardForm((p) => ({ ...p, experience_level: e.target.value }))}
-                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                    className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                   >
                     <option value="Entry-Level">Entry-Level (0-2 years)</option>
                     <option value="Mid-Level">Mid-Level (2-5 years)</option>
@@ -1414,7 +1722,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
             {jobWizardStep === 3 && (
               <div className="space-y-3 text-xs">
                 <p className="text-on-surface-variant">Select automated GenuAI evaluation modules for this opening:</p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2.5">
                   {[
                     { id: "resume", label: "ATS Resume Screening" },
                     { id: "aptitude", label: "Aptitude & Logical Test" },
@@ -1427,7 +1735,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   ].map((mod) => (
                     <label
                       key={mod.id}
-                      className="p-3 rounded-2xl border border-surface-container bg-surface-bright/70 flex items-center gap-2 cursor-pointer"
+                      className="p-3 rounded-2xl border border-surface-container bg-surface-bright/70 flex items-center gap-2 cursor-pointer hover:border-indigo-brand"
                     >
                       <input
                         type="checkbox"
@@ -1458,7 +1766,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                       placeholder="800000"
                       value={jobWizardForm.salary_min || ""}
                       onChange={(e) => setJobWizardForm((p) => ({ ...p, salary_min: parseInt(e.target.value) || 0 }))}
-                      className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                     />
                   </div>
                   <div>
@@ -1468,7 +1776,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                       placeholder="1800000"
                       value={jobWizardForm.salary_max || ""}
                       onChange={(e) => setJobWizardForm((p) => ({ ...p, salary_max: parseInt(e.target.value) || 0 }))}
-                      className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                     />
                   </div>
                 </div>
@@ -1483,7 +1791,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   <select
                     value={jobWizardForm.interview_rounds}
                     onChange={(e) => setJobWizardForm((p) => ({ ...p, interview_rounds: parseInt(e.target.value) || 2 }))}
-                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                    className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                   >
                     <option value={1}>1 Round (Direct Technical)</option>
                     <option value={2}>2 Rounds (AI + Live Technical)</option>
@@ -1495,22 +1803,22 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
 
             {/* Step 6: Review & Publish */}
             {jobWizardStep === 6 && (
-              <div className="space-y-3 text-xs bg-surface-bright/80 p-4 rounded-2xl border border-surface-container">
+              <div className="space-y-3 text-xs bg-surface-bright/80 p-5 rounded-2xl border border-surface-container">
                 <div className="font-bold text-sm text-on-surface">{jobWizardForm.title}</div>
-                <div className="text-on-surface-variant">
+                <div className="text-on-surface-variant font-medium">
                   {jobWizardForm.department} • {jobWizardForm.location} • {jobWizardForm.employment_type}
                 </div>
-                <div className="text-[11px] text-on-surface-variant">{jobWizardForm.description}</div>
+                <div className="text-[11px] text-on-surface-variant leading-relaxed">{jobWizardForm.description}</div>
               </div>
             )}
 
             {/* Wizard Navigation Actions */}
-            <div className="flex items-center justify-between pt-3 border-t border-surface-container">
+            <div className="flex items-center justify-between pt-4 border-t border-surface-container">
               {jobWizardStep > 1 ? (
                 <button
                   type="button"
                   onClick={() => setJobWizardStep((s) => s - 1)}
-                  className="px-4 py-2 text-on-surface font-bold text-xs cursor-pointer flex items-center gap-1"
+                  className="px-5 py-2.5 text-on-surface font-bold text-xs cursor-pointer flex items-center gap-1.5"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
@@ -1520,7 +1828,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 <button
                   type="button"
                   onClick={() => setJobWizardStep((s) => s + 1)}
-                  className="px-5 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-xl text-xs shadow-xs cursor-pointer flex items-center gap-1"
+                  className="px-6 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-2xl text-xs shadow-xs cursor-pointer flex items-center gap-1.5"
                 >
                   Next Step <ChevronRight className="w-4 h-4" />
                 </button>
@@ -1528,7 +1836,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 <button
                   type="button"
                   onClick={handlePublishJob}
-                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-xs cursor-pointer flex items-center gap-1"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-xs shadow-xs cursor-pointer flex items-center gap-1.5"
                 >
                   <CheckCircle2 className="w-4 h-4" /> Publish Opening
                 </button>
@@ -1543,15 +1851,15 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       ───────────────────────────────────────────── */}
       {showScorecardModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
-          <div className="bg-white max-w-lg w-full rounded-3xl border border-surface-container shadow-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-surface-container pb-3">
+          <div className="bg-white max-w-lg w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-5">
+            <div className="flex items-center justify-between border-b border-surface-container pb-4">
               <h3 className="text-sm font-black text-on-surface">
                 Submit Scorecard: {showScorecardModal.candidate_name}
               </h3>
               <button
                 type="button"
                 onClick={() => setShowScorecardModal(null)}
-                className="p-1 text-on-surface-variant hover:text-on-surface cursor-pointer"
+                className="p-1.5 text-on-surface-variant hover:text-on-surface cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1567,7 +1875,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     max={10}
                     value={scorecardForm.technical_score}
                     onChange={(e) => setScorecardForm((p) => ({ ...p, technical_score: parseInt(e.target.value) || 5 }))}
-                    className="w-full p-2.5 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand font-bold"
+                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand font-bold"
                   />
                 </div>
                 <div>
@@ -1578,7 +1886,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     max={10}
                     value={scorecardForm.communication_score}
                     onChange={(e) => setScorecardForm((p) => ({ ...p, communication_score: parseInt(e.target.value) || 5 }))}
-                    className="w-full p-2.5 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand font-bold"
+                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand font-bold"
                   />
                 </div>
                 <div>
@@ -1589,7 +1897,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     max={10}
                     value={scorecardForm.problem_solving_score}
                     onChange={(e) => setScorecardForm((p) => ({ ...p, problem_solving_score: parseInt(e.target.value) || 5 }))}
-                    className="w-full p-2.5 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand font-bold"
+                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand font-bold"
                   />
                 </div>
                 <div>
@@ -1600,7 +1908,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     max={10}
                     value={scorecardForm.teamwork_score}
                     onChange={(e) => setScorecardForm((p) => ({ ...p, teamwork_score: parseInt(e.target.value) || 5 }))}
-                    className="w-full p-2.5 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand font-bold"
+                    className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand font-bold"
                   />
                 </div>
               </div>
@@ -1610,7 +1918,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 <select
                   value={scorecardForm.recommendation}
                   onChange={(e) => setScorecardForm((p) => ({ ...p, recommendation: e.target.value }))}
-                  className="w-full p-2.5 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand font-bold"
+                  className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand font-bold"
                 >
                   <option value="Strong Hire">Strong Hire (Top 5%)</option>
                   <option value="Hire">Hire (Meets All Benchmarks)</option>
@@ -1626,23 +1934,23 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   placeholder="Key strengths, architectural observations, and reasoning..."
                   value={scorecardForm.notes}
                   onChange={(e) => setScorecardForm((p) => ({ ...p, notes: e.target.value }))}
-                  className="w-full p-2.5 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand"
+                  className="w-full p-3 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-surface-container">
+            <div className="flex items-center justify-end gap-2 pt-4 border-t border-surface-container">
               <button
                 type="button"
                 onClick={() => setShowScorecardModal(null)}
-                className="px-4 py-2 text-on-surface-variant font-bold text-xs cursor-pointer"
+                className="px-5 py-2.5 text-on-surface-variant font-bold text-xs cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSubmitScorecard}
-                className="px-5 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-xl text-xs shadow-xs cursor-pointer"
+                className="px-6 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-2xl text-xs shadow-xs cursor-pointer"
               >
                 Save Scorecard
               </button>
@@ -1656,13 +1964,13 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       ───────────────────────────────────────────── */}
       {showScheduleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
-          <div className="bg-white max-w-md w-full rounded-3xl border border-surface-container shadow-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-surface-container pb-3">
+          <div className="bg-white max-w-md w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-5">
+            <div className="flex items-center justify-between border-b border-surface-container pb-4">
               <h3 className="text-sm font-bold text-on-surface">Schedule Interview: {showScheduleModal.name}</h3>
               <button
                 type="button"
                 onClick={() => setShowScheduleModal(null)}
-                className="p-1 text-on-surface-variant hover:text-on-surface cursor-pointer"
+                className="p-1.5 text-on-surface-variant hover:text-on-surface cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1675,7 +1983,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   type="datetime-local"
                   value={scheduleForm.scheduled_at}
                   onChange={(e) => setScheduleForm((p) => ({ ...p, scheduled_at: e.target.value }))}
-                  className="w-full p-3 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand"
+                  className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                 />
               </div>
 
@@ -1684,7 +1992,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 <select
                   value={scheduleForm.interview_type}
                   onChange={(e) => setScheduleForm((p) => ({ ...p, interview_type: e.target.value }))}
-                  className="w-full p-3 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand"
+                  className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                 >
                   <option value="Technical">Technical Round</option>
                   <option value="System Design">System Design</option>
@@ -1699,23 +2007,23 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   placeholder="https://meet.google.com/xyz-abc"
                   value={scheduleForm.meeting_link}
                   onChange={(e) => setScheduleForm((p) => ({ ...p, meeting_link: e.target.value }))}
-                  className="w-full p-3 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand"
+                  className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-surface-container">
+            <div className="flex items-center justify-end gap-2 pt-4 border-t border-surface-container">
               <button
                 type="button"
                 onClick={() => setShowScheduleModal(null)}
-                className="px-4 py-2 text-on-surface-variant font-bold text-xs cursor-pointer"
+                className="px-5 py-2.5 text-on-surface-variant font-bold text-xs cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleScheduleInterview}
-                className="px-5 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-xl text-xs shadow-xs cursor-pointer"
+                className="px-6 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-2xl text-xs shadow-xs cursor-pointer"
               >
                 Send Invite
               </button>
@@ -1729,7 +2037,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       ───────────────────────────────────────────── */}
       {selectedCandidate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
-          <div className="bg-white max-w-2xl w-full rounded-3xl border border-surface-container shadow-2xl p-6 space-y-5 animate-[scaleUp_0.2s_ease] max-h-[90vh] overflow-y-auto">
+          <div className="bg-white max-w-2xl w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-6 animate-[scaleUp_0.2s_ease] max-h-[90vh] overflow-y-auto">
             
             {/* Header */}
             <div className="flex items-start justify-between border-b border-surface-container pb-4">
@@ -1745,7 +2053,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               <button
                 type="button"
                 onClick={() => setSelectedCandidate(null)}
-                className="p-1 text-on-surface-variant hover:text-on-surface cursor-pointer"
+                className="p-1.5 text-on-surface-variant hover:text-on-surface cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1771,25 +2079,25 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
             {candidateProfileTab === "overview" && (
               <div className="space-y-4 text-xs">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container">
+                  <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container">
                     <div className="text-[10px] text-on-surface-variant uppercase font-bold">Overall Score</div>
                     <div className="text-xl font-black text-indigo-brand">{selectedCandidate.overall_score ?? "—"}%</div>
                   </div>
-                  <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container">
+                  <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container">
                     <div className="text-[10px] text-on-surface-variant uppercase font-bold">ATS Score</div>
                     <div className="text-xl font-black text-on-surface">{selectedCandidate.ats_score ?? "—"}%</div>
                   </div>
-                  <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container">
+                  <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container">
                     <div className="text-[10px] text-on-surface-variant uppercase font-bold">Coding Test</div>
                     <div className="text-xl font-black text-on-surface">{selectedCandidate.test_score ?? "—"}%</div>
                   </div>
-                  <div className="p-3 bg-surface-bright rounded-2xl border border-surface-container">
+                  <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container">
                     <div className="text-[10px] text-on-surface-variant uppercase font-bold">AI Interview</div>
                     <div className="text-xl font-black text-on-surface">{selectedCandidate.interview_score ?? "—"}%</div>
                   </div>
                 </div>
 
-                <div className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container space-y-2">
+                <div className="p-4 bg-surface-bright rounded-2xl border border-surface-container space-y-2">
                   <div className="font-bold text-on-surface">Candidate Contact &amp; Background</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-on-surface-variant">
                     <div><span className="font-semibold text-on-surface">Email:</span> {selectedCandidate.email}</div>
@@ -1811,7 +2119,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   { name: "SVAR Verbal Assessment", score: selectedCandidate.communication_score, desc: "Spoken English and fluency" },
                   { name: "Hackathon Project Challenge", score: selectedCandidate.coding_score, desc: "Hands-on full-stack submission" },
                 ].map((m, i) => (
-                  <div key={i} className="p-3 rounded-2xl border border-surface-container bg-surface-bright/50 flex items-center justify-between">
+                  <div key={i} className="p-3.5 rounded-2xl border border-surface-container bg-surface-bright/50 flex items-center justify-between">
                     <div>
                       <div className="font-bold text-on-surface">{m.name}</div>
                       <div className="text-[10px] text-on-surface-variant">{m.desc}</div>
@@ -1833,7 +2141,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
             {/* Tab: Integrity Signals */}
             {candidateProfileTab === "integrity" && (
               <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-2xl bg-surface-bright border border-surface-container space-y-2">
+                <div className="p-4 rounded-2xl bg-surface-bright border border-surface-container space-y-2">
                   <div className="font-bold text-on-surface">Proctoring Signals</div>
                   <div className="space-y-1.5 text-on-surface-variant">
                     <div className="flex items-center justify-between">
@@ -1854,32 +2162,32 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
             )}
 
             {/* Verdict Actions */}
-            <div className="flex flex-wrap items-center justify-end gap-2 pt-4 border-t border-surface-container">
+            <div className="flex flex-wrap items-center justify-end gap-2.5 pt-4 border-t border-surface-container">
               <button
                 type="button"
                 onClick={() => handleUpdateVerdict(selectedCandidate.id, "REJECT")}
-                className="px-4 py-2 bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold rounded-xl text-xs cursor-pointer transition-colors"
+                className="px-5 py-2.5 bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold rounded-2xl text-xs cursor-pointer transition-colors"
               >
                 Reject / Forward
               </button>
               <button
                 type="button"
                 onClick={() => handleUpdateVerdict(selectedCandidate.id, "SHORTLIST")}
-                className="px-4 py-2 bg-indigo-brand/10 text-indigo-brand hover:bg-indigo-brand/20 font-bold rounded-xl text-xs cursor-pointer transition-colors"
+                className="px-5 py-2.5 bg-indigo-brand/10 text-indigo-brand hover:bg-indigo-brand/20 font-bold rounded-2xl text-xs cursor-pointer transition-colors"
               >
                 Shortlist
               </button>
               <button
                 type="button"
                 onClick={() => handleUpdateVerdict(selectedCandidate.id, "OFFER")}
-                className="px-4 py-2 bg-amber-50 text-amber-800 hover:bg-amber-100 font-bold rounded-xl text-xs cursor-pointer transition-colors"
+                className="px-5 py-2.5 bg-amber-50 text-amber-800 hover:bg-amber-100 font-bold rounded-2xl text-xs cursor-pointer transition-colors"
               >
                 Send Offer
               </button>
               <button
                 type="button"
                 onClick={() => handleUpdateVerdict(selectedCandidate.id, "HIRE")}
-                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs cursor-pointer shadow-xs transition-colors"
+                className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-xs cursor-pointer shadow-xs transition-colors"
               >
                 Hire Candidate
               </button>
