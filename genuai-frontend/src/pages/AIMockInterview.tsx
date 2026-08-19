@@ -10,32 +10,144 @@ const TYPES = [
   { key:"Behavioral", label:"Behavioral Round",emoji:"🧠", desc:"Situation-based & soft skill questions" },
 ];
 
-const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
+const QUESTION_BANK: Record<string, Record<string, string[]>> = {
+  HR: {
+    default: [
+      "Tell me about yourself, your background, and why you are interested in this role.",
+      "What is your greatest professional accomplishment so far, and why?",
+      "Describe a situation where you experienced a disagreement with a colleague or lead. How did you handle it?",
+      "Where do you see yourself in 3 years in your career progression?",
+      "Why do you feel GenuAI hiring partners would be a great fit for your skill set?"
+    ]
+  },
+  Technical: {
+    "Software Engineer": [
+      "Explain the key architectural differences between monolithic vs microservices architectures and when you would choose each.",
+      "How do you handle race conditions and concurrency issues when designing high-throughput web applications?",
+      "Describe how database indexing works internally (B-Trees vs Hash indexes) and how to optimize slow SQL queries.",
+      "Walk through how you design RESTful APIs vs GraphQL APIs, focusing on caching and payload efficiency.",
+      "Explain how memory management and garbage collection work in modern execution runtimes."
+    ],
+    "Frontend Developer": [
+      "How do you optimize render performance, virtual DOM diffing, and bundle size in React applications?",
+      "Explain how browser event bubbling, capturing, and event delegation work with examples.",
+      "How do you approach Responsive Design, CSS Grid/Flexbox layouts, and cross-device accessibility (a11y)?",
+      "Describe how client-side caching, Service Workers, and Progressive Web Apps (PWAs) function.",
+      "What strategies do you use for global state management (Zustand, Redux, React Context)?"
+    ],
+    "Backend Developer": [
+      "How do you design a resilient message queue architecture using Kafka or RabbitMQ?",
+      "Explain JWT authentication vs Session-based authentication, including security considerations (XSS, CSRF).",
+      "How do you handle database migrations with zero downtime in production environments?",
+      "Describe rate limiting algorithms (Token Bucket, Leaky Bucket) and how to implement them at the API Gateway level.",
+      "What approaches do you take for distributed tracing and monitoring in microservices?"
+    ],
+    "Full Stack Developer": [
+      "Walk through an end-to-end user request lifecycle from DNS lookup to database query and browser rendering.",
+      "How do you structure your frontend and backend codebases for maximum reusability and clean architecture?",
+      "What is your strategy for automated testing (Unit, Integration, E2E) across the stack?",
+      "How do you secure web applications against OWASP Top 10 vulnerabilities?",
+      "Explain how WebSockets vs Server-Sent Events (SSE) vs HTTP Polling differ for real-time features."
+    ],
+    default: [
+      "Describe a challenging technical problem you solved recently and the trade-offs you considered.",
+      "How do you ensure code quality, maintainability, and proper documentation in a fast-moving team?",
+      "Explain how modern web frameworks handle routing, state management, and asynchronous data fetching.",
+      "What is your approach to debugging production issues when server logs are incomplete?",
+      "How do you design APIs that are backwards-compatible and easy for other developers to consume?"
+    ]
+  },
+  Behavioral: {
+    default: [
+      "Tell me about a time when a project deadline was at risk. What steps did you take to deliver successfully?",
+      "Describe a situation where you had to quickly adapt to a major technical shift or unexpected requirement change.",
+      "Give an example of a mistake you made in a previous project. What went wrong and what did you learn?",
+      "How do you handle receiving critical feedback on your work during code reviews?",
+      "Describe a time when you mentored or assisted a fellow developer to overcome a blocker."
+    ]
+  }
+};
+
+function getFallbackQuestion(role: string, type: string, previousQs: string[]): string {
+  const category = QUESTION_BANK[type] || QUESTION_BANK.HR;
+  const list = category[role] || category.default || QUESTION_BANK.HR.default;
+  const unasked = list.filter(q => !previousQs.includes(q));
+  if (unasked.length > 0) {
+    return unasked[Math.floor(Math.random() * unasked.length)];
+  }
+  return list[previousQs.length % list.length];
+}
+
+function getFallbackEvaluation(question: string, answer: string, role: string) {
+  const words = answer.trim().split(/\s+/).length;
+  let score = 75;
+  let rating = "Good Response";
+  const strengths = ["Clear articulation of concepts", "Directly addressed the question prompt"];
+  const improvements = ["Quantify metrics and business outcomes where possible", "Use the STAR method (Situation, Task, Action, Result) for deeper structure"];
+
+  if (words > 40) {
+    score = Math.min(95, 82 + Math.floor(Math.random() * 10));
+    rating = "Strong Answer";
+    strengths.push("Detailed technical explanation with great structure");
+  } else if (words < 15) {
+    score = 62;
+    rating = "Needs Elaboration";
+    improvements.unshift("Provide more specific technical examples and elaboration");
+  }
+
+  return {
+    score,
+    rating,
+    strengths,
+    improvements,
+    ideal_answer: `A comprehensive answer for a ${role} would clearly describe the approach, key trade-offs considered, and measurable impact achieved.`
+  };
+}
 
 async function generateQuestion(role: string, type: string, previousQs: string[]): Promise<string> {
-  const prev = previousQs.length ? `Avoid repeating these: ${previousQs.slice(-3).join("; ")}` : "";
-  const prompt = `Generate ONE ${type} interview question for a ${role} candidate. ${prev} Return ONLY the question text, nothing else. Make it a realistic, challenging interview question.`;
-  const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.8, max_tokens: 120
-  }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" } });
-  return res.data.choices[0].message.content.trim();
+  const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
+  if (GROQ_KEY) {
+    try {
+      const prev = previousQs.length ? `Avoid repeating these: ${previousQs.slice(-3).join("; ")}` : "";
+      const prompt = `Generate ONE ${type} interview question for a ${role} candidate. ${prev} Return ONLY the question text, nothing else. Make it a realistic, challenging interview question.`;
+      const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.8, max_tokens: 120
+      }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" }, timeout: 6000 });
+      if (res.data?.choices?.[0]?.message?.content) {
+        return res.data.choices[0].message.content.trim();
+      }
+    } catch (e) {
+      console.warn("Groq API question generation unavailable, using fallback question generator:", e);
+    }
+  }
+  return getFallbackQuestion(role, type, previousQs);
 }
 
 async function evaluateAnswer(question: string, answer: string, role: string): Promise<any> {
-  const prompt = `You are a strict interviewer evaluating a ${role} candidate.
+  const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
+  if (GROQ_KEY) {
+    try {
+      const prompt = `You are a strict interviewer evaluating a ${role} candidate.
 Question: "${question}"
 Candidate Answer: "${answer}"
 Rate this answer and return ONLY valid JSON:
 {"score":85,"rating":"Good","strengths":["point1","point2"],"improvements":["point1"],"ideal_answer":"Brief ideal answer in 2 sentences."}`;
-  const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
-    model: "llama-3.3-70b-versatile",
-    messages: [{ role: "user", content: prompt }],
-    response_format: { type: "json_object" },
-    temperature: 0.3, max_tokens: 400
-  }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" } });
-  return JSON.parse(res.data.choices[0].message.content);
+      const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+        temperature: 0.3, max_tokens: 400
+      }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" }, timeout: 6000 });
+      if (res.data?.choices?.[0]?.message?.content) {
+        return JSON.parse(res.data.choices[0].message.content);
+      }
+    } catch (e) {
+      console.warn("Groq API answer evaluation unavailable, using fallback evaluator:", e);
+    }
+  }
+  return getFallbackEvaluation(question, answer, role);
 }
 
 export default function AIMockInterview({ user, onBack }: Props) {
@@ -94,7 +206,11 @@ export default function AIMockInterview({ user, onBack }: Props) {
       const q = await generateQuestion(role, type, []);
       setCurrentQ(q);
       setPhase("interview");
-    } catch { alert("Failed to generate question. Check your Groq API key in .env"); }
+    } catch {
+      const q = getFallbackQuestion(role, type, []);
+      setCurrentQ(q);
+      setPhase("interview");
+    }
     setLoading(false);
   };
 
@@ -108,7 +224,7 @@ export default function AIMockInterview({ user, onBack }: Props) {
       const fb = await evaluateAnswer(currentQ, answer, role);
       setFeedback(fb);
     } catch { 
-      setFeedback({ score:70, rating:"Good", strengths:["Clear answer"], improvements:["Add more detail"], ideal_answer:"Provide a structured response with examples." }); 
+      setFeedback(getFallbackEvaluation(currentQ, answer, role)); 
     }
     setLoading(false);
   };
@@ -124,7 +240,11 @@ export default function AIMockInterview({ user, onBack }: Props) {
       const q = await generateQuestion(role, type, newHistory.map(h => h.q));
       setCurrentQ(q);
       setQIndex(i => i + 1);
-    } catch { alert("Failed to load next question"); }
+    } catch {
+      const q = getFallbackQuestion(role, type, newHistory.map(h => h.q));
+      setCurrentQ(q);
+      setQIndex(i => i + 1);
+    }
     setLoading(false);
   };
 

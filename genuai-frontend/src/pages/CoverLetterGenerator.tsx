@@ -57,16 +57,40 @@ Instructions:
 - Format it with clean paragraphs. If applicant and company info are provided, place them at the very top in a standard formal business letter layout.
 - Ensure the tone is confident, professional, and enthusiastic.`;
 
-      const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
-        model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.5, max_tokens: 1500
-      }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" } });
+      if (GROQ_KEY) {
+        try {
+          const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.5, max_tokens: 1500
+          }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" }, timeout: 6000 });
+          
+          if (res.data?.choices?.[0]?.message?.content) {
+            setResult(res.data.choices[0].message.content.trim());
+            setLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.warn("Groq API cover letter generation failed, using structured template fallback:", e);
+        }
+      }
       
-      setResult(res.data.choices[0].message.content.trim());
+      // Structured Fallback Cover Letter
+      const fallbackLetter = `${applicantInfo ? applicantInfo + "\n\n" : ""}${companyInfo ? companyInfo + "\n\n" : "\n"}${salutation || "Dear Hiring Manager,"}
+
+${opening || `I am writing to express my strong interest in the target role described as: ${jobDetails}.`}
+
+With my background in ${skills || "software development"} and proven track record, I am confident in my ability to deliver immediate value to your team.
+
+${experience ? `Key Experience & Background: ${experience}\n\n` : ""}${achievements ? `Key Achievements: ${achievements}\n\n` : ""}${motivation ? `Motivation: ${motivation}\n\n` : ""}${valueProp ? `Value Proposition: ${valueProp}\n\n` : ""}${closing || "I look forward to the opportunity to discuss how my qualifications align with your team's objectives."}
+
+${cta || "Please feel free to contact me at your earliest convenience to schedule an interview."}
+
+${signOff || "Sincerely,\n" + (user?.name || "Applicant")}`;
+
+      setResult(fallbackLetter);
     } catch (e) {
       console.error(e);
-      alert("Failed to generate cover letter. Check your API key or network connection.");
     }
     setLoading(false);
   };

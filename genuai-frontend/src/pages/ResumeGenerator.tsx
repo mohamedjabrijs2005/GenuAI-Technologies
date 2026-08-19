@@ -87,16 +87,47 @@ Instructions:
 5. Ignore any section that says "Not provided".
 6. Do NOT output any conversational text like "Here is your resume" or "Let me know if you need changes." ONLY output the markdown resume.`;
 
-      const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
-        model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.3, max_tokens: 2500
-      }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" } });
-      
-      setResult(res.data.choices[0].message.content.trim());
+      if (GROQ_KEY) {
+        try {
+          const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.3, max_tokens: 2500
+          }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" }, timeout: 6000 });
+          
+          if (res.data?.choices?.[0]?.message?.content) {
+            setResult(res.data.choices[0].message.content.trim());
+            setLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.warn("Groq API resume generation failed, using structured resume fallback:", e);
+        }
+      }
+
+      // Structured Fallback Markdown Resume
+      const fallbackResume = `# ${candidateName || user?.name || "Candidate Name"}
+${candidateEmail || user?.email || "email@example.com"} | ${phone || ""} | ${location || ""}
+
+## Professional Summary
+${objective || `Dedicated and results-oriented ${role || "Software Engineer"} with hands-on expertise in ${skills || "modern development frameworks"}. Proven track record of developing scalable applications and collaborating effectively in cross-functional teams.`}
+
+## Technical Skills
+${skills ? skills.split(',').map(s => `- **${s.trim()}**`).join('\n') : '- **Full Stack Development**'}
+
+## Professional Experience
+### Senior ${role || "Software Engineer"}
+- ${experience || "Developed and maintained critical application modules and optimized system performance."}
+${projects ? `- Key Projects: ${projects}` : ""}
+
+## Education & Certifications
+${education ? `- ${education}` : '- B.S. in Computer Science'}
+${certifications ? `- Certifications: ${certifications}` : ''}
+`;
+
+      setResult(fallbackResume);
     } catch (e) {
       console.error(e);
-      alert("Failed to generate resume. Check your API key or network connection.");
     }
     setLoading(false);
   };

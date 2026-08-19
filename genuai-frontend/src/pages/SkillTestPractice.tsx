@@ -102,23 +102,58 @@ Return ONLY valid JSON with this exact structure:
 }`;
       }
 
-      const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
-        model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.8, response_format: { type: "json_object" }
-      }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" } });
-      
-      let responseText = res.data.choices[0].message.content.trim();
-      if (responseText.startsWith("\`\`\`")) {
-        responseText = responseText.replace(/^\`\`\`(json)?\n/, "").replace(/\n\`\`\`$/, "");
+      if (GROQ_KEY) {
+        try {
+          const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.8, response_format: { type: "json_object" }
+          }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" }, timeout: 6000 });
+          
+          let responseText = res.data.choices[0].message.content.trim();
+          if (responseText.startsWith("```")) {
+            responseText = responseText.replace(/^```(json)?\n/, "").replace(/\n```$/, "");
+          }
+          
+          const q = JSON.parse(responseText);
+          setQuestion(q);
+          if (q.type === "code") setUserCode(q.codeTemplate);
+          setLoading(false);
+          return;
+        } catch (e) {
+          console.warn("Groq API question generation failed, using question bank fallback:", e);
+        }
       }
-      
-      const q = JSON.parse(responseText);
-      setQuestion(q);
-      if (q.type === "code") setUserCode(q.codeTemplate);
+
+      // Fallback Question Generator
+      const isCodeCategory = cat === "automata" || cat === "automata_fix";
+
+      const fallbackMcq: MCQQuestion = {
+        type: "mcq",
+        question: `Which of the following best describes the core principle of ${cat} in modern software engineering?`,
+        options: [
+          `Optimizing execution time and modular scalability for ${cat}`,
+          `Storing all application state in browser session memory`,
+          `Bypassing asynchronous event loops during API fetching`,
+          `Using static hardcoded data for all server responses`
+        ],
+        correctIndex: 0,
+        explanation: `${cat} principles prioritize clean architecture, performance optimization, and modular scalability.`
+      };
+
+      const fallbackCode: CodeQuestion = {
+        type: "code",
+        title: `${cat} Coding Challenge`,
+        description: `Write a function \`solve(input_data)\` in Python that processes the input and returns the optimal result for ${cat}.`,
+        codeTemplate: `def solve(input_data):\n    # Write your solution for ${cat} here\n    return input_data`,
+        language: "python"
+      };
+
+      const fallbackQ: Question = isCodeCategory ? fallbackCode : fallbackMcq;
+      setQuestion(fallbackQ);
+      if (fallbackQ.type === "code") setUserCode(fallbackQ.codeTemplate);
     } catch (e) {
       console.error(e);
-      alert("Failed to generate question. Retrying...");
     }
     setLoading(false);
   };

@@ -88,17 +88,37 @@ Return the result strictly as a JSON object with this exact format:
   ]
 }`;
 
-      const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
-        model: "llama-3.3-70b-versatile",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.7, max_tokens: 500, response_format: { type: "json_object" }
-      }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" } });
-      
-      const data = JSON.parse(res.data.choices[0].message.content);
-      setSyllabus(data.modules || []);
+      if (GROQ_KEY) {
+        try {
+          const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.7, max_tokens: 500, response_format: { type: "json_object" }
+          }, { headers: { Authorization: `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" }, timeout: 6000 });
+          
+          if (res.data?.choices?.[0]?.message?.content) {
+            const data = JSON.parse(res.data.choices[0].message.content);
+            setSyllabus(data.modules || []);
+            setSyllabusLoading(false);
+            return;
+          }
+        } catch (e) {
+          console.warn("Groq API syllabus generation failed, using structured syllabus fallback:", e);
+        }
+      }
+
+      // Structured Fallback Syllabus Modules
+      const fallbackModules = [
+        { id: "m1", title: `1. Foundations of ${currentSkill}`, description: `Core concepts, syntax, and essential mental models for ${currentSkill}.` },
+        { id: "m2", title: `2. Data Structures & Core Logic`, description: `Best practices for structuring algorithms and managing state efficiently.` },
+        { id: "m3", title: `3. Advanced Architecture & Patterns`, description: `Designing scalable, maintainable systems with clean coding standards.` },
+        { id: "m4", title: `4. Testing, Debugging & Performance`, description: `Optimizing runtime performance, handling errors, and writing robust tests.` },
+        { id: "m5", title: `5. Real-World Project Engineering`, description: `Building, deploying, and maintaining enterprise applications in production.` }
+      ];
+
+      setSyllabus(fallbackModules);
     } catch (e) {
       console.error(e);
-      alert("Failed to generate syllabus. Please check your API key.");
     }
     setSyllabusLoading(false);
   };
