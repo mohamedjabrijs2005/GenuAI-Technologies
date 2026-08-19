@@ -75,44 +75,44 @@ export default function PracticeDashboard({ user, onBack }: Props) {
         <div className="absolute top-[10%] left-[-5%] w-[400px] h-[400px] bg-indigo-brand/5 blur-[100px] rounded-full pointer-events-none" />
         <div className="absolute bottom-[20%] right-[-5%] w-[500px] h-[500px] bg-warning/5 blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="text-center mb-xl relative z-10">
-          <h1 className="text-[2.8rem] md:text-[3.5rem] font-black text-on-surface mb-3 drop-shadow-sm leading-tight tracking-tight">
+        <div className="text-center mb-8 relative z-10">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-on-surface mb-3 drop-shadow-sm leading-tight tracking-tight">
             Prepare to <span className="text-indigo-brand">Succeed</span>
           </h1>
-          <p className="text-on-surface-variant font-medium text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-on-surface-variant font-medium text-xs sm:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed">
             Master every stage of the hiring process with AI-driven practice environments.
           </p>
         </div>
 
         {/* Modules Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg mb-xl relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 relative z-10">
           {TOOLS.map(tool => {
             const isHover = active === tool.id;
             return (
               <div key={tool.id} onMouseEnter={() => setActive(tool.id)} onMouseLeave={() => setActive(null)}
-                className={`glass rounded-3xl p-xl flex flex-col relative transition-all duration-300 cursor-pointer border-2 ${isHover ? `${tool.classes.border} shadow-[0_16px_40px_rgba(0,0,0,0.08)] scale-[1.02] bg-white` : 'border-surface-container hover:border-surface-container-high'}`}>
+                className={`glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col relative transition-all duration-200 cursor-pointer border-2 ${isHover ? `${tool.classes.border} shadow-md scale-[1.01] bg-white` : 'border-surface-container hover:border-surface-container-high'}`}>
                 
                 {!tool.ready && (
-                  <div className="absolute top-md right-md bg-warning/20 text-warning-dark text-[10px] font-black px-xs py-0.5 rounded-full uppercase tracking-widest border border-warning/30">
+                  <div className="absolute top-3 right-3 bg-warning/20 text-warning-dark text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest border border-warning/30">
                     SOON
                   </div>
                 )}
                 
-                <div className={`w-16 h-16 rounded-2xl ${tool.classes.bgLight} flex items-center justify-center mb-md overflow-hidden shrink-0`}>
-                  <img src={tool.imgSrc} alt={tool.title} className="w-10 h-10 object-contain mix-blend-multiply drop-shadow-sm" />
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl ${tool.classes.bgLight} flex items-center justify-center mb-3 sm:mb-4 overflow-hidden shrink-0`}>
+                  <img src={tool.imgSrc} alt={tool.title} className="w-7 h-7 sm:w-10 sm:h-10 object-contain mix-blend-multiply drop-shadow-xs" />
                 </div>
                 
-                <h3 className="text-title-md font-title-md text-on-surface mb-xs">{tool.title}</h3>
-                <p className="text-on-surface-variant font-medium text-sm leading-relaxed mb-md flex-1">{tool.desc}</p>
+                <h3 className="text-base sm:text-lg font-black text-on-surface mb-1">{tool.title}</h3>
+                <p className="text-on-surface-variant font-medium text-xs sm:text-sm leading-relaxed mb-4 flex-1">{tool.desc}</p>
                 
-                <div className="flex flex-wrap gap-xs mb-lg">
+                <div className="flex flex-wrap gap-1.5 mb-4">
                   {tool.tags.map((t,i) => (
-                    <span key={i} className={`${tool.classes.bgLight} ${tool.classes.text} text-xs font-bold px-sm py-1 rounded-full border ${tool.classes.borderLight}`}>{t}</span>
+                    <span key={i} className={`${tool.classes.bgLight} ${tool.classes.text} text-[11px] sm:text-xs font-bold px-2 py-0.5 rounded-full border ${tool.classes.borderLight}`}>{t}</span>
                   ))}
                 </div>
                 
-                <button onClick={() => handleOpen(tool)} className={`w-full py-sm rounded-xl font-bold text-sm flex items-center justify-center gap-xs transition-all ${tool.ready ? (isHover ? `${tool.classes.bg} text-white shadow-md` : `bg-transparent ${tool.classes.text} border ${tool.classes.border}`) : 'bg-surface-bright text-on-surface-variant border border-surface-container cursor-not-allowed'}`}>
-                  {tool.ready ? (isHover ? <>Launch <span className="material-symbols-outlined text-[16px]">rocket_launch</span></> : 'Open Tool') : 'Coming Soon'}
+                <button onClick={() => handleOpen(tool)} className={`w-full py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1 transition-all ${tool.ready ? (isHover ? `${tool.classes.bg} text-white shadow-xs` : `bg-transparent ${tool.classes.text} border ${tool.classes.border}`) : 'bg-surface-bright text-on-surface-variant border border-surface-container cursor-not-allowed'}`}>
+                  {tool.ready ? (isHover ? <>Launch <span className="material-symbols-outlined text-sm">rocket_launch</span></> : 'Open Tool') : 'Coming Soon'}
                 </button>
               </div>
             );
@@ -120,22 +120,22 @@ export default function PracticeDashboard({ user, onBack }: Props) {
         </div>
         
         {/* Bottom Banner (Overview) */}
-        <div className="glass rounded-3xl p-xl md:p-xxl border border-surface-container shadow-sm flex flex-col md:flex-row items-center gap-xl relative overflow-hidden z-10 mt-auto">
+        <div className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-surface-container shadow-xs flex flex-col md:flex-row items-start md:items-center gap-4 sm:gap-6 relative overflow-hidden z-10 mt-auto">
           <div className="absolute -top-10 -right-10 w-64 h-64 bg-indigo-brand/10 blur-[80px] rounded-full pointer-events-none" />
           <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-[#7C3AED]/10 blur-[80px] rounded-full pointer-events-none" />
           
           <div className="flex-1 relative z-10">
-            <div className="flex items-center gap-md mb-md">
-              <div className="w-14 h-14 bg-indigo-brand/10 rounded-2xl flex items-center justify-center border border-indigo-brand/20">
-                 <img src="/icons/learning_brain.png" alt="Brain" className="w-8 h-8 object-contain mix-blend-multiply" />
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-indigo-brand/10 rounded-xl sm:rounded-2xl flex items-center justify-center border border-indigo-brand/20 shrink-0">
+                 <img src="/icons/learning_brain.png" alt="Brain" className="w-6 h-6 sm:w-8 sm:h-8 object-contain mix-blend-multiply" />
               </div>
               <div>
-                <h2 className="text-headline-sm font-headline-sm text-on-surface m-0 mb-1">Candidate Practice Hub</h2>
-                <p className="text-on-surface-variant text-sm font-bold uppercase tracking-wider">The ultimate AI-powered preparation environment</p>
+                <h2 className="text-base sm:text-xl font-black text-on-surface m-0 mb-0.5">Candidate Practice Hub</h2>
+                <p className="text-on-surface-variant text-[10px] sm:text-xs font-bold uppercase tracking-wider">AI-powered preparation environment</p>
               </div>
             </div>
             
-            <p className="text-on-surface-variant font-medium text-sm leading-relaxed mb-lg max-w-3xl">
+            <p className="text-on-surface-variant font-medium text-xs sm:text-sm leading-relaxed max-w-3xl">
               Welcome to your personal training ground. This multimodal hub leverages advanced Natural Language Processing (NLP) to help you master every stage of the hiring process. From generating ATS-optimized resumes to simulating high-pressure live coding tests and conducting voice-to-voice mock interviews, everything you need is right here.
             </p>
 
