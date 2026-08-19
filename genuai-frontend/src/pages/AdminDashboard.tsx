@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import {
   LayoutDashboard,
@@ -267,7 +267,7 @@ export default function AdminDashboard({ user, onLogout }: Props) {
         <div className="space-y-8 animate-[fadeIn_0.2s_ease]">
           
           {/* TIER 1: COMMAND HEADER BANNER & QUICK ACTIONS */}
-          <div className="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-[32px] border border-surface-container shadow-2xs flex flex-wrap items-center justify-between gap-6">
+          <div className="bg-white/95 backdrop-blur-md p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-[32px] border border-surface-container shadow-2xs flex flex-wrap items-center justify-between gap-4 sm:gap-6">
             <div className="space-y-1.5 max-w-xl">
               <div className="flex items-center gap-2.5">
                 <h2 className="font-headline-md font-extrabold text-xl sm:text-2xl text-on-surface tracking-tight">

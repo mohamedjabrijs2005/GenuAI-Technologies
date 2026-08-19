@@ -72,24 +72,24 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
           <a
             href="/"
             onClick={scrollToTop}
-            className="flex items-center gap-3 group shrink-0 cursor-pointer"
+            className="flex items-center gap-2.5 sm:gap-3 group shrink-0 cursor-pointer max-w-[70%] sm:max-w-none"
           >
-            <div className="relative">
+            <div className="relative shrink-0">
               <img
                 src="/logo.png"
                 alt="GenuAI Technologies Logo"
-                className="w-9 sm:w-10 h-9 sm:h-10 object-contain transition-transform duration-300 group-hover:scale-105"
+                className="w-8 sm:w-10 h-8 sm:h-10 object-contain transition-transform duration-300 group-hover:scale-105"
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
               <div className="absolute -inset-1 bg-accent-gold/20 blur-md rounded-full -z-10 group-hover:bg-indigo-brand/30 transition-all" />
             </div>
-            <div>
-              <div className="font-black text-lg sm:text-xl tracking-tight text-on-surface flex items-center gap-1.5 leading-none">
+            <div className="truncate">
+              <div className="font-black text-sm sm:text-lg lg:text-xl tracking-tight text-on-surface flex items-center gap-1.5 leading-tight truncate">
                 <span>Genu<span className="text-accent-gold">AI</span> Technologies</span>
               </div>
-              <div className="text-[9px] sm:text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest mt-1">
+              <div className="hidden xs:block text-[8px] sm:text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest mt-0.5 truncate">
                 AI Recruitment Intelligence Platform
               </div>
             </div>
