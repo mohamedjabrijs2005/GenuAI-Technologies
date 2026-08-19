@@ -168,6 +168,7 @@ export default function AIMockInterview({ user, onBack }: Props) {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const animFrameRef = useRef<number | null>(null);
 
   // Initialize Speech Recognition on mount
   useEffect(() => {
@@ -183,8 +184,12 @@ export default function AIMockInterview({ user, onBack }: Props) {
         for (let i = 0; i < event.results.length; i++) {
           current += event.results[i][0].transcript;
         }
-        // Update the textarea live
-        setAnswer(current);
+        
+        // Throttled update to prevent mobile re-render lagging
+        if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = requestAnimationFrame(() => {
+          setAnswer(current);
+        });
       };
       
       recognitionRef.current.onerror = (e: any) => {
@@ -195,6 +200,7 @@ export default function AIMockInterview({ user, onBack }: Props) {
     }
     return () => {
       if (recognitionRef.current) try { recognitionRef.current.stop(); } catch(e){}
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       window.speechSynthesis.cancel();
     };
   }, []);
@@ -253,7 +259,7 @@ export default function AIMockInterview({ user, onBack }: Props) {
       alert("Speech Recognition is not supported in this browser. Please use Chrome/Edge or type your answer.");
       return;
     }
-    setAnswer(""); // Clear previous text when starting a fresh voice recording
+    setAnswer("");
     try {
       recognitionRef.current.start();
       setIsRecording(true);
@@ -279,90 +285,91 @@ export default function AIMockInterview({ user, onBack }: Props) {
 
   const avgScore = history.length ? Math.round(history.reduce((s, h) => s + (h.fb?.score || 0), 0) / history.length) : 0;
   
-  // ── SETUP ──
+  // ── SETUP PHASE ──
   if (phase === "setup") return (
-    <div className="min-h-screen bg-background quantum-gradient font-body-base text-on-background relative overflow-hidden flex flex-col">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent-gold/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-brand/10 blur-[120px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-background quantum-gradient font-body-base text-on-background relative overflow-x-hidden flex flex-col">
+      {/* Background Orbs */}
+      <div className="absolute top-[-10%] left-[-10%] w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-accent-gold/10 blur-[60px] sm:blur-[120px] rounded-full pointer-events-none transform-gpu" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-indigo-brand/10 blur-[60px] sm:blur-[120px] rounded-full pointer-events-none transform-gpu" />
       
-      {/* Header */}
-      <div className="relative z-10 glass border-b border-surface-container/50 px-xl py-sm flex items-center justify-between">
-        <button onClick={onBack} className="flex items-center gap-xs text-on-surface-variant hover:text-on-surface transition-colors font-bold text-sm">
-          <span className="material-symbols-outlined text-xl">arrow_back</span>
-          Back to Practice Hub
+      {/* Responsive Header */}
+      <div className="relative z-10 glass border-b border-surface-container/50 px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
+        <button onClick={onBack} className="flex items-center gap-1 text-on-surface-variant hover:text-on-surface transition-colors font-bold text-xs sm:text-sm shrink-0">
+          <span className="material-symbols-outlined text-lg sm:text-xl">arrow_back</span>
+          <span className="hidden sm:inline">Back to Practice Hub</span>
+          <span className="sm:hidden">Back</span>
         </button>
-        <div className="font-black text-on-surface text-lg flex items-center gap-sm">
-          <span className="material-symbols-outlined text-accent-gold">smart_toy</span>
-          AI Mock Interview
+        <div className="font-black text-on-surface text-sm sm:text-lg flex items-center gap-1.5 truncate">
+          <span className="material-symbols-outlined text-accent-gold text-lg sm:text-xl shrink-0">smart_toy</span>
+          <span className="truncate">AI Mock Interview</span>
         </div>
-        <div className="w-32"></div>
+        <div className="w-8 sm:w-20"></div>
       </div>
 
-      <div className="relative z-10 flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full px-margin-mobile md:px-margin-desktop py-xxl gap-xl">
+      {/* Setup Layout */}
+      <div className="relative z-10 flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-12 gap-6 sm:gap-8 items-center justify-center">
         
         {/* Left Content */}
-        <div className="flex-1 flex flex-col justify-center">
-          <div className="text-7xl mb-lg animate-[float_4s_ease-in-out_infinite]">🤖</div>
-          <h1 className="text-display-lg-mobile md:text-display-lg-desktop font-black text-on-surface mb-md leading-tight tracking-tight">
+        <div className="flex-1 flex flex-col justify-center text-center lg:text-left space-y-4">
+          <div className="text-5xl sm:text-7xl mb-2 animate-[float_4s_ease-in-out_infinite]">🤖</div>
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-on-surface leading-tight tracking-tight">
             Master Your Next<br/>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-brand via-purple-500 to-cyan-500 drop-shadow-sm">Technical Interview</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-brand via-purple-500 to-cyan-500">Technical Interview</span>
           </h1>
-          <p className="text-body-lg text-on-surface-variant/90 font-medium mb-xl max-w-xl leading-relaxed">
+          <p className="text-xs sm:text-base text-on-surface-variant/90 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
             Experience a hyper-realistic, AI-driven interview environment. Utilize live voice transcription and receive instantaneous, actionable feedback on every response.
           </p>
-          <div className="flex flex-wrap gap-md">
-             <div className="glass px-md py-sm rounded-xl font-bold text-sm text-indigo-brand flex items-center gap-xs shadow-sm border border-indigo-brand/20">
-               <span className="material-symbols-outlined text-lg">mic</span> Live Speech-to-Text
+          <div className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-3 pt-2">
+             <div className="glass px-3 py-2 rounded-xl font-bold text-xs sm:text-sm text-indigo-brand flex items-center gap-1.5 shadow-xs border border-indigo-brand/20">
+               <span className="material-symbols-outlined text-base">mic</span> Live Speech-to-Text
              </div>
-             <div className="glass px-md py-sm rounded-xl font-bold text-sm text-success flex items-center gap-xs shadow-sm border border-success/20">
-               <span className="material-symbols-outlined text-lg">bolt</span> Instant AI Grading
+             <div className="glass px-3 py-2 rounded-xl font-bold text-xs sm:text-sm text-success flex items-center gap-1.5 shadow-xs border border-success/20">
+               <span className="material-symbols-outlined text-base">bolt</span> Instant AI Grading
              </div>
           </div>
         </div>
         
         {/* Right Content - Config Card */}
-        <div className="flex-1 max-w-[500px] w-full mt-xl lg:mt-0">
-          <div className="glass p-xxl rounded-xxxl shadow-md border border-surface-container relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-brand/5 to-transparent pointer-events-none transition-opacity opacity-0 group-hover:opacity-100 duration-500"></div>
-            <div className="relative z-10">
-              <h2 className="text-title-lg font-black text-on-surface mb-lg">Configure Session</h2>
+        <div className="flex-1 max-w-[500px] w-full">
+          <div className="glass p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-lg border border-surface-container relative overflow-hidden">
+            <div className="relative z-10 space-y-5">
+              <h2 className="text-lg sm:text-xl font-black text-on-surface">Configure Session</h2>
               
-              <div className="mb-lg">
-                <label className="text-label-caps font-label-caps text-on-surface-variant block mb-xs tracking-widest uppercase">Your Target Role</label>
+              <div>
+                <label className="text-[10px] font-bold text-on-surface-variant block mb-1 tracking-widest uppercase">Your Target Role</label>
                 <div className="relative">
-                  <select value={role} onChange={e => setRole(e.target.value)} className="w-full appearance-none bg-surface-bright border border-surface-container rounded-xl px-md py-sm text-on-surface font-semibold focus:outline-none focus:border-indigo-brand focus:ring-1 focus:ring-indigo-brand transition-colors cursor-pointer">
+                  <select value={role} onChange={e => setRole(e.target.value)} className="w-full appearance-none bg-surface-bright border border-surface-container rounded-xl px-3 sm:px-4 py-2.5 text-xs sm:text-sm text-on-surface font-semibold focus:outline-none focus:border-indigo-brand focus:ring-1 focus:ring-indigo-brand transition-colors cursor-pointer pr-8">
                     {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                   </select>
-                  <span className="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-lg">expand_more</span>
                 </div>
               </div>
 
-              <div className="mb-xl">
-                <label className="text-label-caps font-label-caps text-on-surface-variant block mb-sm tracking-widest uppercase">Interview Type</label>
-                <div className="grid grid-cols-3 gap-sm">
+              <div>
+                <label className="text-[10px] font-bold text-on-surface-variant block mb-2 tracking-widest uppercase">Interview Type</label>
+                <div className="grid grid-cols-3 gap-2">
                   {TYPES.map(t => (
-                    <div key={t.key} onClick={() => setType(t.key)} className={`p-sm rounded-xl border-2 cursor-pointer text-center transition-all duration-300 ${type === t.key ? "border-indigo-brand bg-indigo-brand/5 shadow-sm transform -translate-y-1" : "border-surface-container bg-surface-bright hover:border-surface-container-high hover:bg-surface-container/50"}`}>
-                      <div className="text-3xl mb-xs drop-shadow-sm">{t.emoji}</div>
-                      <div className={`font-bold text-xs ${type === t.key ? "text-indigo-brand" : "text-on-surface-variant"}`}>{t.label}</div>
+                    <div key={t.key} onClick={() => setType(t.key)} className={`p-2 sm:p-3 rounded-xl border-2 cursor-pointer text-center transition-all duration-200 ${type === t.key ? "border-indigo-brand bg-indigo-brand/5 shadow-xs transform -translate-y-0.5" : "border-surface-container bg-surface-bright hover:border-slate-300"}`}>
+                      <div className="text-xl sm:text-2xl mb-1">{t.emoji}</div>
+                      <div className={`font-bold text-[11px] sm:text-xs ${type === t.key ? "text-indigo-brand" : "text-on-surface-variant"}`}>{t.label}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mb-xl">
-                <div className="flex justify-between items-center mb-sm">
-                  <label className="text-label-caps font-label-caps text-on-surface-variant tracking-widest uppercase">Number of Questions</label>
-                  <span className="text-indigo-brand font-black text-lg bg-indigo-brand/10 px-xs py-0.5 rounded-md">{questionCount}</span>
+              <div>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="text-[10px] font-bold text-on-surface-variant tracking-widest uppercase">Number of Questions</label>
+                  <span className="text-indigo-brand font-black text-sm sm:text-base bg-indigo-brand/10 px-2 py-0.5 rounded-md">{questionCount}</span>
                 </div>
                 <input type="range" min={3} max={10} value={questionCount} onChange={e => setQuestionCount(Number(e.target.value))} className="w-full h-2 bg-surface-container rounded-full appearance-none cursor-pointer accent-indigo-brand" />
               </div>
 
-              <button onClick={startInterview} disabled={loading} className={`w-full py-md rounded-xl font-black text-body-base flex items-center justify-center gap-sm transition-all duration-300 ${loading ? "bg-surface-container text-on-surface-variant cursor-not-allowed" : "bg-gradient-to-r from-indigo-brand to-[#764BA2] text-white hover:shadow-[0_8px_25px_rgba(102,126,234,0.4)] hover:-translate-y-0.5"}`}>
+              <button onClick={startInterview} disabled={loading} className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${loading ? "bg-surface-container text-on-surface-variant cursor-not-allowed" : "bg-gradient-to-r from-indigo-brand to-[#764BA2] text-white hover:shadow-lg active:scale-[0.99]"}`}>
                 {loading ? (
-                  <><span className="material-symbols-outlined animate-spin text-xl">autorenew</span> Preparing AI...</>
+                  <><span className="material-symbols-outlined animate-spin text-lg">autorenew</span> Preparing AI...</>
                 ) : (
-                  <>Start {questionCount}-Question Interview <span className="material-symbols-outlined text-xl">arrow_forward</span></>
+                  <>Start {questionCount}-Question Interview <span className="material-symbols-outlined text-lg">arrow_forward</span></>
                 )}
               </button>
             </div>
@@ -372,26 +379,22 @@ export default function AIMockInterview({ user, onBack }: Props) {
     </div>
   );
 
-  // ── RESULTS ──
+  // ── RESULTS PHASE ──
   if (phase === "results") return (
-    <div className="min-h-screen bg-background quantum-gradient font-body-base text-on-background relative overflow-hidden flex flex-col">
-      {/* Decorative */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-accent-gold/10 blur-[150px] rounded-full pointer-events-none" />
-      
-      {/* Results Hero */}
-      <div className="relative z-10 glass border-b border-surface-container/50 pt-xxl pb-xl px-margin-mobile md:px-margin-desktop text-center">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-6xl mb-md drop-shadow-sm animate-[bounce_2s_infinite]">🏆</div>
-          <h1 className="text-display-sm-mobile md:text-display-sm-desktop font-black text-on-surface mb-xs">Interview Complete</h1>
-          <div className="text-title-md font-bold text-on-surface-variant/80 mb-lg flex items-center justify-center gap-sm">
-             <span className="material-symbols-outlined">work</span> {role} <span className="text-surface-container-high">•</span> {type} Round
+    <div className="min-h-screen bg-background quantum-gradient font-body-base text-on-background relative overflow-x-hidden flex flex-col">
+      <div className="relative z-10 glass border-b border-surface-container/50 py-8 px-4 text-center">
+        <div className="max-w-4xl mx-auto space-y-3">
+          <div className="text-4xl sm:text-5xl">🏆</div>
+          <h1 className="text-2xl sm:text-3xl font-black text-on-surface">Interview Complete</h1>
+          <div className="text-xs sm:text-sm font-bold text-on-surface-variant/80 flex items-center justify-center gap-2">
+             <span className="material-symbols-outlined text-base">work</span> {role} • {type} Round
           </div>
           
-          <div className="inline-flex items-center gap-md glass p-md rounded-xxl border border-surface-container shadow-md">
-            <span className={`text-5xl font-black ${avgScore >= 80 ? "text-success" : avgScore >= 60 ? "text-warning" : "text-error"}`}>{avgScore}%</span>
-            <div className="text-left border-l-2 border-surface-container pl-md">
-              <div className="text-sm font-black text-on-surface uppercase tracking-widest">Overall Score</div>
-              <div className={`font-bold text-sm ${avgScore >= 80 ? "text-success" : avgScore >= 60 ? "text-warning" : "text-error"}`}>
+          <div className="inline-flex items-center gap-4 glass p-4 rounded-2xl border border-surface-container shadow-sm mt-2">
+            <span className={`text-3xl sm:text-5xl font-black ${avgScore >= 80 ? "text-success" : avgScore >= 60 ? "text-warning" : "text-error"}`}>{avgScore}%</span>
+            <div className="text-left border-l border-surface-container pl-3">
+              <div className="text-[10px] font-bold text-on-surface uppercase tracking-widest">Overall Score</div>
+              <div className={`font-bold text-xs sm:text-sm ${avgScore >= 80 ? "text-success" : avgScore >= 60 ? "text-warning" : "text-error"}`}>
                 {avgScore >= 80 ? "Excellent Performance!" : avgScore >= 60 ? "Good — Keep Practising" : "Needs Improvement"}
               </div>
             </div>
@@ -399,23 +402,23 @@ export default function AIMockInterview({ user, onBack }: Props) {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto w-full px-margin-mobile md:px-margin-desktop py-xl flex-1 pb-xxxl">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-xl gap-md">
-          <h2 className="text-title-lg font-black text-on-surface flex items-center gap-sm">
-            <span className="material-symbols-outlined text-accent-gold text-3xl">insights</span>
+      <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 flex-1 space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <h2 className="text-lg sm:text-xl font-black text-on-surface flex items-center gap-2">
+            <span className="material-symbols-outlined text-accent-gold text-2xl">insights</span>
             Detailed Feedback ({history.length} Questions)
           </h2>
-          <div className="flex gap-sm">
-            <button onClick={() => { setPhase("setup"); setHistory([]); setQIndex(0); }} className="px-md py-sm bg-indigo-brand text-white rounded-xl font-bold text-sm hover:bg-indigo-brand/90 transition-colors shadow-sm flex items-center gap-xs">
+          <div className="flex gap-2 w-full sm:w-auto">
+            <button onClick={() => { setPhase("setup"); setHistory([]); setQIndex(0); }} className="flex-1 sm:flex-initial px-4 py-2 bg-indigo-brand text-white rounded-xl font-bold text-xs hover:bg-indigo-brand-dark transition-colors shadow-xs flex items-center justify-center gap-1">
               <span className="material-symbols-outlined text-sm">refresh</span> New Interview
             </button>
-            <button onClick={onBack} className="px-md py-sm glass rounded-xl font-bold text-sm text-on-surface hover:bg-surface-container/50 transition-colors border border-surface-container flex items-center gap-xs">
+            <button onClick={onBack} className="flex-1 sm:flex-initial px-4 py-2 glass rounded-xl font-bold text-xs text-on-surface hover:bg-surface-container/50 transition-colors border border-surface-container flex items-center justify-center gap-1">
                Exit
             </button>
           </div>
         </div>
 
-        <div className="flex flex-col gap-lg">
+        <div className="space-y-4">
           {history.map((h, i) => {
             const isGood = h.fb?.score >= 80;
             const isOk = h.fb?.score >= 60;
@@ -423,44 +426,43 @@ export default function AIMockInterview({ user, onBack }: Props) {
             const qBg = isGood ? "bg-success/10" : isOk ? "bg-warning/10" : "bg-error/10";
             
             return (
-              <div key={i} className="glass rounded-xxl p-lg border border-surface-container shadow-sm group hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start mb-md gap-lg">
-                  <div className="flex-1">
-                    <div className="text-label-caps font-label-caps text-on-surface-variant tracking-widest uppercase mb-xs text-xs flex items-center gap-xs">
+              <div key={i} className="glass rounded-2xl p-4 sm:p-6 border border-surface-container shadow-xs space-y-3">
+                <div className="flex justify-between items-start gap-4">
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
                       Question {i+1}
                     </div>
-                    <div className="text-title-md font-bold text-on-surface leading-snug">{h.q}</div>
+                    <div className="text-sm sm:text-base font-bold text-on-surface leading-snug">{h.q}</div>
                   </div>
-                  <div className="text-right flex-shrink-0 flex flex-col items-end">
-                    <div className={`text-4xl font-black ${qColor} leading-none mb-1`}>{h.fb?.score || 0}%</div>
-                    <div className={`font-bold text-xs uppercase tracking-wider px-2 py-0.5 rounded-md ${qBg} ${qColor}`}>{h.fb?.rating}</div>
+                  <div className="text-right shrink-0">
+                    <div className={`text-2xl sm:text-3xl font-black ${qColor}`}>{h.fb?.score || 0}%</div>
+                    <div className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${qBg} ${qColor}`}>{h.fb?.rating}</div>
                   </div>
                 </div>
                 
-                <div className="bg-surface-bright/80 p-md rounded-xl mb-lg border border-surface-container/50 font-medium text-on-surface-variant italic relative">
-                  <span className="material-symbols-outlined absolute top-md left-md text-surface-container-high text-3xl -z-10 opacity-30">format_quote</span>
-                  <p className="relative z-10 pl-sm">"{h.a}"</p>
+                <div className="bg-surface-bright/80 p-3 rounded-xl border border-surface-container/50 text-xs sm:text-sm font-medium text-on-surface-variant italic">
+                  "{h.a}"
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-md mb-md">
-                  <div className="bg-success/5 rounded-xl p-md border border-success/20">
-                    <div className="text-sm font-black text-success mb-sm flex items-center gap-xs uppercase tracking-wider"><span className="text-lg">✅</span> Strengths</div>
-                    <ul className="space-y-sm">
-                      {(h.fb?.strengths||[]).map((s:string,idx:number) => <li key={idx} className="text-sm font-medium text-success/80 flex items-start gap-xs"><span className="text-success mt-0.5 text-xs">•</span> <span>{s}</span></li>)}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="bg-success/5 rounded-xl p-3 border border-success/20">
+                    <div className="text-xs font-black text-success mb-2 uppercase tracking-wider flex items-center gap-1"><span>✅</span> Strengths</div>
+                    <ul className="space-y-1 text-xs text-success/90 font-medium">
+                      {(h.fb?.strengths||[]).map((s:string,idx:number) => <li key={idx}>• {s}</li>)}
                     </ul>
                   </div>
-                  <div className="bg-warning/5 rounded-xl p-md border border-warning/20">
-                    <div className="text-sm font-black text-warning mb-sm flex items-center gap-xs uppercase tracking-wider"><span className="text-lg">📈</span> Areas to Improve</div>
-                    <ul className="space-y-sm">
-                      {(h.fb?.improvements||[]).map((s:string,idx:number) => <li key={idx} className="text-sm font-medium text-warning/80 flex items-start gap-xs"><span className="text-warning mt-0.5 text-xs">•</span> <span>{s}</span></li>)}
+                  <div className="bg-warning/5 rounded-xl p-3 border border-warning/20">
+                    <div className="text-xs font-black text-warning mb-2 uppercase tracking-wider flex items-center gap-1"><span>📈</span> Areas to Improve</div>
+                    <ul className="space-y-1 text-xs text-warning/90 font-medium">
+                      {(h.fb?.improvements||[]).map((s:string,idx:number) => <li key={idx}>• {s}</li>)}
                     </ul>
                   </div>
                 </div>
 
                 {h.fb?.ideal_answer && (
-                  <div className="bg-indigo-brand/5 rounded-xl p-md border border-indigo-brand/20">
-                    <div className="text-sm font-black text-indigo-brand mb-xs flex items-center gap-xs uppercase tracking-wider"><span className="text-lg">💡</span> Ideal Answer Example</div>
-                    <div className="text-body-base font-medium text-indigo-brand/80">{h.fb.ideal_answer}</div>
+                  <div className="bg-indigo-brand/5 rounded-xl p-3 border border-indigo-brand/20">
+                    <div className="text-xs font-black text-indigo-brand mb-1 uppercase tracking-wider flex items-center gap-1"><span>💡</span> Ideal Answer Example</div>
+                    <div className="text-xs text-indigo-brand/90 font-medium leading-relaxed">{h.fb.ideal_answer}</div>
                   </div>
                 )}
               </div>
@@ -471,68 +473,75 @@ export default function AIMockInterview({ user, onBack }: Props) {
     </div>
   );
 
-  // ── INTERVIEW ──
+  // ── ACTIVE INTERVIEW PHASE ──
   const progress = ((qIndex) / questionCount) * 100;
   return (
-    <div className="h-screen bg-background font-body-base text-on-background flex flex-col overflow-hidden relative">
-      {/* Decorative Background */}
+    <div className="min-h-screen lg:h-screen bg-background font-body-base text-on-background flex flex-col overflow-x-hidden lg:overflow-hidden relative">
+      {/* Background */}
       <div className="absolute inset-0 quantum-gradient opacity-50 pointer-events-none" />
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-accent-gold/10 blur-[150px] rounded-full pointer-events-none" />
       
       {/* Header */}
-      <div className="relative z-10 glass border-b border-surface-container/50 px-xl h-16 flex items-center justify-between flex-shrink-0 shadow-sm">
-        <div className="flex items-center gap-md">
-          <div className="font-black text-lg text-on-surface flex items-center gap-xs tracking-tight">
-             <span className="material-symbols-outlined text-accent-gold">smart_toy</span> GenuAI Interview
+      <div className="relative z-10 glass border-b border-surface-container/50 px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between shrink-0 shadow-xs gap-2">
+        <div className="flex items-center gap-2 truncate">
+          <div className="font-black text-sm sm:text-base text-on-surface flex items-center gap-1 tracking-tight truncate">
+             <span className="material-symbols-outlined text-accent-gold text-lg">smart_toy</span>
+             <span className="truncate">GenuAI Interview</span>
           </div>
-          <div className="bg-surface-container-high/50 px-sm py-0.5 rounded-md text-xs font-bold text-on-surface-variant flex items-center gap-xs">
-            <span className="w-2 h-2 rounded-full bg-indigo-brand animate-pulse"></span>
+          <div className="hidden xs:flex bg-indigo-brand/10 border border-indigo-brand/20 px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-bold text-indigo-brand items-center gap-1 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-brand animate-pulse"></span>
             {role} ({type})
           </div>
         </div>
-        <div className="flex items-center gap-xl">
-          <div className="flex items-center gap-sm">
-            <div className="text-xs text-on-surface-variant font-bold uppercase tracking-widest">Question {qIndex+1} of {questionCount}</div>
-            <div className="w-40 h-2 bg-surface-container rounded-full overflow-hidden shadow-inner">
-              <div className="h-full bg-gradient-to-r from-indigo-brand to-cyan-500 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+        
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] sm:text-xs text-on-surface-variant font-bold uppercase tracking-wider">Q{qIndex+1}/{questionCount}</span>
+            <div className="w-20 sm:w-32 h-2 bg-surface-container rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-indigo-brand to-cyan-500 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
             </div>
           </div>
-          <button onClick={onBack} className="px-sm py-1 border border-surface-container-high text-on-surface-variant rounded-lg text-xs font-bold hover:bg-surface-container-high hover:text-on-surface transition-colors flex items-center gap-xs">
-            <span className="material-symbols-outlined text-sm">close</span> End Session
+          <button onClick={onBack} className="px-2.5 py-1 border border-surface-container text-on-surface-variant rounded-lg text-xs font-bold hover:bg-surface-container hover:text-on-surface transition-colors">
+            Exit
           </button>
         </div>
       </div>
 
-      <div className="relative z-10 flex-1 flex flex-col lg:flex-row overflow-hidden">
-        {/* Left Pane - Question */}
-        <div className="w-full lg:w-5/12 glass border-b lg:border-b-0 lg:border-r border-surface-container/50 p-xl lg:p-xxl flex flex-col overflow-y-auto">
-          <div className="flex justify-between items-start mb-lg">
-            <div className="text-xs font-black text-indigo-brand uppercase tracking-widest bg-indigo-brand/10 px-sm py-1 rounded-md border border-indigo-brand/20">
+      {/* Main Split Body */}
+      <div className="relative z-10 flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
+        {/* Left Pane - Question Card */}
+        <div className="w-full lg:w-5/12 glass border-b lg:border-b-0 lg:border-r border-surface-container/50 p-4 sm:p-6 lg:p-8 flex flex-col justify-between space-y-4 shrink-0">
+          <div className="flex justify-between items-center gap-2">
+            <span className="text-[10px] font-black text-indigo-brand uppercase tracking-widest bg-indigo-brand/10 px-2.5 py-1 rounded-md border border-indigo-brand/20">
               {type} Round
-            </div>
-            <button onClick={readQuestionAloud} disabled={isPlaying} className={`glass px-sm py-1 rounded-lg border border-surface-container text-xs font-bold flex items-center gap-xs transition-colors ${isPlaying ? 'text-indigo-brand bg-indigo-brand/5' : 'text-on-surface hover:bg-surface-container/50'}`}>
+            </span>
+            <button onClick={readQuestionAloud} disabled={isPlaying} className={`glass px-2.5 py-1 rounded-lg border border-surface-container text-xs font-bold flex items-center gap-1 transition-colors ${isPlaying ? 'text-indigo-brand bg-indigo-brand/5' : 'text-on-surface hover:bg-surface-container'}`}>
               <span className={`material-symbols-outlined text-sm ${isPlaying ? 'animate-pulse' : ''}`}>{isPlaying ? 'volume_up' : 'play_arrow'}</span>
               {isPlaying ? "Speaking..." : "Read Aloud"}
             </button>
           </div>
-          <div className="flex-1 flex flex-col justify-center pb-xl">
-             <span className="material-symbols-outlined text-4xl text-surface-container-high mb-sm">help</span>
-             <p className="text-display-sm-mobile md:text-title-lg font-black text-on-surface leading-snug">{currentQ}</p>
+
+          <div className="py-4 space-y-2">
+             <span className="material-symbols-outlined text-3xl text-indigo-brand/60">help</span>
+             <h2 className="text-base sm:text-xl lg:text-2xl font-black text-on-surface leading-snug">{currentQ}</h2>
+          </div>
+
+          <div className="text-[11px] text-on-surface-variant font-medium bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+            💡 Tip: Speak clearly using your microphone or type your response in the editor.
           </div>
         </div>
 
         {/* Right Pane - Answer / Feedback */}
-        <div className="flex-1 p-xl lg:p-xxl overflow-y-auto bg-surface-bright/30">
+        <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto bg-surface-bright/30 flex flex-col">
           {!feedback ? (
-            <div className="glass rounded-xxl border border-surface-container shadow-lg flex flex-col h-full min-h-[500px]">
-              <div className="px-lg py-md border-b border-surface-container/50 bg-surface-bright/50 rounded-t-xxl flex justify-between items-center">
-                <div className="font-bold text-xs text-on-surface-variant uppercase tracking-widest flex items-center gap-xs">
+            <div className="glass rounded-2xl border border-surface-container shadow-sm flex flex-col flex-1 min-h-[320px] sm:min-h-[420px]">
+              <div className="px-4 py-3 border-b border-surface-container/50 bg-surface-bright/50 rounded-t-2xl flex justify-between items-center">
+                <span className="font-bold text-xs text-on-surface-variant uppercase tracking-widest flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-sm">edit_document</span> Response Editor
-                </div>
+                </span>
                 {isRecording && (
-                  <div className="text-error text-xs font-bold flex items-center gap-xs bg-error/10 px-sm py-0.5 rounded-full border border-error/20">
-                    <div className="w-2 h-2 bg-error rounded-full animate-ping"></div> Live Transcription
-                  </div>
+                  <span className="text-error text-[11px] font-bold flex items-center gap-1 bg-error/10 px-2 py-0.5 rounded-full border border-error/20">
+                    <span className="w-1.5 h-1.5 bg-error rounded-full animate-ping"></span> Live Listening
+                  </span>
                 )}
               </div>
               
@@ -540,83 +549,83 @@ export default function AIMockInterview({ user, onBack }: Props) {
                 value={answer} 
                 onChange={e => setAnswer(e.target.value)} 
                 placeholder="Type your answer here, or click 'Live Voice Answer' to speak it..." 
-                className="flex-1 bg-transparent border-none p-lg text-body-lg font-medium text-on-surface outline-none resize-none placeholder:text-on-surface-variant/40"
+                className="flex-1 bg-transparent border-none p-4 text-xs sm:text-sm font-medium text-on-surface outline-none resize-none placeholder:text-on-surface-variant/40 min-h-[160px] sm:min-h-[220px]"
               />
               
-              <div className="p-md border-t border-surface-container/50 bg-surface-bright/50 rounded-b-xxl flex flex-col sm:flex-row gap-sm">
+              <div className="p-3 border-t border-surface-container/50 bg-surface-bright/50 rounded-b-2xl flex flex-col sm:flex-row gap-2">
                 <button 
                   onClick={isRecording ? stopVoice : startVoice} 
-                  className={`px-lg py-md rounded-xl font-black text-sm flex items-center justify-center gap-sm transition-all border-2 ${isRecording ? "bg-error/10 border-error/30 text-error hover:bg-error/20" : "glass border-surface-container text-on-surface hover:bg-surface-container/50"}`}
+                  className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all border ${isRecording ? "bg-error/10 border-error/30 text-error" : "glass border-surface-container text-on-surface hover:bg-surface-container"}`}
                 >
-                  <span className={`material-symbols-outlined ${isRecording ? 'animate-pulse' : ''}`}>{isRecording ? "stop_circle" : "mic"}</span>
+                  <span className={`material-symbols-outlined text-base ${isRecording ? 'animate-pulse' : ''}`}>{isRecording ? "stop_circle" : "mic"}</span>
                   {isRecording ? "Stop Listening" : "Live Voice Answer"}
                 </button>
                 <button 
                   onClick={submitAnswer} 
                   disabled={!answer.trim() || loading} 
-                  className={`flex-1 px-lg py-md rounded-xl font-black text-sm flex items-center justify-center gap-sm transition-all ${(!answer.trim() || loading) ? "bg-surface-container text-on-surface-variant cursor-not-allowed" : "bg-on-surface text-surface hover:-translate-y-0.5 shadow-md hover:shadow-lg"}`}
+                  className={`flex-1 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all ${(!answer.trim() || loading) ? "bg-surface-container text-on-surface-variant cursor-not-allowed" : "bg-indigo-brand text-white hover:bg-indigo-brand-dark shadow-xs"}`}
                 >
                   {loading ? (
-                    <><span className="material-symbols-outlined animate-spin">autorenew</span> Evaluating...</>
+                    <><span className="material-symbols-outlined animate-spin text-base">autorenew</span> Evaluating...</>
                   ) : (
-                    <>Submit Answer <span className="material-symbols-outlined">send</span></>
+                    <>Submit Answer <span className="material-symbols-outlined text-base">send</span></>
                   )}
                 </button>
               </div>
             </div>
           ) : (
-            <div className="glass rounded-xxl border border-surface-container shadow-lg p-xl lg:p-xxl animate-[fadeIn_0.3s_ease-out]">
-              <div className="flex justify-between items-start mb-lg pb-md border-b border-surface-container/50">
+            <div className="glass rounded-2xl border border-surface-container shadow-sm p-4 sm:p-6 space-y-4 animate-[fadeIn_0.2s_ease-out]">
+              <div className="flex justify-between items-start pb-3 border-b border-surface-container/50">
                 <div>
-                  <h3 className="text-title-lg font-black text-on-surface mb-xs flex items-center gap-sm">
-                    <span className="material-symbols-outlined text-accent-gold text-3xl">psychology</span>
+                  <h3 className="text-base sm:text-lg font-black text-on-surface flex items-center gap-2">
+                    <span className="material-symbols-outlined text-accent-gold text-2xl">psychology</span>
                     AI Evaluation
                   </h3>
-                  <p className="text-body-base text-on-surface-variant font-medium">Instant feedback on your response.</p>
+                  <p className="text-xs text-on-surface-variant font-medium">Instant feedback on your response.</p>
                 </div>
                 <div className="text-right">
-                  <div className={`text-5xl font-black leading-none tracking-tighter ${feedback.score >= 80 ? "text-success" : feedback.score >= 60 ? "text-warning" : "text-error"}`}>
+                  <div className={`text-3xl sm:text-4xl font-black ${feedback.score >= 80 ? "text-success" : feedback.score >= 60 ? "text-warning" : "text-error"}`}>
                     {feedback.score}%
                   </div>
-                  <div className={`text-xs font-black uppercase tracking-widest mt-sm ${feedback.score >= 80 ? "text-success" : feedback.score >= 60 ? "text-warning" : "text-error"}`}>
+                  <div className={`text-[10px] font-bold uppercase tracking-widest ${feedback.score >= 80 ? "text-success" : feedback.score >= 60 ? "text-warning" : "text-error"}`}>
                     {feedback.rating}
                   </div>
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-md mb-lg">
-                <div className="bg-success/5 rounded-xl p-md border border-success/20">
-                  <div className="text-sm font-black text-success mb-sm flex items-center gap-xs uppercase tracking-wider"><span className="text-lg">✅</span> What you did well</div>
-                  <ul className="space-y-sm">
-                    {(feedback.strengths||[]).map((s:string,i:number) => <li key={i} className="text-sm font-medium text-success/90 flex items-start gap-xs"><span className="text-success mt-0.5 text-xs">•</span> <span>{s}</span></li>)}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-success/5 rounded-xl p-3 border border-success/20">
+                  <div className="text-xs font-black text-success mb-1.5 uppercase tracking-wider flex items-center gap-1"><span>✅</span> What you did well</div>
+                  <ul className="space-y-1 text-xs text-success/90 font-medium">
+                    {(feedback.strengths||[]).map((s:string,i:number) => <li key={i}>• {s}</li>)}
                   </ul>
                 </div>
-                <div className="bg-warning/5 rounded-xl p-md border border-warning/20">
-                  <div className="text-sm font-black text-warning mb-sm flex items-center gap-xs uppercase tracking-wider"><span className="text-lg">📈</span> What to improve</div>
-                  <ul className="space-y-sm">
-                    {(feedback.improvements||[]).map((s:string,i:number) => <li key={i} className="text-sm font-medium text-warning/90 flex items-start gap-xs"><span className="text-warning mt-0.5 text-xs">•</span> <span>{s}</span></li>)}
+                <div className="bg-warning/5 rounded-xl p-3 border border-warning/20">
+                  <div className="text-xs font-black text-warning mb-1.5 uppercase tracking-wider flex items-center gap-1"><span>📈</span> What to improve</div>
+                  <ul className="space-y-1 text-xs text-warning/90 font-medium">
+                    {(feedback.improvements||[]).map((s:string,i:number) => <li key={i}>• {s}</li>)}
                   </ul>
                 </div>
               </div>
               
               {feedback.ideal_answer && (
-                <div className="bg-indigo-brand/5 rounded-xl p-md mb-xl border border-indigo-brand/20">
-                  <div className="text-sm font-black text-indigo-brand mb-xs flex items-center gap-xs uppercase tracking-wider"><span className="text-lg">💡</span> Ideal Answer Example</div>
-                  <div className="text-body-base font-medium text-indigo-brand/90 leading-relaxed">{feedback.ideal_answer}</div>
+                <div className="bg-indigo-brand/5 rounded-xl p-3 border border-indigo-brand/20">
+                  <div className="text-xs font-black text-indigo-brand mb-1 uppercase tracking-wider flex items-center gap-1"><span>💡</span> Ideal Answer Example</div>
+                  <div className="text-xs text-indigo-brand/90 font-medium leading-relaxed">{feedback.ideal_answer}</div>
                 </div>
               )}
               
               <button 
                 onClick={nextQuestion} 
                 disabled={loading} 
-                className={`w-full py-md rounded-xl font-black text-body-base flex items-center justify-center gap-sm transition-all duration-300 ${loading ? "bg-surface-container text-on-surface-variant cursor-not-allowed" : "bg-on-surface text-surface hover:-translate-y-0.5 shadow-md hover:shadow-lg"}`}
+                className={`w-full py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${loading ? "bg-surface-container text-on-surface-variant cursor-not-allowed" : "bg-indigo-brand text-white hover:bg-indigo-brand-dark shadow-xs"}`}
               >
                 {loading ? (
-                  <><span className="material-symbols-outlined animate-spin text-xl">autorenew</span> Preparing next question...</>
+                  <><span className="material-symbols-outlined animate-spin text-base">autorenew</span> Preparing next question...</>
                 ) : qIndex + 1 >= questionCount ? (
-                  <>Finish Interview & See Results <span className="material-symbols-outlined">flag</span></>
+                  <>Finish Interview &amp; See Results <span className="material-symbols-outlined text-base">flag</span></>
                 ) : (
-                  <>Next Question ({qIndex+2}/{questionCount}) <span className="material-symbols-outlined">arrow_forward</span></>
+                  <>Next Question ({qIndex+2}/{questionCount}) <span className="material-symbols-outlined text-base">arrow_forward</span></>
                 )}
               </button>
             </div>
