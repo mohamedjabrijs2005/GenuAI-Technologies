@@ -389,18 +389,75 @@ export default function Auth({ onLogin }: Props) {
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-accent-gold/10 blur-[120px] rounded-full pointer-events-none" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-brand/10 blur-[100px] rounded-full pointer-events-none" />
 
-        {/* MOBILE BRAND HEADER */}
-        <div className="lg:hidden flex flex-col items-center text-center pt-8 pb-4 px-4 relative z-10">
-          <div className="relative group inline-block mb-3">
+        {/* MOBILE BRAND HEADER & PLATFORM OVERVIEW */}
+        <div className="lg:hidden flex flex-col items-center text-center pt-8 pb-6 px-4 relative z-10 space-y-4 max-w-xl mx-auto">
+          <div className="relative group inline-block">
+            <div className="absolute -inset-3 bg-accent-gold/20 blur-xl rounded-full opacity-75"></div>
             <img src="/logo.png" alt="GenuAI Shield" className="relative w-16 h-16 object-contain gold-glow-subtle" />
           </div>
-          <h2 className="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[#667EEA] via-[#764BA2] to-[#0891B2] tracking-tight mb-1">
-            GenuAI Technologies
-          </h2>
-          <div className="inline-flex items-center px-3 py-1 glass rounded-lg shadow-xs bg-surface-bright/50 mb-3">
-            <span className="text-[10px] font-black text-[#F59E0B] uppercase tracking-wider">
-              AI-Powered Recruitment Intelligence Ecosystem
-            </span>
+
+          <div className="space-y-1">
+            <h2 className="text-2xl sm:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[#667EEA] via-[#764BA2] to-[#0891B2] tracking-tight">
+              GenuAI Technologies
+            </h2>
+            <div className="inline-flex items-center px-3 py-1 glass rounded-lg shadow-xs bg-surface-bright/50">
+              <span className="text-[10px] sm:text-[11px] font-black text-[#F59E0B] uppercase tracking-wider">
+                AI-Powered Recruitment Intelligence Ecosystem
+              </span>
+            </div>
+          </div>
+
+          {/* Mobile Headline */}
+          <div className="space-y-1 pt-1">
+            <h1 className="text-2xl sm:text-3xl font-black text-on-surface tracking-tight">
+              Hire Smarter. <span className="text-accent-gold">Get Hired Faster.</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-on-surface-variant max-w-md mx-auto leading-relaxed">
+              AI-powered recruitment intelligence for verified, skill-based hiring.
+            </p>
+          </div>
+
+          {/* Mobile Core USP Ribbon Card */}
+          <div className="glass p-3.5 rounded-2xl border border-indigo-brand/20 bg-indigo-brand/5 w-full text-left flex items-start gap-3 shadow-xs">
+            <span className="material-symbols-outlined text-indigo-brand text-[22px] shrink-0 mt-0.5">hub</span>
+            <div>
+              <div className="text-xs font-bold text-on-surface">One Assessment → Multiple Companies</div>
+              <div className="text-[11px] text-on-surface-variant leading-relaxed mt-0.5">
+                Complete one verified assessment and unlock multiple opportunities across employers.
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Overview Stats Grid */}
+          <div className="grid grid-cols-2 gap-2.5 w-full text-left pt-1">
+            {STATS.map((s, i) => (
+              <div key={i} className="glass p-3 rounded-xl border border-surface-container bg-white/60">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={`w-7 h-7 rounded-lg ${s.bg} ${s.color} flex items-center justify-center shrink-0`}>
+                    <span className="material-symbols-outlined text-[16px]">{s.icon}</span>
+                  </div>
+                  <span className={`text-[11px] font-bold ${s.color} truncate`}>{s.val}</span>
+                </div>
+                <div className="text-[11px] font-bold text-on-surface truncate">{s.label}</div>
+                <p className="text-[10px] text-on-surface-variant line-clamp-1 mt-0.5">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile Testimonial */}
+          <div className="glass p-3.5 rounded-2xl border border-accent-gold/20 w-full text-left">
+            <p className="text-[11px] italic text-on-surface mb-2 leading-relaxed">
+              "{TESTIMONIALS[testimonialIdx].quote}"
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-accent-gold/20 text-accent-gold-dark flex items-center justify-center font-bold text-[10px]">
+                {TESTIMONIALS[testimonialIdx].initial}
+              </div>
+              <div>
+                <div className="text-[11px] font-bold text-on-surface">{TESTIMONIALS[testimonialIdx].name}</div>
+                <div className="text-[9px] text-on-surface-variant">{TESTIMONIALS[testimonialIdx].role}</div>
+              </div>
+            </div>
           </div>
         </div>
 
