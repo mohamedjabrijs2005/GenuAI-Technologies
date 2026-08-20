@@ -251,16 +251,17 @@ Return ONLY JSON:
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-brand/10 blur-[120px] rounded-full pointer-events-none" />
       
       {/* Header */}
-      <div className="relative z-10 glass border-b border-surface-container/50 px-xl py-sm flex items-center justify-between shadow-sm">
-        <button onClick={onBack} className="flex items-center gap-xs text-on-surface-variant hover:text-on-surface transition-colors font-bold text-sm">
-          <span className="material-symbols-outlined text-xl">arrow_back</span>
-          Back to Practice Hub
+      <div className="relative z-10 glass border-b border-surface-container/50 px-3 sm:px-6 py-3 flex items-center justify-between gap-2 shadow-xs">
+        <button onClick={onBack} className="flex items-center gap-1 text-on-surface-variant hover:text-on-surface transition-colors font-bold text-xs sm:text-sm shrink-0 whitespace-nowrap cursor-pointer">
+          <span className="material-symbols-outlined text-base sm:text-lg">arrow_back</span>
+          <span className="hidden sm:inline">Back to Practice Hub</span>
+          <span className="sm:hidden">Back</span>
         </button>
-        <div className="font-black text-on-surface text-lg flex items-center gap-sm">
-          <span className="material-symbols-outlined text-accent-gold">school</span>
-          GenuAI Skill Test
+        <div className="font-black text-on-surface text-xs sm:text-lg flex items-center gap-1.5 min-w-0 truncate">
+          <span className="material-symbols-outlined text-accent-gold text-base sm:text-xl shrink-0">school</span>
+          <span className="truncate">GenuAI Skill Test</span>
         </div>
-        <div className="w-32"></div>
+        <div className="w-6 sm:w-16"></div>
       </div>
 
       <div className="relative z-10 flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full px-margin-mobile md:px-margin-desktop py-xxl gap-xl">

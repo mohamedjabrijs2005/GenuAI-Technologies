@@ -27,8 +27,8 @@ function JobBoard({ user, onBack, initialFilter = 'All' }: { user: any, onBack: 
 
   return (
     <div className="max-w-[1100px] mx-auto w-full p-lg md:p-xl">
-      <button onClick={onBack} className="text-on-surface-variant font-bold text-sm mb-lg hover:text-on-surface flex items-center gap-xs transition-colors">
-        <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to Search Hub
+      <button onClick={onBack} className="text-on-surface-variant font-bold text-xs sm:text-sm mb-4 sm:mb-6 hover:text-on-surface flex items-center gap-1 transition-colors shrink-0 whitespace-nowrap cursor-pointer">
+        <span className="material-symbols-outlined text-base">arrow_back</span> Back to Search Hub
       </button>
       <div className="bg-gradient-to-br from-warning to-error rounded-3xl p-xl text-white mb-xl flex justify-between items-center shadow-lg shadow-warning/20">
         <div>

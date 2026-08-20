@@ -188,56 +188,29 @@ Format the output using simple Markdown (## headers, **bold**, and \`\`\` for co
       <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-accent-gold/10 blur-[150px] rounded-full pointer-events-none" />
       
       {/* Header */}
-      <div className="relative z-20 glass border-b border-surface-container/50 px-xl py-sm flex items-center justify-between shadow-sm sticky top-0">
-        <div className="flex items-center gap-md">
-          <div className="w-12 h-12 bg-indigo-brand/10 rounded-xl border border-indigo-brand/20 flex items-center justify-center overflow-hidden">
-            <img src="/icons/learning_brain.png" alt="Brain" className="w-full h-full object-cover mix-blend-multiply" />
-          </div>
-          <div className="hidden sm:block">
-            <div className="font-black text-lg text-on-surface">Inclusive Learning Hub</div>
-            <div className="text-xs text-on-surface-variant font-bold mt-0.5">Dynamic AI Education Engine</div>
-          </div>
+      <div className="glass border-b border-surface-container px-3 sm:px-6 py-2.5 sm:py-3 flex flex-wrap items-center justify-between shrink-0 sticky top-0 z-40 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="material-symbols-outlined text-accent-gold text-lg sm:text-xl shrink-0">school</span>
+          <div className="font-black text-xs sm:text-sm text-on-surface truncate">Inclusive Learning Hub</div>
         </div>
         
-        <div className="flex items-center gap-md flex-1 max-w-[500px] mx-xl">
-          <div className="flex w-full bg-surface-bright/50 rounded-xl border border-surface-container overflow-hidden shadow-inner group focus-within:border-indigo-brand/50 focus-within:bg-surface-bright transition-colors">
-            <div className="pl-sm flex items-center justify-center text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px]">search</span>
-            </div>
-            <input 
-              type="text" 
-              value={searchQuery} 
-              onChange={e => setSearchQuery(e.target.value)} 
-              onKeyDown={e => e.key === 'Enter' && generateSyllabus()}
-              placeholder="What do you want to learn? (e.g. React Hooks)" 
-              className="flex-1 py-sm px-sm border-none bg-transparent outline-none text-sm text-on-surface placeholder:text-on-surface-variant/50"
-            />
-            <button 
-              onClick={() => generateSyllabus()} 
-              disabled={syllabusLoading || !searchQuery.trim()} 
-              className="bg-indigo-brand text-white border-none px-md font-bold text-sm disabled:bg-surface-container disabled:text-on-surface-variant transition-colors hover:bg-indigo-brand/90"
-            >
-              {syllabusLoading ? <span className="material-symbols-outlined animate-spin text-[20px]">autorenew</span> : "Learn"}
-            </button>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-md">
-          <div className="flex items-center gap-xs bg-surface-bright/50 px-sm py-1 rounded-xl border border-surface-container shadow-sm">
-            <span className="material-symbols-outlined text-indigo-brand text-[20px]">public</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 bg-surface-bright/50 px-2 py-1 rounded-xl border border-surface-container shadow-xs">
+            <span className="material-symbols-outlined text-indigo-brand text-base">public</span>
             <select 
               value={language.code} 
               onChange={e => handleLanguageChange(e.target.value)} 
-              className="bg-transparent border-none text-sm font-bold text-on-surface cursor-pointer outline-none w-full appearance-none pr-sm"
+              className="bg-transparent border-none text-xs font-bold text-on-surface cursor-pointer outline-none appearance-none pr-1"
             >
-              {LANGUAGES.map(l => <option key={l.code} value={l.code} className="text-on-surface bg-surface-bright">{l.label} - {l.native}</option>)}
+              {LANGUAGES.map(l => <option key={l.code} value={l.code} className="text-on-surface bg-surface-bright">{l.native}</option>)}
             </select>
           </div>
           <button 
             onClick={() => { window.speechSynthesis.cancel(); onBack(); }} 
-            className="px-sm py-1.5 border border-surface-container-high rounded-xl bg-transparent text-xs text-on-surface-variant font-bold hover:bg-surface-container-high hover:text-on-surface transition-colors flex items-center gap-xs"
+            className="px-2.5 py-1 border border-surface-container-high rounded-xl bg-transparent text-xs text-on-surface-variant font-bold hover:bg-surface-container-high hover:text-on-surface transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
           >
-            <span className="material-symbols-outlined text-[18px]">exit_to_app</span> Exit Hub
+            <span className="material-symbols-outlined text-sm">arrow_back</span>
+            <span className="hidden sm:inline">Exit Hub</span>
           </button>
         </div>
       </div>

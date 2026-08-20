@@ -25,23 +25,24 @@ export default function CareerProfileDashboard({ user, onBack }: Props) {
   return (
     <div className="min-h-screen bg-background quantum-gradient relative overflow-hidden flex flex-col">
       {/* Header */}
-      <nav className="glass border-b border-surface-container px-lg md:px-xl h-16 flex items-center justify-between shadow-sm sticky top-0 z-40">
-        <div className="flex items-center gap-sm">
-          <img src="/logo.png" alt="GenuAI" className="w-10 h-10 object-contain drop-shadow-md" />
-          <div>
-            <div className="font-black text-sm text-on-surface">GenuAI Technologies</div>
-            <div className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Career Profile Hub</div>
+      <nav className="glass border-b border-surface-container px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between shadow-xs sticky top-0 z-40 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <img src="/logo.png" alt="GenuAI" className="w-7 h-7 sm:w-9 sm:h-9 object-contain shrink-0" />
+          <div className="min-w-0 truncate">
+            <div className="font-black text-xs sm:text-sm text-on-surface truncate leading-tight">GenuAI Technologies</div>
+            <div className="text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-wider truncate">Career Profile Hub</div>
           </div>
         </div>
-        <div className="flex items-center gap-md">
-          <button onClick={onBack} className="bg-surface-bright border border-surface-container rounded-lg px-md py-xs text-xs font-bold text-on-surface-variant hover:text-on-surface hover:border-surface-container-high transition-colors">
-            ← Change Path
+        <div className="flex items-center gap-2 shrink-0">
+          <button onClick={onBack} className="bg-surface-bright border border-surface-container rounded-xl px-2.5 sm:px-3 py-1.5 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap cursor-pointer">
+            <span className="material-symbols-outlined text-sm">arrow_back</span>
+            <span className="hidden sm:inline">Change Path</span>
           </button>
-          <div className="flex items-center gap-xs">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0F172A] to-[#334155] flex items-center justify-center text-white font-black text-xs shadow-sm">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#0F172A] to-[#334155] flex items-center justify-center text-white font-black text-xs shadow-xs">
               {name[0]?.toUpperCase()}
             </div>
-            <span className="text-sm font-bold text-on-surface hidden sm:block">{name}</span>
+            <span className="text-xs sm:text-sm font-bold text-on-surface hidden md:block max-w-[100px] truncate">{name}</span>
           </div>
         </div>
       </nav>

@@ -121,15 +121,15 @@ ${signOff || "Sincerely,\n" + (user?.name || "Applicant")}`;
       `}</style>
 
       {/* Header */}
-      <div className="glass border-b border-surface-container px-lg md:px-xl h-16 flex items-center justify-between shrink-0 sticky top-0 z-40">
-        <div className="flex items-center gap-md">
-          <div className="font-black text-title-sm text-on-surface flex items-center gap-sm">
-            <span>✉️</span> Pro Cover Letter Generator
+      <div className="glass border-b border-surface-container px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between shrink-0 sticky top-0 z-40 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="font-black text-xs sm:text-sm text-on-surface flex items-center gap-1.5 truncate">
+            <span>✉️</span> <span className="truncate">Cover Letter Generator</span>
           </div>
-          <div className="bg-surface-container text-on-surface-variant px-sm py-0.5 rounded-md text-[10px] font-bold uppercase tracking-widest hidden sm:block">AI Drafting Engine</div>
         </div>
-        <button onClick={onBack} className="bg-surface-bright border border-surface-container text-on-surface-variant px-md py-xs rounded-lg font-bold text-xs hover:text-on-surface hover:border-surface-container-high transition-colors">
-          Exit to Hub
+        <button onClick={onBack} className="bg-surface-bright border border-surface-container text-on-surface-variant px-2.5 sm:px-3 py-1.5 rounded-xl font-bold text-xs hover:text-on-surface transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap cursor-pointer">
+          <span className="material-symbols-outlined text-sm">arrow_back</span>
+          <span className="hidden sm:inline">Exit to Hub</span>
         </button>
       </div>
 
