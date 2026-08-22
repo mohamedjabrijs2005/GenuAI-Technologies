@@ -73,43 +73,43 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore, onProtectedActi
 
             {/* Main Heading */}
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-on-surface leading-[1.1] sm:leading-[1.08]">
-              One Assessment. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-brand to-[#7C3AED]">
-                Multiple Opportunities.
+              Role-Aware Recruitment. <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700">
+                Dynamic Assessment.
               </span> <br />
-              Verified Talent.
+              Fair Candidate Comparison.
             </h1>
 
             {/* Description */}
             <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed max-w-2xl mx-auto lg:mx-0">
-              GenuAI Technologies is an AI-powered recruitment intelligence ecosystem that verifies skills, detects recruitment fraud, and connects candidates with multiple companies through one trusted assessment.
+              Your assessment path is built from what your selected companies actually require — never a one-size-fits-all test. Select your target companies and roles. GenuAI Works merges their overlapping requirements — shared skills are tested once, company-specific skills only when relevant.
             </p>
 
             {/* Core USP Ribbon */}
             <div className="inline-block p-2.5 sm:p-3 rounded-2xl bg-surface-bright border border-surface-container shadow-xs w-full sm:w-auto">
               <div className="text-[11px] sm:text-xs font-semibold text-on-surface-variant flex flex-wrap items-center justify-center lg:justify-start gap-1.5 sm:gap-2">
-                <ShieldCheck className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-success shrink-0" />
-                <span className="text-on-surface font-bold">One Assessment</span>
+                <ShieldCheck className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-emerald-500 shrink-0" />
+                <span className="text-on-surface font-bold">Target Companies &amp; Roles</span>
                 <span className="text-on-surface-variant/40 hidden sm:inline">•</span>
-                <span className="text-indigo-brand font-bold">Multiple Companies</span>
+                <span className="text-indigo-600 font-bold font-mono">GenuAI Works Engine</span>
                 <span className="text-on-surface-variant/40 hidden sm:inline">•</span>
-                <span className="text-success-dark font-bold">Verified Talent</span>
+                <span className="text-purple-600 font-bold">Explainable Match Score</span>
               </div>
             </div>
 
-            {/* CTAs: "Experience GenuAI" smoothly scrolls, "Get Started" directly opens /auth */}
+            {/* CTAs */}
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4">
               <button
                 onClick={onExplore}
-                className="w-full sm:w-auto px-6 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm text-on-surface bg-surface border border-surface-container shadow-xs hover:bg-surface-bright hover:border-surface-container-high transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-6 h-12 rounded-xl font-bold text-xs sm:text-sm text-on-surface bg-surface border border-surface-container shadow-xs hover:bg-slate-800/80 hover:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Experience GenuAI</span>
-                <Activity className="w-4 h-4 text-indigo-brand" />
+                <Activity className="w-4 h-4 text-indigo-500" />
               </button>
 
               <button
                 onClick={onGetStarted}
-                className="w-full sm:w-auto px-7 py-3 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-indigo-brand to-indigo-brand-dark hover:shadow-xl hover:shadow-indigo-brand/30 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                className="w-full sm:w-auto px-7 h-12 rounded-xl font-bold text-xs sm:text-sm text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-indigo-600/20"
               >
                 <span>Get Started</span>
                 <ArrowRight className="w-4 h-4" />
@@ -118,7 +118,7 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore, onProtectedActi
 
             {/* Subtext */}
             <p className="text-[11px] sm:text-xs font-medium text-on-surface-variant/70 italic">
-              "Your skills should travel with you." — Unified credentials recognized across organizations.
+              Explore companies freely. Shared skills are evaluated once and reused across target roles.
             </p>
           </div>
 

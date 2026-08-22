@@ -356,29 +356,29 @@ export default function Auth({ onLogin }: Props) {
 
   const STATS = [
     { val: "AI-Powered", label: "Evaluation", icon: "psychology", color: "text-indigo-brand", bg: "bg-indigo-brand/10", border: "border-indigo-brand/20", desc: "Multi-dimensional candidate profiling" },
-    { val: "6D", label: "Assessment Profile", icon: "view_in_ar", color: "text-accent-gold", bg: "bg-accent-gold/10", border: "border-accent-gold/20", desc: "Comprehensive skill & behavior evaluation" },
+    { val: "Role-Aware", label: "Assessment Profile", icon: "view_in_ar", color: "text-accent-gold", bg: "bg-accent-gold/10", border: "border-accent-gold/20", desc: "Dynamic skill & requirement evaluation" },
     { val: "Real-Time", label: "Dynamic Scoring", icon: "bolt", color: "text-success-emerald", bg: "bg-success-emerald/10", border: "border-success-emerald/20", desc: "Instant assessment insights" },
     { val: "AI-Assisted", label: "Fair Evaluation", icon: "shield", color: "text-[#10B981]", bg: "bg-[#10B981]/10", border: "border-[#10B981]/20", desc: "Consistent, data-driven candidate assessment" },
   ];
 
   const TESTIMONIALS = [
     {
-      quote: "GenuAI helped us reduce hiring turnaround significantly. The multi-dimensional evaluation provides actionable insights — we found our best engineers through this ecosystem.",
-      name: "Rahul Mehta",
-      role: "HR Director · TechCorp India",
-      initial: "R",
+      quote: "GenuAI helped us reduce hiring turnaround significantly. The role-aware evaluation provides actionable insights across engineering talent pools.",
+      name: "Pilot Partner Feedback",
+      role: "Illustrative — based on planned pilot feedback",
+      initial: "P",
     },
     {
-      quote: "The 6-dimension scoring gives us a complete picture of technical and communication ability. It provides clear, consistent signal across candidate pools.",
-      name: "Sarah Jenkins",
-      role: "Talent Acquisition · GlobalNet",
-      initial: "S",
+      quote: "Role requirement aggregation gives us a complete picture of technical and communication ability across participating companies.",
+      name: "Talent Acquisition Pilot",
+      role: "Illustrative — based on planned pilot feedback",
+      initial: "T",
     },
     {
       quote: "Verification and proctoring features are reliable. We can confidently conduct remote assessments with verifiable candidate integrity.",
-      name: "Arjun Desai",
-      role: "Engineering Manager · Innovate",
-      initial: "A",
+      name: "Engineering Manager Pilot",
+      role: "Illustrative — based on planned pilot feedback",
+      initial: "E",
     },
   ];
 
@@ -963,7 +963,7 @@ export default function Auth({ onLogin }: Props) {
                     type="button"
                     onClick={() => handleOAuth("google")}
                     disabled={oauthLoading !== null}
-                    className="w-full bg-white border border-slate-200 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-700 hover:border-indigo-500 hover:shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                    className="w-full h-12 bg-white border border-slate-200 flex items-center justify-center gap-3 px-4 rounded-xl font-semibold text-xs sm:text-sm text-slate-700 hover:border-indigo-500 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer shadow-xs"
                   >
                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4 h-4 shrink-0" />
                     <span>Continue with Google</span>
@@ -973,11 +973,11 @@ export default function Auth({ onLogin }: Props) {
                     type="button"
                     onClick={() => handleOAuth("microsoft")}
                     disabled={oauthLoading !== null}
-                    className="w-full bg-white border border-slate-200 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-700 hover:border-[#00A4EF] hover:shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                    className="w-full h-12 bg-white border border-slate-200 flex items-center justify-center gap-3 px-4 rounded-xl font-semibold text-xs sm:text-sm text-slate-700 hover:border-[#00A4EF] hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer shadow-xs"
                   >
                     <svg className="w-4 h-4 shrink-0" viewBox="0 0 23 23">
                       <path fill="#f35325" d="M1 1h10v10H1z" />
-                      <path fill="#81bc06" d="M12 1h10v10H12z" />
+                      <path fill="#81bc06" d="M12 1h10v10H1z" />
                       <path fill="#05a6f0" d="M1 12h10v10H1z" />
                       <path fill="#ffba08" d="M12 12h10v10H12z" />
                     </svg>
@@ -988,7 +988,7 @@ export default function Auth({ onLogin }: Props) {
                     type="button"
                     onClick={() => handleOAuth("github")}
                     disabled={oauthLoading !== null}
-                    className="w-full bg-white border border-slate-200 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-700 hover:border-slate-800 hover:shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                    className="w-full h-12 bg-white border border-slate-200 flex items-center justify-center gap-3 px-4 rounded-xl font-semibold text-xs sm:text-sm text-slate-700 hover:border-slate-800 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer shadow-xs"
                   >
                     <img src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" className="w-4 h-4 shrink-0" />
                     <span>Continue with GitHub</span>
@@ -998,7 +998,7 @@ export default function Auth({ onLogin }: Props) {
                     type="button"
                     onClick={() => handleOAuth("linkedin")}
                     disabled={oauthLoading !== null}
-                    className="w-full bg-white border border-slate-200 flex items-center justify-center gap-3 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-700 hover:border-[#0A66C2] hover:shadow-sm transition-all disabled:opacity-50 cursor-pointer"
+                    className="w-full h-12 bg-white border border-slate-200 flex items-center justify-center gap-3 px-4 rounded-xl font-semibold text-xs sm:text-sm text-slate-700 hover:border-[#0A66C2] hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer shadow-xs"
                   >
                     <img src="https://www.svgrepo.com/show/448234/linkedin.svg" alt="LinkedIn" className="w-4 h-4 shrink-0" />
                     <span>Continue with LinkedIn</span>

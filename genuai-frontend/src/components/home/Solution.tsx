@@ -63,8 +63,8 @@ export const Solution: React.FC = () => {
               </div>
             </div>
 
-            <div className="px-5 py-2.5 rounded-xl bg-indigo-brand/10 border border-indigo-brand/20 text-indigo-brand text-xs font-bold">
-              8 Assessment Dimensions Unified
+            <div className="px-5 py-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 text-xs font-bold">
+              Role-Aware Requirement Orchestration
             </div>
           </div>
         </div>

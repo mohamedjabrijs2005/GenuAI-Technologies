@@ -103,38 +103,38 @@ export const CoreUSP: React.FC<Props> = ({ onProtectedAction }) => {
               </div>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2: Dynamic Assessment Journey */}
             <div
               onClick={handleStartUnifiedTest}
-              className="p-6 rounded-2xl bg-surface-bright border border-indigo-brand/30 flex flex-col justify-between shadow-xs cursor-pointer hover:border-indigo-brand transition-colors"
+              className="p-6 rounded-2xl bg-surface-bright border border-indigo-brand/30 flex flex-col justify-between shadow-xs cursor-pointer hover:border-indigo-500 active:scale-[0.98] transition-all"
             >
               <div>
-                <div className="text-xs font-bold text-indigo-brand uppercase mb-2">Step 02</div>
-                <h3 className="text-base font-bold text-on-surface mb-2">ONE GenuAI Assessment</h3>
+                <div className="text-xs font-bold text-indigo-500 uppercase tracking-wider mb-2">Step 02</div>
+                <h3 className="text-base font-bold text-on-surface mb-2">Dynamic Assessment Path</h3>
                 <p className="text-xs text-on-surface-variant mb-4">
-                  Complete 7 comprehensive modules — coding, aptitude, GD, and AI interview.
+                  Hit "I'm Ready" and GenuAI Works generates your path — Core, Majority, and Company-Specific modules, with "Why am I taking this?" explanations.
                 </p>
                 <div className="p-4 rounded-xl bg-surface border border-surface-container space-y-2 text-xs">
                   <div className="flex items-center justify-between font-bold text-on-surface">
-                    <span>ATS Resume Screening</span>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-success" />
+                    <span>Core Requirements (100% Shared)</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                   </div>
                   <div className="flex items-center justify-between font-bold text-on-surface">
-                    <span>GenuAI Skill Test</span>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-success" />
+                    <span>Majority Skills (&gt;50% Common)</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-indigo-500" />
                   </div>
                   <div className="flex items-center justify-between font-bold text-on-surface">
-                    <span>SVAR Verbal &amp; GD</span>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-success" />
+                    <span>Company-Specific Modules</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-500" />
                   </div>
                   <div className="flex items-center justify-between font-bold text-on-surface">
-                    <span>AI Technical Interview</span>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-success" />
+                    <span>Verified Result Reuse</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                   </div>
                 </div>
               </div>
-              <div className="mt-4 text-[10px] font-bold text-indigo-brand flex items-center gap-1">
-                <span>Start Assessment</span>
+              <div className="mt-4 text-[10px] font-bold text-indigo-400 flex items-center gap-1">
+                <span>Generate Your Path</span>
                 <ArrowRight className="w-3 h-3" />
               </div>
             </div>

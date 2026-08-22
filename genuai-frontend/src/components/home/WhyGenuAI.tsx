@@ -5,8 +5,8 @@ export const WhyGenuAI: React.FC = () => {
   const pillars = [
     {
       num: '01',
-      title: 'One Assessment → Multiple Companies',
-      desc: 'Candidates stop repeating identical tests. One authenticated score passport connects to multiple hiring partners.',
+      title: 'Target Company Selection & Reuse',
+      desc: 'Select target companies and roles. GenuAI Works merges overlapping requirements — shared skills tested once, company-specific skills only when relevant.',
       icon: Star,
     },
     {

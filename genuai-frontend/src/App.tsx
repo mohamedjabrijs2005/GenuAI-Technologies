@@ -17,6 +17,11 @@ const AdminDashboard       = lazy(() => import("./features/admin").then(m => ({ 
 const AMCATTest            = lazy(() => import("./features/skillTest").then(m => ({ default: m.AMCATTestPage })));
 const AIMockInterviewPage  = lazy(() => import("./features/interview").then(m => ({ default: m.AIMockInterviewPage })));
 
+const CandidateCompanySelector = lazy(() => import("./pages/CandidateCompanySelector"));
+const DynamicAssessmentPage    = lazy(() => import("./pages/DynamicAssessmentPage"));
+const CompanyMatchPage         = lazy(() => import("./pages/CompanyMatchPage"));
+const CandidateReadinessPage   = lazy(() => import("./pages/CandidateReadinessPage"));
+
 // ── Suspense fallback ───────────────────────────────────────────────────────
 function PageLoader() {
   return (
@@ -82,6 +87,7 @@ export default function App() {
                   if (path === "practice") navigate("/practice");
                   else if (path === "search") navigate("/search");
                   else if (path === "career-profile") navigate("/career-profile");
+                  else if (path === "companies") navigate("/companies");
                   else {
                     sessionStorage.setItem("genuai_pipeline_stage", "interest");
                     navigate("/pipeline");
@@ -132,6 +138,40 @@ export default function App() {
           }
         />
         <Route path="/company-overview" element={<Navigate to="/assessment" replace />} />
+
+        {/* GenuAI Works Thin Slice Flow */}
+        <Route
+          path="/companies"
+          element={
+            <ProtectedRoute allowedRoles={["candidate", "admin"]}>
+              <CandidateCompanySelector user={user} onBack={() => navigate("/dashboard")} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-assessment"
+          element={
+            <ProtectedRoute allowedRoles={["candidate", "admin"]}>
+              <DynamicAssessmentPage user={user} onBack={() => navigate("/companies")} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/matches"
+          element={
+            <ProtectedRoute allowedRoles={["candidate", "admin"]}>
+              <CompanyMatchPage user={user} onBack={() => navigate("/my-assessment")} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/readiness"
+          element={
+            <ProtectedRoute allowedRoles={["candidate", "admin"]}>
+              <CandidateReadinessPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* 6-Module pipeline */}
         <Route

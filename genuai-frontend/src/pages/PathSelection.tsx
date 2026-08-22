@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 interface Props {
   user: any;
-  onSelect: (path: 'practice' | 'search' | 'test' | 'career-profile') => void;
+  onSelect: (path: 'practice' | 'search' | 'test' | 'career-profile' | 'companies') => void;
   onLogout: () => void;
 }
 
@@ -60,6 +60,32 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
           <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
             Select how you would like to leverage the GenuAI ecosystem today. Take your time to practice, evaluate, or discover opportunities.
           </p>
+        </div>
+
+        {/* GenuAI Works Featured Card */}
+        <div
+          onClick={() => onSelect('companies')}
+          className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/40 p-6 sm:p-8 rounded-[32px] cursor-pointer shadow-2xl hover:border-indigo-400 transition transform hover:-translate-y-1"
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                <span className="material-symbols-outlined text-sm text-indigo-400">auto_awesome</span>
+                GENUAI WORKS — ROLE-AWARE ENGINE
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Multi-Company Target Selection & Dynamic Assessment
+              </h2>
+              <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+                Select target companies (Zoho, Apple, Google) and roles. GenuAI Works aggregates locked company requirements, performs Common/Majority analysis, checks verified assessment reuse, and generates your role-aware dynamic path.
+              </p>
+            </div>
+            <div className="shrink-0">
+              <span className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-black px-6 py-3.5 rounded-2xl shadow-lg text-sm uppercase tracking-wider">
+                Select Companies & Roles <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* 4 Broader Spacious Path Cards */}

@@ -175,6 +175,418 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           correct_answer TEXT,
           created_at TIMESTAMP DEFAULT NOW()
         );
+
+        -- ─────────────────────────────────────────────
+        -- GENUAI WORKS — ROLE-SKILL-ASSESSMENT KNOWLEDGE BASE
+        -- ─────────────────────────────────────────────
+
+        -- Canonical skill taxonomy
+        CREATE TABLE IF NOT EXISTS skills (
+          id SERIAL PRIMARY KEY,
+          canonical_name VARCHAR(100) UNIQUE NOT NULL,
+          category VARCHAR(100),
+          description TEXT,
+          is_composite BOOLEAN DEFAULT false,
+          status VARCHAR(50) DEFAULT 'active',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS skill_aliases (
+          id SERIAL PRIMARY KEY,
+          skill_id INTEGER REFERENCES skills(id) ON DELETE CASCADE,
+          alias_text VARCHAR(255) NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Canonical role taxonomy
+        CREATE TABLE IF NOT EXISTS role_taxonomy (
+          id SERIAL PRIMARY KEY,
+          canonical_name VARCHAR(100) UNIQUE NOT NULL,
+          category VARCHAR(100),
+          description TEXT,
+          status VARCHAR(50) DEFAULT 'active',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Role equivalency mapping (Fix 1: admin-curated, AI may suggest)
+        CREATE TABLE IF NOT EXISTS role_equivalency_mapping (
+          id SERIAL PRIMARY KEY,
+          company_role_title VARCHAR(255) NOT NULL,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          canonical_role_id INTEGER REFERENCES role_taxonomy(id) ON DELETE CASCADE,
+          mapped_by VARCHAR(50) DEFAULT 'admin_confirmed' CHECK (mapped_by IN ('ai_suggested','admin_confirmed')),
+          confidence DECIMAL(5,2) DEFAULT 1.0,
+          reviewed_by_admin INTEGER REFERENCES users(id),
+          created_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(company_id, company_role_title)
+        );
+
+        -- Assessment module library
+        CREATE TABLE IF NOT EXISTS assessment_modules (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(100) UNIQUE NOT NULL,
+          canonical_name VARCHAR(100) UNIQUE NOT NULL,
+          category VARCHAR(100),
+          description TEXT,
+          is_composite BOOLEAN DEFAULT false,
+          status VARCHAR(50) DEFAULT 'active',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Role ↔ Skill relevance mappings
+        CREATE TABLE IF NOT EXISTS role_skills (
+          id SERIAL PRIMARY KEY,
+          role_taxonomy_id INTEGER REFERENCES role_taxonomy(id) ON DELETE CASCADE,
+          skill_id INTEGER REFERENCES skills(id) ON DELETE CASCADE,
+          relevance VARCHAR(50) DEFAULT 'required' CHECK (relevance IN ('required','optional','not_applicable')),
+          created_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(role_taxonomy_id, skill_id)
+        );
+
+        -- Role ↔ Assessment module relevance mappings
+        CREATE TABLE IF NOT EXISTS role_assessment_modules (
+          id SERIAL PRIMARY KEY,
+          role_taxonomy_id INTEGER REFERENCES role_taxonomy(id) ON DELETE CASCADE,
+          assessment_module_id INTEGER REFERENCES assessment_modules(id) ON DELETE CASCADE,
+          relevance VARCHAR(50) DEFAULT 'required' CHECK (relevance IN ('required','optional','not_applicable')),
+          created_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(role_taxonomy_id, assessment_module_id)
+        );
+
+        -- ─────────────────────────────────────────────
+        -- COMPANY ROLE CONFIGURATION
+        -- ─────────────────────────────────────────────
+
+        -- Company-specific roles (linked to canonical)
+        CREATE TABLE IF NOT EXISTS company_roles (
+          id SERIAL PRIMARY KEY,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          canonical_role_id INTEGER REFERENCES role_taxonomy(id),
+          title VARCHAR(255) NOT NULL,
+          description TEXT,
+          status VARCHAR(50) DEFAULT 'active',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Assessment configuration per company-role
+        CREATE TABLE IF NOT EXISTS company_assessment_configurations (
+          id SERIAL PRIMARY KEY,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_role_id INTEGER REFERENCES company_roles(id) ON DELETE CASCADE,
+          status VARCHAR(50) DEFAULT 'draft' CHECK (status IN ('draft','locked')),
+          created_by INTEGER REFERENCES users(id),
+          created_at TIMESTAMP DEFAULT NOW(),
+          locked_at TIMESTAMP,
+          UNIQUE(company_id, company_role_id)
+        );
+
+        -- Configuration versions — NEVER overwrite, only add new versions (Fix 2)
+        CREATE TABLE IF NOT EXISTS company_configuration_versions (
+          id SERIAL PRIMARY KEY,
+          configuration_id INTEGER REFERENCES company_assessment_configurations(id) ON DELETE CASCADE,
+          version_number INTEGER NOT NULL DEFAULT 1,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_role_id INTEGER REFERENCES company_roles(id) ON DELETE CASCADE,
+          canonical_role_id INTEGER REFERENCES role_taxonomy(id),
+          selected_module_ids INTEGER[] DEFAULT '{}',
+          weightages JSONB DEFAULT '{}',
+          status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active','superseded')),
+          superseded_at TIMESTAMP,
+          superseded_by_version_id INTEGER,
+          created_at TIMESTAMP DEFAULT NOW(),
+          created_by INTEGER REFERENCES users(id)
+        );
+
+        -- Requirements within a version
+        CREATE TABLE IF NOT EXISTS company_configuration_requirements (
+          id SERIAL PRIMARY KEY,
+          configuration_version_id INTEGER REFERENCES company_configuration_versions(id) ON DELETE CASCADE,
+          assessment_module_id INTEGER REFERENCES assessment_modules(id) ON DELETE CASCADE,
+          weight DECIMAL(5,2) DEFAULT 1.0,
+          is_required BOOLEAN DEFAULT true,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Agreement acceptance records
+        CREATE TABLE IF NOT EXISTS company_configuration_agreements (
+          id SERIAL PRIMARY KEY,
+          configuration_id INTEGER REFERENCES company_assessment_configurations(id) ON DELETE CASCADE,
+          configuration_version_id INTEGER REFERENCES company_configuration_versions(id) ON DELETE CASCADE,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          accepted_by INTEGER REFERENCES users(id),
+          agreement_text TEXT,
+          accepted_at TIMESTAMP DEFAULT NOW(),
+          ip_address VARCHAR(100)
+        );
+
+        -- ─────────────────────────────────────────────
+        -- CANDIDATE INTELLIGENCE
+        -- ─────────────────────────────────────────────
+
+        CREATE TABLE IF NOT EXISTS candidate_company_interests (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          status VARCHAR(50) DEFAULT 'active',
+          created_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(candidate_id, company_id)
+        );
+
+        CREATE TABLE IF NOT EXISTS candidate_role_interests (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_role_id INTEGER REFERENCES company_roles(id) ON DELETE CASCADE,
+          canonical_role_id INTEGER REFERENCES role_taxonomy(id),
+          status VARCHAR(50) DEFAULT 'active',
+          created_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(candidate_id, company_id, company_role_id)
+        );
+
+        CREATE TABLE IF NOT EXISTS candidate_skill_profiles (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          skill_id INTEGER REFERENCES skills(id) ON DELETE CASCADE,
+          proficiency_level VARCHAR(50),
+          score DECIMAL(5,2),
+          verified BOOLEAN DEFAULT false,
+          last_assessed TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(candidate_id, skill_id)
+        );
+
+        -- ─────────────────────────────────────────────
+        -- GENUAI WORKS ENGINE
+        -- ─────────────────────────────────────────────
+
+        CREATE TABLE IF NOT EXISTS dynamic_assessment_paths (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          generated_at TIMESTAMP DEFAULT NOW(),
+          canonical_role_groups JSONB DEFAULT '{}',
+          core_module_ids INTEGER[] DEFAULT '{}',
+          majority_module_ids INTEGER[] DEFAULT '{}',
+          company_specific_modules JSONB DEFAULT '{}',
+          reused_results JSONB DEFAULT '{}',
+          assessment_explanations JSONB DEFAULT '{}',
+          status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending','in_progress','completed','expired')),
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Assessment attempts — version-bound (Fix 2)
+        CREATE TABLE IF NOT EXISTS assessment_attempts (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          assessment_module_id INTEGER REFERENCES assessment_modules(id),
+          dynamic_path_id INTEGER REFERENCES dynamic_assessment_paths(id),
+          configuration_version_id INTEGER REFERENCES company_configuration_versions(id),
+          score DECIMAL(5,2),
+          max_score DECIMAL(5,2) DEFAULT 100,
+          percentage DECIMAL(5,2),
+          status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending','in_progress','completed','verified','expired')),
+          verified BOOLEAN DEFAULT false,
+          validity_months INTEGER DEFAULT 6,
+          started_at TIMESTAMP,
+          completed_at TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS assessment_reuse_records (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          original_attempt_id INTEGER REFERENCES assessment_attempts(id),
+          reused_for_path_id INTEGER REFERENCES dynamic_assessment_paths(id),
+          reuse_reason TEXT,
+          reused_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Candidate assessment groups — composite key (Fix 3)
+        CREATE TABLE IF NOT EXISTS candidate_assessment_groups (
+          id SERIAL PRIMARY KEY,
+          canonical_role_id INTEGER REFERENCES role_taxonomy(id),
+          configuration_version_id INTEGER REFERENCES company_configuration_versions(id),
+          assessment_pattern_hash VARCHAR(64) NOT NULL,
+          pattern_description JSONB DEFAULT '{}',
+          created_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(canonical_role_id, configuration_version_id, assessment_pattern_hash)
+        );
+
+        CREATE TABLE IF NOT EXISTS candidate_group_memberships (
+          id SERIAL PRIMARY KEY,
+          group_id INTEGER REFERENCES candidate_assessment_groups(id) ON DELETE CASCADE,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          dynamic_path_id INTEGER REFERENCES dynamic_assessment_paths(id),
+          joined_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(group_id, candidate_id)
+        );
+
+        -- ─────────────────────────────────────────────
+        -- MATCHING & INTELLIGENCE
+        -- ─────────────────────────────────────────────
+
+        -- Company-specific match scores — version-bound (Fix 2)
+        CREATE TABLE IF NOT EXISTS candidate_company_matches (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_role_id INTEGER REFERENCES company_roles(id),
+          configuration_version_id INTEGER REFERENCES company_configuration_versions(id),
+          match_score DECIMAL(5,2),
+          score_components JSONB DEFAULT '{}',
+          strengths JSONB DEFAULT '[]',
+          weak_areas JSONB DEFAULT '[]',
+          explanation TEXT,
+          generated_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS skill_gap_analysis (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_role_id INTEGER REFERENCES company_roles(id),
+          skill_id INTEGER REFERENCES skills(id),
+          required_level VARCHAR(50),
+          current_level VARCHAR(50),
+          gap_severity VARCHAR(50),
+          recommendations JSONB DEFAULT '[]',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS readiness_scores (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_role_id INTEGER REFERENCES company_roles(id),
+          configuration_version_id INTEGER REFERENCES company_configuration_versions(id),
+          component_scores JSONB DEFAULT '{}',
+          overall_readiness DECIMAL(5,2),
+          generated_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS career_recommendations (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          recommendation_type VARCHAR(100),
+          content JSONB DEFAULT '{}',
+          relevance_score DECIMAL(5,2),
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS company_intelligence (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          company_role_id INTEGER REFERENCES company_roles(id),
+          content_type VARCHAR(100),
+          content JSONB DEFAULT '{}',
+          relevance_score DECIMAL(5,2),
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS news_items (
+          id SERIAL PRIMARY KEY,
+          title VARCHAR(500) NOT NULL,
+          content TEXT,
+          source VARCHAR(255),
+          url VARCHAR(500),
+          tags JSONB DEFAULT '[]',
+          category VARCHAR(100),
+          published_at TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS candidate_news_relevance (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          news_item_id INTEGER REFERENCES news_items(id) ON DELETE CASCADE,
+          relevance_score DECIMAL(5,2),
+          reason VARCHAR(500),
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- ─────────────────────────────────────────────
+        -- SUBSCRIPTIONS & PAYMENTS
+        -- ─────────────────────────────────────────────
+
+        CREATE TABLE IF NOT EXISTS subscription_plans (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          description TEXT,
+          price DECIMAL(10,2) NOT NULL,
+          currency VARCHAR(10) DEFAULT 'INR',
+          duration_days INTEGER NOT NULL,
+          config_changes_allowed INTEGER DEFAULT 1,
+          roles_allowed INTEGER DEFAULT 5,
+          advanced_analytics BOOLEAN DEFAULT false,
+          features JSONB DEFAULT '[]',
+          is_active BOOLEAN DEFAULT true,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS company_subscriptions (
+          id SERIAL PRIMARY KEY,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          plan_id INTEGER REFERENCES subscription_plans(id),
+          status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active','expired','cancelled')),
+          starts_at TIMESTAMP DEFAULT NOW(),
+          expires_at TIMESTAMP,
+          config_changes_used INTEGER DEFAULT 0,
+          payment_id INTEGER,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS configuration_change_requests (
+          id SERIAL PRIMARY KEY,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          configuration_id INTEGER REFERENCES company_assessment_configurations(id),
+          current_version_id INTEGER REFERENCES company_configuration_versions(id),
+          subscription_id INTEGER REFERENCES company_subscriptions(id),
+          reason TEXT,
+          status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
+          requested_at TIMESTAMP DEFAULT NOW(),
+          approved_at TIMESTAMP,
+          approved_by INTEGER REFERENCES users(id)
+        );
+
+        CREATE TABLE IF NOT EXISTS payments (
+          id SERIAL PRIMARY KEY,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          subscription_id INTEGER REFERENCES company_subscriptions(id),
+          amount DECIMAL(10,2) NOT NULL,
+          currency VARCHAR(10) DEFAULT 'INR',
+          gateway VARCHAR(100) DEFAULT 'mock',
+          gateway_reference VARCHAR(500),
+          status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending','completed','failed','refunded')),
+          paid_at TIMESTAMP,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- ─────────────────────────────────────────────
+        -- APPLICATIONS
+        -- ─────────────────────────────────────────────
+
+        CREATE TABLE IF NOT EXISTS applications (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          job_id INTEGER REFERENCES jobs(id) ON DELETE CASCADE,
+          company_role_id INTEGER REFERENCES company_roles(id),
+          dynamic_path_id INTEGER REFERENCES dynamic_assessment_paths(id),
+          match_score DECIMAL(5,2),
+          status VARCHAR(50) DEFAULT 'applied',
+          applied_at TIMESTAMP DEFAULT NOW()
+        );
+
+        -- Extend jobs table to link company_roles
+        ALTER TABLE jobs ADD COLUMN IF NOT EXISTS company_role_id INTEGER REFERENCES company_roles(id);
+
+        -- Indexes for performance
+        CREATE INDEX IF NOT EXISTS idx_cand_company_interests ON candidate_company_interests(candidate_id);
+        CREATE INDEX IF NOT EXISTS idx_cand_role_interests ON candidate_role_interests(candidate_id);
+        CREATE INDEX IF NOT EXISTS idx_dynamic_paths_candidate ON dynamic_assessment_paths(candidate_id);
+        CREATE INDEX IF NOT EXISTS idx_assessment_attempts_candidate ON assessment_attempts(candidate_id);
+        CREATE INDEX IF NOT EXISTS idx_assessment_attempts_version ON assessment_attempts(configuration_version_id);
+        CREATE INDEX IF NOT EXISTS idx_matches_candidate ON candidate_company_matches(candidate_id);
+        CREATE INDEX IF NOT EXISTS idx_matches_company ON candidate_company_matches(company_id);
+        CREATE INDEX IF NOT EXISTS idx_config_versions_role ON company_configuration_versions(company_role_id);
+        CREATE INDEX IF NOT EXISTS idx_groups_composite ON candidate_assessment_groups(canonical_role_id, configuration_version_id);
       `);
       console.log('[DB] Enterprise tables & indexes verified successfully.');
       return;
