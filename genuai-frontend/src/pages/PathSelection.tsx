@@ -62,27 +62,28 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
           </p>
         </div>
 
-        {/* GenuAI Works Featured Card */}
+        {/* GenuAI Works Featured Card - Elegant Light Design */}
         <div
           onClick={() => onSelect('companies')}
-          className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/40 p-6 sm:p-8 rounded-[32px] cursor-pointer shadow-2xl hover:border-indigo-400 transition transform hover:-translate-y-1"
+          className="bg-white border border-slate-200/80 p-6 sm:p-8 rounded-3xl cursor-pointer shadow-md hover:shadow-xl hover:border-indigo-300 transition-all duration-300"
         >
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                <span className="material-symbols-outlined text-sm text-indigo-400">auto_awesome</span>
-                GENUAI WORKS — ROLE-AWARE ENGINE
+              <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 border border-indigo-200/80 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                <span className="material-symbols-outlined text-sm text-indigo-600">auto_awesome</span>
+                <span>GENUAI WORKS — ROLE-AWARE ENGINE</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Multi-Company Target Selection & Dynamic Assessment
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Multi-Company Target Selection &amp; Dynamic Assessment
               </h2>
-              <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed font-normal">
                 Select target companies (Zoho, Apple, Google) and roles. GenuAI Works aggregates locked company requirements, performs Common/Majority analysis, checks verified assessment reuse, and generates your role-aware dynamic path.
               </p>
             </div>
-            <div className="shrink-0">
-              <span className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-black px-6 py-3.5 rounded-2xl shadow-lg text-sm uppercase tracking-wider">
-                Select Companies & Roles <span className="material-symbols-outlined text-base">arrow_forward</span>
+            <div className="shrink-0 w-full md:w-auto">
+              <span className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-black px-6 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all text-xs sm:text-sm uppercase tracking-wider w-full md:w-auto cursor-pointer">
+                <span>Select Companies &amp; Roles</span>
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
               </span>
             </div>
           </div>
