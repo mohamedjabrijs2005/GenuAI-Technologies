@@ -119,14 +119,14 @@ export default function TermsPage() {
       {/* Step 1 Orientation Header */}
       <OrientationHeader currentStep={1} title="Terms & Conditions" />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-20 space-y-10">
         {/* Page Title & Intro */}
-        <div className="text-center max-w-3xl mx-auto mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-3 border border-indigo-200/80">
-            <Scale className="w-3.5 h-3.5" />
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-200/80 shadow-2xs">
+            <Scale className="w-4 h-4" />
             <span>Platform Governance &amp; Operational Agreement</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-3">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
             Terms &amp; Conditions
           </h1>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">

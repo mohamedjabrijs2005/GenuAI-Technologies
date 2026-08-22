@@ -31,13 +31,13 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-16">
       <OrientationHeader currentStep={2} title="Privacy Policy" />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center max-w-3xl mx-auto mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-3 border border-emerald-200/80">
-            <Lock className="w-3.5 h-3.5" />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-20 space-y-10">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-4 border border-emerald-200/80 shadow-2xs">
+            <Lock className="w-4 h-4" />
             <span>Data Protection &amp; Candidate Privacy</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-3">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
             Privacy Policy
           </h1>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">

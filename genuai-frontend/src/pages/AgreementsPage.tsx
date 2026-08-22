@@ -104,17 +104,17 @@ export default function AgreementsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-16">
-      {/* Step 7 Orientation Header */}
-      <OrientationHeader currentStep={7} title="Role Agreements" />
+      {/* Step 6 Orientation Header */}
+      <OrientationHeader currentStep={6} title="Role Agreements" />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-20 space-y-10">
         {/* Page Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-3 border border-indigo-200/80">
-            <FileCheck className="w-3.5 h-3.5" />
-            <span>Step 7 of 7 • Final Operational Sign-off</span>
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-200/80 shadow-2xs">
+            <FileCheck className="w-4 h-4" />
+            <span>Step 6 of 6 • Final Operational Sign-off</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-3">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
             Platform Role Agreements
           </h1>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
