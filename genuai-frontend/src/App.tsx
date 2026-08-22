@@ -76,7 +76,7 @@ export default function App() {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/roadmap" element={<RoadmapPage />} />
         <Route path="/security" element={<SecurityPage />} />
-        <Route path="/learning-hub" element={<LearningHubPage />} />
+        <Route path="/learning-hub" element={<Navigate to="/roadmap" replace />} />
         <Route path="/agreements" element={<AgreementsPage />} />
         <Route path="/technology" element={<Navigate to="/agreements" replace />} />
         <Route

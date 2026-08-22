@@ -17,7 +17,7 @@ export const OrientationFooter: React.FC<OrientationFooterProps> = ({
 }) => {
   const navigate = useNavigate();
   const [agreed, setAgreed] = useState(false);
-  const isFinalStep = currentStep === 7;
+  const isFinalStep = currentStep === 6;
 
   const handleNext = () => {
     if (!agreed) return;
@@ -44,7 +44,7 @@ export const OrientationFooter: React.FC<OrientationFooterProps> = ({
           <ShieldCheck className="w-5 h-5 text-indigo-100 shrink-0" />
           <div>
             <div className="text-xs font-black text-white uppercase tracking-widest">
-              Step {currentStep} of 7 — Required Acknowledgement
+              Step {currentStep} of 6 — Required Acknowledgement
             </div>
             <div className="text-[11px] text-indigo-200 font-normal mt-0.5">
               You must confirm before advancing to the next section.

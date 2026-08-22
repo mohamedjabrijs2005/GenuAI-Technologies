@@ -230,7 +230,7 @@ export default function AgreementsPage() {
 
         {/* Orientation Consent Footer - Final Step redirects to /auth */}
         <OrientationFooter
-          currentStep={7}
+          currentStep={6}
           pageTitle="Role Agreements"
           nextPath="/auth"
           nextTitle="Complete Orientation & Sign In"

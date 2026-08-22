@@ -79,8 +79,8 @@ export default function SecurityPage() {
         <OrientationFooter
           currentStep={5}
           pageTitle="Security Center"
-          nextPath="/learning-hub"
-          nextTitle="Step 6: Learning Hub"
+          nextPath="/agreements"
+          nextTitle="Step 6: Role Agreements"
         />
       </div>
     </div>

@@ -29,7 +29,6 @@ export const Footer: React.FC = () => {
             <div className="text-xs font-bold text-on-surface uppercase tracking-wider mb-3">Ecosystem</div>
             <ul className="space-y-2 text-xs">
               <li><Link to="/pricing" className="hover:text-indigo-500 transition-colors">Pricing</Link></li>
-              <li><Link to="/learning-hub" className="hover:text-indigo-500 transition-colors">Learning Hub</Link></li>
               <li><Link to="/roadmap" className="hover:text-indigo-500 transition-colors">Roadmap</Link></li>
               <li><Link to="/security" className="hover:text-indigo-500 transition-colors">Security Center</Link></li>
               <li><Link to="/agreements" className="hover:text-indigo-500 transition-colors">Role Agreements</Link></li>

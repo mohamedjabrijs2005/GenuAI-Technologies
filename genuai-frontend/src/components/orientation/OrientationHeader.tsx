@@ -13,13 +13,13 @@ export const stepsList = [
   { step: 3, title: 'Ecosystem Pricing', path: '/pricing', short: 'Pricing' },
   { step: 4, title: 'Product Roadmap', path: '/roadmap', short: 'Roadmap' },
   { step: 5, title: 'Security Center', path: '/security', short: 'Security' },
-  { step: 6, title: 'Learning Hub', path: '/learning-hub', short: 'Learning' },
-  { step: 7, title: 'Role Agreements', path: '/agreements', short: 'Agreements' },
+  { step: 6, title: 'Role Agreements', path: '/agreements', short: 'Agreements' },
 ];
 
 export const OrientationHeader: React.FC<OrientationHeaderProps> = ({ currentStep, title }) => {
   const navigate = useNavigate();
-  const progressPercent = Math.round((currentStep / 7) * 100);
+  const totalSteps = stepsList.length;
+  const progressPercent = Math.round((currentStep / totalSteps) * 100);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-[0_1px_4px_0_rgba(0,0,0,0.06)]">
@@ -37,7 +37,7 @@ export const OrientationHeader: React.FC<OrientationHeaderProps> = ({ currentSte
 
           {/* Center: current step title */}
           <div className="text-xs font-bold text-slate-900 text-center truncate">
-            <span className="text-indigo-600">Step {currentStep} of 7</span>
+            <span className="text-indigo-600">Step {currentStep} of {totalSteps}</span>
             <span className="mx-2 text-slate-300">·</span>
             <span>{title}</span>
           </div>
