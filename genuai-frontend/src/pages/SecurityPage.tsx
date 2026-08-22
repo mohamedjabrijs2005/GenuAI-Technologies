@@ -31,25 +31,25 @@ export default function SecurityPage() {
             Security &amp; Trust Center
           </h1>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-            Multi-Signal Fusion AI proctoring, multi-layer verification, and evidentiary fraud detection for fair candidate evaluation.
+            Real-time multi-signal proctoring, 10-layer biometric verification, and evidentiary fraud detection for fair candidate evaluation.
           </p>
         </div>
 
-        {/* AI Trust Score Explanation Card */}
+        {/* Real-time Session Trust Score Explanation Card */}
         <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xs grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
           <div className="md:col-span-4 text-center p-6 rounded-2xl bg-emerald-50/50 border border-emerald-100">
             <div className="text-4xl font-black text-emerald-600 mb-1 font-mono">94%</div>
-            <div className="text-xs font-bold text-slate-900 uppercase tracking-wider">AI Trust Score Index</div>
-            <p className="text-[11px] text-slate-500 mt-2 font-normal">Evidentiary standard for recruiter verification</p>
+            <div className="text-xs font-bold text-slate-900 uppercase tracking-wider">Session Integrity Index</div>
+            <p className="text-[11px] text-slate-500 mt-2 font-normal">Evidentiary benchmark for recruiter evaluation</p>
           </div>
 
           <div className="md:col-span-8 space-y-3 text-xs text-slate-600 leading-relaxed font-normal">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Multi-Signal Fusion Methodology</h3>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Real-Time Telemetry Methodology</h3>
             <p>
-              The GenuAI Trust Index combines biometric face landmarks, voice timbre matching, gaze tracking, and environment telemetry into a unified evidentiary rating.
+              The GenuAI Session Integrity Index combines biometric facial landmark consistency, audio waveform timbre matching, eye-gaze tracking, and environment telemetry into a real-time evidentiary report.
             </p>
             <p>
-              GenuAI explicitly designates the AI Trust Score as an evidentiary tool to assist human decision-making, rather than a 100% infallible automated disqualification system.
+              GenuAI explicitly designates the Session Integrity Index as an evidentiary tool to assist human decision-making, avoiding automated candidate disqualifications.
             </p>
           </div>
         </div>

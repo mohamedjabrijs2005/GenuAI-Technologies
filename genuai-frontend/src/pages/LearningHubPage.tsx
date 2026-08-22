@@ -87,8 +87,8 @@ export default function LearningHubPage() {
         <OrientationFooter
           currentStep={6}
           pageTitle="Learning Hub"
-          nextPath="/technology"
-          nextTitle="Step 7: Technology Stack"
+          nextPath="/agreements"
+          nextTitle="Step 7: Role Agreements"
         />
       </div>
     </div>

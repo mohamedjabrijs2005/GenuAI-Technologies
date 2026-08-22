@@ -28,7 +28,7 @@ const PricingPage              = lazy(() => import("./pages/PricingPage"));
 const RoadmapPage              = lazy(() => import("./pages/RoadmapPage"));
 const SecurityPage             = lazy(() => import("./pages/SecurityPage"));
 const LearningHubPage          = lazy(() => import("./pages/LearningHubPage"));
-const TechnologyPage           = lazy(() => import("./pages/TechnologyPage"));
+const AgreementsPage           = lazy(() => import("./pages/AgreementsPage"));
 
 // ── Suspense fallback ───────────────────────────────────────────────────────
 function PageLoader() {
@@ -77,7 +77,8 @@ export default function App() {
         <Route path="/roadmap" element={<RoadmapPage />} />
         <Route path="/security" element={<SecurityPage />} />
         <Route path="/learning-hub" element={<LearningHubPage />} />
-        <Route path="/technology" element={<TechnologyPage />} />
+        <Route path="/agreements" element={<AgreementsPage />} />
+        <Route path="/technology" element={<Navigate to="/agreements" replace />} />
         <Route
           path="/auth"
           element={

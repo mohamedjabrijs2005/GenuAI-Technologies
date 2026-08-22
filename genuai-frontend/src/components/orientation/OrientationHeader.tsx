@@ -14,7 +14,7 @@ export const stepsList = [
   { step: 4, title: 'Product Roadmap', path: '/roadmap', short: 'Roadmap' },
   { step: 5, title: 'Security Center', path: '/security', short: 'Security' },
   { step: 6, title: 'Learning Hub', path: '/learning-hub', short: 'Learning' },
-  { step: 7, title: 'Technology Stack', path: '/technology', short: 'Tech' },
+  { step: 7, title: 'Role Agreements', path: '/agreements', short: 'Agreements' },
 ];
 
 export const OrientationHeader: React.FC<OrientationHeaderProps> = ({ currentStep, title }) => {
