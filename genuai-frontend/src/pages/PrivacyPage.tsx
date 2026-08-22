@@ -29,25 +29,25 @@ export default function PrivacyPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-body-base py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-8">
         <button
           onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-900 hover:border-slate-300 transition-all shadow-xs cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-emerald-600" />
           <span>Back to Home</span>
         </button>
 
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-3 border border-emerald-500/20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-3 border border-emerald-200/80">
             <Lock className="w-3.5 h-3.5" />
             <span>Data Protection &amp; Candidate Privacy</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
             Privacy Policy
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
             GenuAI Technologies is committed to candidate privacy, DPDP 2023 compliance, GDPR data rights, and ethical AI data handling.
           </p>
         </div>
@@ -57,36 +57,36 @@ export default function PrivacyPage() {
           {principles.map((p, idx) => {
             const Icon = p.icon;
             return (
-              <div key={idx} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-3">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+              <div key={idx} className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs space-y-3">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold">
                   <Icon className="w-5 h-5" />
                 </div>
-                <h3 className="text-base font-bold text-white">{p.title}</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">{p.desc}</p>
+                <h3 className="text-base font-bold text-slate-900">{p.title}</h3>
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">{p.desc}</p>
               </div>
             );
           })}
         </div>
 
         {/* Detailed Sections */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl space-y-6">
-          <h2 className="text-xl font-bold text-white pb-3 border-b border-slate-800">
+        <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-10 shadow-xs space-y-6">
+          <h2 className="text-xl font-bold text-slate-900 pb-3 border-b border-slate-100">
             Candidate Rights under DPDP Act 2023 &amp; GDPR
           </h2>
 
-          <div className="space-y-4 text-xs text-slate-300 leading-relaxed">
-            <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-800">
-              <strong className="text-white block mb-1">Right to Access &amp; Portability:</strong>
+          <div className="space-y-4 text-xs text-slate-700 leading-relaxed font-normal">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/60">
+              <strong className="text-slate-900 block mb-1 font-bold text-sm">Right to Access &amp; Portability:</strong>
               Candidates can inspect all generated assessment scorecards, view timestamped evaluation components, and export their verification profile as JSON.
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-800">
-              <strong className="text-white block mb-1">Right to Erasure &amp; Consent Revocation:</strong>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/60">
+              <strong className="text-slate-900 block mb-1 font-bold text-sm">Right to Erasure &amp; Consent Revocation:</strong>
               Candidates may revoke recipient access or request full data erasure directly from their Candidate Dashboard settings.
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-800">
-              <strong className="text-white block mb-1">Biometric Data Protection:</strong>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/60">
+              <strong className="text-slate-900 block mb-1 font-bold text-sm">Biometric Data Protection:</strong>
               Biometric facial landmark vectors and voice timbre baselines are processed solely for live anti-proxy verification during active assessment sessions. They are never used for advertising, surveillance, or social scoring.
             </div>
           </div>
@@ -95,3 +95,4 @@ export default function PrivacyPage() {
     </div>
   );
 }
+

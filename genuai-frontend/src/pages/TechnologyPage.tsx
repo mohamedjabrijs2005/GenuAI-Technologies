@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu, Server, Database, Lock, Globe, Code, ArrowLeft } from 'lucide-react';
+import { Cpu, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function TechnologyPage() {
@@ -17,44 +17,44 @@ export default function TechnologyPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-body-base py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-8">
         <button
           onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-900 hover:border-slate-300 transition-all shadow-xs cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-indigo-600" />
           <span>Back to Home</span>
         </button>
 
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-3 border border-indigo-500/20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-3 border border-indigo-200/80">
             <Cpu className="w-3.5 h-3.5" />
             <span>Modern Software Stack</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
             Technology Architecture
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
             Enterprise-grade infrastructure driving GenuAI Works role-aware requirement orchestration, anti-proxy proctoring, and match scoring.
           </p>
         </div>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl overflow-x-auto">
+        <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xs overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider">
+              <tr className="border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
                 <th className="pb-3 px-3">Category</th>
                 <th className="pb-3 px-3">Technology Stack</th>
                 <th className="pb-3 px-3">Architectural Function</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60">
+            <tbody className="divide-y divide-slate-100">
               {stack.map((row) => (
-                <tr key={row.category} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="py-4 px-3 font-bold text-white whitespace-nowrap">{row.category}</td>
-                  <td className="py-4 px-3 font-mono text-indigo-400 font-semibold">{row.tech}</td>
-                  <td className="py-4 px-3 text-slate-300 leading-relaxed">{row.desc}</td>
+                <tr key={row.category} className="hover:bg-slate-50/80 transition-colors">
+                  <td className="py-4 px-3 font-bold text-slate-900 whitespace-nowrap">{row.category}</td>
+                  <td className="py-4 px-3 font-mono text-indigo-600 font-bold">{row.tech}</td>
+                  <td className="py-4 px-3 text-slate-600 leading-relaxed font-normal">{row.desc}</td>
                 </tr>
               ))}
             </tbody>
@@ -64,3 +64,4 @@ export default function TechnologyPage() {
     </div>
   );
 }
+

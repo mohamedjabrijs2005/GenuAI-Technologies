@@ -106,31 +106,31 @@ export default function TermsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-body-base py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         <button
           onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-900 hover:border-slate-300 transition-all shadow-xs cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-indigo-600" />
           <span>Back to Home</span>
         </button>
 
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-3 border border-indigo-500/20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-3 border border-indigo-200/80">
             <Scale className="w-3.5 h-3.5" />
             <span>Ecosystem Governance &amp; Compliance</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
             Terms &amp; Conditions
           </h1>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
             Our legal, operational, and ethical framework guarantees assessment integrity, candidate data protection, multi-company scorecard portability, and non-discriminatory hiring standards.
           </p>
         </div>
 
         {/* 8-Tab Navigation Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 mb-8">
           {sections.map((sec, idx) => {
             const Icon = sec.icon;
             const isActive = activeTab === idx;
@@ -138,21 +138,21 @@ export default function TermsPage() {
               <button
                 key={sec.id}
                 onClick={() => setActiveTab(idx)}
-                className={`p-3 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between cursor-pointer ${
+                className={`p-3.5 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-600 text-white border-indigo-500 shadow-md scale-[1.02]'
-                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-md scale-[1.02]'
+                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-xs'
                 }`}
               >
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-2 ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400'
+                  isActive ? 'bg-white/20 text-white' : 'bg-indigo-50 text-indigo-600'
                 }`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="text-[11px] font-bold leading-tight truncate">
                   {sec.title.split('. ')[1]}
                 </div>
-                <div className={`text-[9px] font-mono mt-1 ${isActive ? 'text-indigo-100' : 'text-slate-500'}`}>
+                <div className={`text-[9px] font-mono mt-1 font-semibold ${isActive ? 'text-indigo-100' : 'text-slate-400'}`}>
                   0{idx + 1}
                 </div>
               </button>
@@ -161,45 +161,45 @@ export default function TermsPage() {
         </div>
 
         {/* Active Section Panel */}
-        <div className="bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800 mb-6">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
             <div>
-              <div className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">
+              <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
                 Official Platform Policy • Section 0{activeTab + 1}
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900">
                 {sections[activeTab].title}
               </h3>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20 shrink-0">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200/80 shrink-0">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Platform Policy (Effective Upon Employer Partnership Agreement)</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 mb-6 text-sm text-slate-200 font-medium leading-relaxed">
+          <div className="p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100/80 text-sm text-slate-800 font-medium leading-relaxed">
             {sections[activeTab].summary}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sections[activeTab].details.map((clause, i) => (
-              <div key={i} className="p-4 rounded-2xl bg-slate-800/40 border border-slate-800 flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+              <div key={i} className="p-4.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 flex items-start gap-3.5">
+                <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
                   {i + 1}
                 </span>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
                   {clause}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="mt-8 pt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-[11px] text-slate-400">
+          <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4 text-[11px] text-slate-500 font-medium">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>GenuAI Trust Framework • Continuous Audit &amp; Fair Recruitment Standard</span>
             </div>
-            <div className="font-mono text-indigo-400 font-semibold">
+            <div className="font-mono text-indigo-600 font-bold">
               Doc Ref: GENUAI-TOS-2026-V2.2
             </div>
           </div>
@@ -208,3 +208,4 @@ export default function TermsPage() {
     </div>
   );
 }
+
