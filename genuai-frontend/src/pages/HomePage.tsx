@@ -27,10 +27,6 @@ export default function HomePage() {
   });
 
   const handleGetStarted = () => {
-    navigate('/auth');
-  };
-
-  const handleStartOrientation = () => {
     navigate('/terms');
   };
 
@@ -117,7 +113,7 @@ export default function HomePage() {
                 </div>
 
                 <button
-                  onClick={handleStartOrientation}
+                  onClick={handleGetStarted}
                   className="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition-all shadow-lg flex items-center gap-2 shrink-0 cursor-pointer"
                 >
                   <span>Start Step 1: Terms &amp; Conditions</span>
