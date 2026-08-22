@@ -40,7 +40,7 @@ export const Hero: React.FC<Props> = ({ onGetStarted, onExplore, onProtectedActi
       onProtectedAction({
         intent: 'candidate',
         title: 'Ready to start AI Assessment & Anti-Proxy Verification?',
-        description: 'Sign in or create an account to access standardized assessments, coding IDE, and speech evaluation.',
+        description: 'Sign in or create an account to select target companies, generate dynamic assessment paths, and view match scorecards.',
       });
     }
   };

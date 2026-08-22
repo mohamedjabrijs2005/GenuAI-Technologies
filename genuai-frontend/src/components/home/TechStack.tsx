@@ -3,64 +3,60 @@ import { Code, Server, Database, Sparkles, Shield, Mail, Cloud, Cpu } from 'luci
 
 export const TechStack: React.FC = () => {
   const stack = [
-    { name: 'React.js & TypeScript', category: 'Frontend', desc: 'Reactive, type-safe user interface architecture with modular components', icon: Code },
-    { name: 'Tailwind CSS', category: 'Design System', desc: 'Custom high-contrast aesthetic design tokens and responsive utility styling', icon: Sparkles },
-    { name: 'Node.js & Express.js', category: 'Backend Engine', desc: 'High-concurrency microservices and assessment routing pipelines', icon: Server },
-    { name: 'Supabase', category: 'Database & Store', desc: 'PostgreSQL relational store with row-level security and fast queries', icon: Database },
-    { name: 'Google Gemini API', category: 'AI Intelligence', desc: 'Multi-modal candidate assessment analysis and natural dialogue synthesis', icon: Sparkles },
-    { name: 'Anthropic Claude API', category: 'AI Reasoning', desc: 'Deep technical code reasoning and complex problem-solving evaluation', icon: Cpu },
-    { name: 'Groq API', category: 'Fast Inference', desc: 'Ultra-low-latency real-time evaluation and speech analysis', icon: Sparkles },
-    { name: 'OAuth Authentication', category: 'Security & Auth', desc: 'Secure Google and GitHub identity verification and session tokens', icon: Shield },
-    { name: 'Gmail API', category: 'Communication', desc: 'Automated candidate scorecard dispatch and credential verification notifications', icon: Mail },
-    { name: 'Vercel & Render', category: 'Deployment', desc: 'Global CDN distribution and auto-scaling cloud microservices infrastructure', icon: Cloud },
+    { name: 'React & TypeScript', category: 'Frontend', icon: Code },
+    { name: 'Node & Express', category: 'Backend Engine', icon: Server },
+    { name: 'PostgreSQL & Redis', category: 'Data Store', icon: Database },
+    { name: 'Groq LPUs & Whisper V3', category: 'AI Speech & NLP', icon: Sparkles },
+    { name: 'Docker Judge0 IDE', category: 'Proctored IDE', icon: Cpu },
   ];
 
   return (
     <section id="tech-stack" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/30 border-t border-b border-surface-container/50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-indigo-brand/20">
             <Cpu className="w-3.5 h-3.5" />
             <span>Modern Software Stack</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
-            Powered by Modern Software &amp; AI
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-on-surface mb-3 leading-tight">
+            Powered by Modern Software &amp; AI Infrastructure
           </h2>
-          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
-            Engineered with modern, reliable, and scalable web, AI, and cloud technologies designed for high-concurrency recruitment operations.
+          <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+            High-concurrency microservices, real-time speech processing, and sandboxed code compilation.
           </p>
         </div>
 
-        {/* 10 Software Technology Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+        {/* Single Row of 5 Core Badges */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
           {stack.map((item) => {
             const Icon = item.icon;
             return (
               <div
                 key={item.name}
-                className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-surface-container shadow-xs hover:border-indigo-brand/40 hover:shadow-md transition-all flex flex-col justify-between"
+                className="p-4 rounded-2xl bg-surface border border-surface-container shadow-xs flex flex-col items-center text-center space-y-2"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center font-bold">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant uppercase tracking-wider">
-                      {item.category}
-                    </span>
-                  </div>
-
-                  <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-1 leading-snug">
-                    {item.name}
-                  </h3>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    {item.desc}
-                  </p>
+                <div className="w-10 h-10 rounded-xl bg-indigo-brand/10 text-indigo-brand flex items-center justify-center font-bold">
+                  <Icon className="w-5 h-5" />
                 </div>
+                <h3 className="text-xs font-bold text-slate-900 leading-snug">{item.name}</h3>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant uppercase tracking-wider">
+                  {item.category}
+                </span>
               </div>
             );
           })}
+        </div>
+
+        {/* Link to Full Tech Stack Page */}
+        <div className="text-center">
+          <a
+            href="/technology"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-indigo-400 font-bold text-xs hover:bg-slate-800 transition-all"
+          >
+            <span>Explore complete architectural software stack table</span>
+            <Cpu className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </section>

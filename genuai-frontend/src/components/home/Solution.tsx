@@ -32,8 +32,8 @@ export const Solution: React.FC = () => {
 
         {/* The Equation / Formula Visual */}
         <div className="glass rounded-3xl p-8 sm:p-12 border border-surface-container shadow-sm mb-12">
-          <div className="text-xs font-bold text-indigo-brand uppercase tracking-widest text-center mb-8">
-            The GenuAI Unified Hiring Formula
+          <div className="text-xs font-bold text-indigo-500 uppercase tracking-widest text-center mb-8">
+            8 modules available. Companies select and lock the 4–6 that matter for each role.
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">

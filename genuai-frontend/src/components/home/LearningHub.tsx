@@ -74,10 +74,23 @@ export const LearningHub: React.FC<Props> = ({ onProtectedAction }) => {
           <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
             Assessment without preparation creates anxiety. GenuAI provides complete practice environments so candidates can sharpen their coding, speaking, and collaboration skills before taking the official evaluation.
           </p>
+
+          {/* 1-Line Teaser Summary & Link to Dedicated Route */}
+          <div className="mt-8 p-5 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 text-center flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-xs font-semibold text-indigo-300">
+              Practice in your language — English live, Tamil &amp; Hindi in beta, more on the roadmap.
+            </div>
+            <a
+              href="/learning-hub"
+              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition-colors shrink-0"
+            >
+              Explore Multilingual Support &amp; Practice IDE →
+            </a>
+          </div>
         </div>
 
         {/* 6 Learning Modules */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {hubs.map((hub) => {
             const Icon = hub.icon;
             return (
@@ -101,136 +114,6 @@ export const LearningHub: React.FC<Props> = ({ onProtectedAction }) => {
               </div>
             );
           })}
-        </div>
-
-        {/* Multilingual & Multi-Language Ecosystem Showcase */}
-        <div className="glass rounded-3xl p-6 sm:p-8 lg:p-10 border border-surface-container shadow-sm">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-surface-container mb-6">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand text-[10px] sm:text-[11px] font-bold uppercase tracking-wider mb-1.5 border border-indigo-brand/20">
-                <Globe2 className="w-3.5 h-3.5" />
-                <span>Multilingual &amp; Polyglot Architecture</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-on-surface">
-                Languages Supported Across the GenuAI Ecosystem
-              </h3>
-              <p className="text-xs sm:text-sm text-on-surface-variant max-w-2xl mt-1">
-                Removing bias across both human spoken languages and technical programming languages.
-              </p>
-            </div>
-
-            {/* Toggle Switch between Spoken and Programming */}
-            <div className="flex items-center p-1 rounded-2xl bg-surface border border-surface-container shrink-0 w-full sm:w-auto">
-              <button
-                onClick={() => setActiveTab('spoken')}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  activeTab === 'spoken'
-                    ? 'bg-indigo-brand text-white shadow-xs'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                <Globe2 className="w-3.5 h-3.5" />
-                <span>Natural / Spoken ({spokenLanguages.length})</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('programming')}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  activeTab === 'programming'
-                    ? 'bg-indigo-brand text-white shadow-xs'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                <Terminal className="w-3.5 h-3.5" />
-                <span>Programming / Tech ({programmingLanguages.length})</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Tab 1: Spoken & Regional Languages Grid */}
-          {activeTab === 'spoken' ? (
-            <div className="animate-[fadeIn_0.3s_ease]">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-on-surface uppercase tracking-wider">
-                  Human Voice &amp; Communication Evaluation
-                </span>
-                <span className="text-[11px] font-semibold text-success-dark flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-success" />
-                  Continuous Speech AI &amp; Regional Dialect Calibration
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {spokenLanguages.map((lang) => (
-                  <div
-                    key={lang.name}
-                    className={`p-3 rounded-2xl border transition-all flex items-center justify-between ${
-                      lang.live
-                        ? 'bg-surface border-indigo-brand/30 shadow-xs'
-                        : 'bg-surface-bright/80 border-surface-container'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-lg leading-none">{lang.flag}</span>
-                      <div>
-                        <div className="text-xs font-bold text-on-surface flex items-center gap-1.5">
-                          <span>{lang.name}</span>
-                          <span className="text-[11px] font-normal text-on-surface-variant font-sans">
-                            ({lang.native})
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-on-surface-variant">Speech &amp; GD Coaching</div>
-                      </div>
-                    </div>
-
-                    <span
-                      className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${
-                        lang.live
-                          ? 'bg-success/15 text-success-dark border-success/30'
-                          : 'bg-surface-container text-on-surface-variant border-surface-container-high'
-                      }`}
-                    >
-                      {lang.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            /* Tab 2: Programming Languages & IDE Compilers Grid */
-            <div className="animate-[fadeIn_0.3s_ease]">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-on-surface uppercase tracking-wider">
-                  Multi-Language Cloud Compiler &amp; Sandbox Engines
-                </span>
-                <span className="text-[11px] font-semibold text-indigo-brand flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-indigo-brand" />
-                  Instant Automated Test Cases &amp; Complexity Analysis
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {programmingLanguages.map((tech) => (
-                  <div
-                    key={tech.name}
-                    className="p-3 rounded-2xl bg-surface border border-indigo-brand/20 shadow-xs hover:border-indigo-brand/50 transition-all flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-lg leading-none">{tech.icon}</span>
-                      <div>
-                        <div className="text-xs font-bold text-on-surface">{tech.name}</div>
-                        <div className="text-[10px] text-on-surface-variant">{tech.type}</div>
-                      </div>
-                    </div>
-
-                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-indigo-brand/10 text-indigo-brand border border-indigo-brand/20">
-                      Live IDE
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </section>

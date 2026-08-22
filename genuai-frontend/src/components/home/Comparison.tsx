@@ -26,7 +26,7 @@ export const Comparison: React.FC = () => {
     {
       metric: 'Evaluation Standard',
       trad: 'Inconsistent rubrics across disparate testing vendors',
-      genu: 'Standardized 8-dimension holistic hiring scorecard',
+      genu: 'Role-specific scorecard, built from each company\'s locked requirements',
     },
     {
       metric: 'Time to Verified Hire',
@@ -90,7 +90,7 @@ export const Comparison: React.FC = () => {
                 </span>
               </div>
               <h3 className="text-2xl font-black text-on-surface mb-6">
-                One Assessment. Multiple Opportunities. Verified Talent.
+                Target Companies • Dynamic Paths • Verified Talent
               </h3>
 
               <div className="space-y-6">
@@ -109,8 +109,8 @@ export const Comparison: React.FC = () => {
             </div>
 
             <div className="mt-8 pt-6 border-t border-surface-container flex items-center justify-between text-xs font-bold text-on-surface">
-              <span>90% Reduced Testing Redundancy</span>
-              <span className="text-success-dark font-mono">100% Tamper Evident</span>
+              <span>Fewer Repeated Tests Across Companies</span>
+              <span className="text-emerald-400 font-mono">Multi-Layer AI-Assisted Verification</span>
             </div>
           </div>
         </div>

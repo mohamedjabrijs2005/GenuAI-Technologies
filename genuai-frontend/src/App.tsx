@@ -22,6 +22,14 @@ const DynamicAssessmentPage    = lazy(() => import("./pages/DynamicAssessmentPag
 const CompanyMatchPage         = lazy(() => import("./pages/CompanyMatchPage"));
 const CandidateReadinessPage   = lazy(() => import("./pages/CandidateReadinessPage"));
 
+const TermsPage                = lazy(() => import("./pages/TermsPage"));
+const PrivacyPage              = lazy(() => import("./pages/PrivacyPage"));
+const PricingPage              = lazy(() => import("./pages/PricingPage"));
+const RoadmapPage              = lazy(() => import("./pages/RoadmapPage"));
+const SecurityPage             = lazy(() => import("./pages/SecurityPage"));
+const LearningHubPage          = lazy(() => import("./pages/LearningHubPage"));
+const TechnologyPage           = lazy(() => import("./pages/TechnologyPage"));
+
 // ── Suspense fallback ───────────────────────────────────────────────────────
 function PageLoader() {
   return (
@@ -61,6 +69,15 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/ecosystem" element={<EcosystemOverviewPage />} />
+
+        {/* Dedicated Reference Routes */}
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/roadmap" element={<RoadmapPage />} />
+        <Route path="/security" element={<SecurityPage />} />
+        <Route path="/learning-hub" element={<LearningHubPage />} />
+        <Route path="/technology" element={<TechnologyPage />} />
         <Route
           path="/auth"
           element={

@@ -15,7 +15,7 @@ export const VideoSection: React.FC = () => {
             See GenuAI in Action
           </h2>
           <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
-            Watch how our 6-dimension AI evaluation and multi-company assessment architecture transforms the recruitment lifecycle.
+            See how GenuAI's role-aware assessment architecture transforms the recruitment lifecycle.
           </p>
         </div>
 

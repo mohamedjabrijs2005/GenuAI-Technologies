@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
   return (
@@ -18,8 +19,8 @@ export const Footer: React.FC = () => {
               AI-Powered Recruitment Intelligence Ecosystem. Transforming hiring through multi-modal assessment, anti-proxy verification, and intelligent talent distribution.
             </p>
             <div className="text-xs font-semibold text-on-surface flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-success" />
-              <span>One Assessment. Multiple Opportunities. Verified Talent.</span>
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <span>Target Companies • Dynamic Paths • Verified Talent</span>
             </div>
           </div>
 
@@ -27,11 +28,11 @@ export const Footer: React.FC = () => {
           <div>
             <div className="text-xs font-bold text-on-surface uppercase tracking-wider mb-3">Ecosystem</div>
             <ul className="space-y-2 text-xs">
-              <li><a href="#about" className="hover:text-indigo-brand transition-colors">Experience</a></li>
-              <li><a href="#solution" className="hover:text-indigo-brand transition-colors">Solutions</a></li>
-              <li><a href="#pricing" className="hover:text-indigo-brand transition-colors">Pricing</a></li>
-              <li><a href="#learning-hub" className="hover:text-indigo-brand transition-colors">Learning Hub</a></li>
-              <li><a href="#contact" className="hover:text-indigo-brand transition-colors">Contact</a></li>
+              <li><Link to="/pricing" className="hover:text-indigo-500 transition-colors">Pricing</Link></li>
+              <li><Link to="/learning-hub" className="hover:text-indigo-500 transition-colors">Learning Hub</Link></li>
+              <li><Link to="/roadmap" className="hover:text-indigo-500 transition-colors">Roadmap</Link></li>
+              <li><Link to="/security" className="hover:text-indigo-500 transition-colors">Security Center</Link></li>
+              <li><Link to="/technology" className="hover:text-indigo-500 transition-colors">Technology Stack</Link></li>
             </ul>
           </div>
 
@@ -39,11 +40,10 @@ export const Footer: React.FC = () => {
           <div>
             <div className="text-xs font-bold text-on-surface uppercase tracking-wider mb-3">Governance</div>
             <ul className="space-y-2 text-xs">
-              <li><a href="#terms-and-conditions" className="hover:text-indigo-brand transition-colors">Terms and Conditions</a></li>
-              <li><a href="#terms-and-conditions" className="hover:text-indigo-brand transition-colors">Privacy Policy</a></li>
-              <li><a href="#candidates" className="hover:text-indigo-brand transition-colors">Candidate Hub</a></li>
-              <li><a href="#companies" className="hover:text-indigo-brand transition-colors">Company Access</a></li>
-              <li><a href="#admin" className="hover:text-indigo-brand transition-colors">Institutional Admin</a></li>
+              <li><Link to="/terms" className="hover:text-indigo-500 transition-colors">Terms and Conditions</Link></li>
+              <li><Link to="/privacy" className="hover:text-indigo-500 transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/companies" className="hover:text-indigo-500 transition-colors">Target Companies</Link></li>
+              <li><Link to="/readiness" className="hover:text-indigo-500 transition-colors">Candidate Readiness</Link></li>
             </ul>
           </div>
         </div>

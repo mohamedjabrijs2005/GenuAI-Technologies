@@ -31,7 +31,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     badge: 'Skill Freedom',
     description: 'For students and developers building verified credentials and unlocking multi-company opportunities.',
     priceLabel: 'Skill Passport',
-    priceSub: 'One standardized assessment accepted across all partner employers',
+    priceSub: 'Your assessment path, built from your selected companies\' requirements — accepted across all of them',
     theme: {
       iconBg: 'bg-blue-600 text-white shadow-md shadow-blue-600/25',
       badgeStyle: 'bg-blue-50 text-blue-700 border-blue-200 ring-1 ring-blue-500/20',
@@ -40,10 +40,10 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     },
     features: [
       { text: 'Profile & Automated Resume AI Parsing' },
-      { text: 'Unlimited Coding IDE & DSA Practice Sandbox', isRateLimit: true },
-      { text: '1 Official Verified Assessment / 30-Day Cooldown', isRateLimit: true },
-      { text: 'One Assessment → Multiple Company Opportunities' },
-      { text: 'Continuous Biometric Proctoring & AI Trust Score' },
+      { text: 'Target Company & Role Selection' },
+      { text: 'Dynamic Assessment Path Generation' },
+      { text: 'Verified Result Reuse across Target Roles' },
+      { text: 'Explainable Company Match Scores' },
       { text: 'Verifiable Skill Credential Valid for 12 Months' },
     ],
     ctaText: 'Explore Candidate Plan',
@@ -57,7 +57,7 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     badge: 'Zero Retest Overhead',
     description: 'For organizations seeking authenticated, pre-evaluated talent with zero test infrastructure costs.',
     priceLabel: 'Enterprise Hiring',
-    priceSub: 'Standardized talent scorecards and calibrated hiring analytics',
+    priceSub: 'Calibrated role requirements & version-bound match scorecards',
     theme: {
       iconBg: 'bg-purple-600 text-white shadow-md shadow-purple-600/25',
       badgeStyle: 'bg-purple-50 text-purple-700 border-purple-200 ring-1 ring-purple-500/20',
@@ -65,13 +65,11 @@ export const subscriptionPlans: SubscriptionPlan[] = [
       buttonStyle: 'text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-purple-600/30',
     },
     features: [
-      { text: 'Job Posting & Automated Role Criteria Mapping' },
-      { text: '500 Candidate Dispatches / min ATS API Quota', isRateLimit: true },
-      { text: '10,000 Parallel AI-Proctored Live Sessions', isRateLimit: true },
-      { text: 'Full 8-Module Standardized Assessment Access' },
-      { text: 'AI Technical Interview & Group Discussion Records' },
-      { text: 'Anti-Proxy Biometric Verification & Audit Logs' },
-      { text: 'Predictive Hiring Analytics & Cohort Benchmarks' },
+      { text: 'Configure & Lock 4–6 Assessment Requirements per Role' },
+      { text: 'Access to the full assessment module library' },
+      { text: '500 Candidate Dispatches / min ATS API Quota*', isRateLimit: true },
+      { text: '10,000 Parallel AI-Proctored Live Sessions*', isRateLimit: true },
+      { text: 'Version-Bound Candidate Match Analytics & Audit Logs' },
     ],
     ctaText: 'Explore Company Plan',
     intent: 'company',
@@ -93,12 +91,9 @@ export const subscriptionPlans: SubscriptionPlan[] = [
     },
     features: [
       { text: 'Candidate Batch & Department Management' },
-      { text: '5,000 Concurrent Campus Placement Test Seats', isRateLimit: true },
-      { text: '2.5s Real-Time Placement Cell Telemetry Sync', isRateLimit: true },
+      { text: '5,000 Concurrent Campus Placement Test Seats*', isRateLimit: true },
       { text: 'Institutional Assessment & Skill Programs' },
-      { text: 'Multilingual Practice Modules & Voice Coaching' },
-      { text: 'Direct Partner Employer Dispatch Console' },
-      { text: 'Institution Governance & Compliance Dashboard' },
+      { text: 'Cohort Skill Gap Analytics & Benchmark Reports' },
     ],
     ctaText: 'Explore Institution Plan',
     intent: 'institution',
@@ -222,8 +217,13 @@ export const SubscriptionPricing: React.FC<Props> = ({ onProtectedAction }) => {
         </div>
 
         {/* Clean, Subtle Platform Notice */}
-        <div className="text-center text-[11px] text-slate-500 max-w-xl mx-auto font-medium">
-          Subscription checkout integration coming soon. All demo features and assessments can be experienced through account login.
+        <div className="text-center text-xs text-slate-500 max-w-xl mx-auto font-medium space-y-2">
+          <p>* Target capacity at full scale — current pilot capacity available on request.</p>
+          <div>
+            <a href="/pricing" className="text-indigo-600 font-bold underline hover:text-indigo-800 transition-colors">
+              See full plan details &amp; quota comparisons →
+            </a>
+          </div>
         </div>
       </div>
     </section>

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { ShieldCheck, FileText, Lock, Scale, AlertTriangle, Eye, RefreshCw, CheckCircle2, UserCheck } from 'lucide-react';
+import { ShieldCheck, FileText, Lock, Scale, AlertTriangle, Eye, RefreshCw, CheckCircle2, UserCheck, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-export const TermsAndConditions: React.FC = () => {
+export default function TermsPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
 
   const sections = [
@@ -12,9 +14,9 @@ export const TermsAndConditions: React.FC = () => {
       summary: 'Candidates complete one unified official evaluation; the resulting authenticated scorecard remains valid for 12 months across all selected partner employers.',
       details: [
         'A single completed GenuAI Official Assessment creates a verifiable talent credential valid for 12 calendar months from the completion timestamp.',
-        'Candidates maintain full ownership of their assessment results and can choose which participating companies receive their standardized scores.',
+        'Candidates maintain full ownership of their assessment results and can choose which participating companies receive their scores.',
         'Retesting policies enforce a mandatory 30-day cooldown between official full-cycle attempts to prevent memorization and ensure authentic skill measurement.',
-        'Participating employers agree to recognize standardized GenuAI scorecards without requiring redundant preliminary aptitude or coding screening.',
+        'Employers who join the GenuAI partner network agree to recognize verified results for the specific skills they configured and locked, without requiring the candidate to retake those same skills for another participating employer\'s identical requirement.',
       ],
     },
     {
@@ -23,10 +25,10 @@ export const TermsAndConditions: React.FC = () => {
       icon: UserCheck,
       summary: 'Candidate data is dispatched strictly based on explicit user selection before or after testing; no blind distribution to unauthorized third parties.',
       details: [
-        'Before commencing an assessment, candidates explicitly select their target companies (e.g., Google, Microsoft, Zoho, etc.).',
+        'Before commencing an assessment, candidates explicitly select their target companies (e.g., Google, Apple, Zoho, etc.).',
         'Assessment telemetry, including coding scores, SVAR verbal fluency, group discussion ratings, and ATS resume matches, is only shared with verified recipient companies.',
         'No candidate credentials, resumes, or contact details are ever sold, rented, or broadcast to unverified recruiters or third-party marketing brokers.',
-        'Candidates may revoke company access or download their cryptographic evaluation summary at any time from their personal dashboard.',
+        'Candidates may revoke company access or download their evaluation summary at any time from their personal dashboard.',
       ],
     },
     {
@@ -74,7 +76,7 @@ export const TermsAndConditions: React.FC = () => {
         'SVAR speech recognition and AI interview models are trained across diverse regional and international accents to eliminate linguistic penalization.',
         'College brand, geography, and gender are completely decoupled from core skill percentiles in initial automated screening rounds.',
         'Routine bias audits and disparity tests are conducted every quarter to maintain statistical fairness across demographic cohorts.',
-        'Recruiters receive standardized scoring rubrics calibrated strictly against verifiable technical and problem-solving benchmarks.',
+        'Recruiters receive scoring rubrics calibrated strictly against verifiable technical and problem-solving benchmarks.',
       ],
     },
     {
@@ -104,18 +106,25 @@ export const TermsAndConditions: React.FC = () => {
   ];
 
   return (
-    <section id="terms-and-conditions" className="py-12 sm:py-16 lg:py-24 bg-surface-bright/40 border-t border-b border-surface-container/50 relative scroll-mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 rounded-full bg-indigo-brand/10 text-indigo-brand text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-3 sm:mb-4 border border-indigo-brand/20">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-body-base py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <button
+          onClick={() => navigate('/')}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Home</span>
+        </button>
+
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-3 border border-indigo-500/20">
             <Scale className="w-3.5 h-3.5" />
             <span>Ecosystem Governance &amp; Compliance</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-on-surface mb-3 sm:mb-4 leading-tight">
-            Terms &amp; Conditions Applied Concepts
-          </h2>
-          <p className="text-sm sm:text-base lg:text-lg text-on-surface-variant leading-relaxed">
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
+            Terms &amp; Conditions
+          </h1>
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
             Our legal, operational, and ethical framework guarantees assessment integrity, candidate data protection, multi-company scorecard portability, and non-discriminatory hiring standards.
           </p>
         </div>
@@ -131,19 +140,19 @@ export const TermsAndConditions: React.FC = () => {
                 onClick={() => setActiveTab(idx)}
                 className={`p-3 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-brand text-white border-indigo-brand shadow-md scale-[1.02]'
-                    : 'bg-surface border-surface-container text-on-surface hover:bg-surface-bright'
+                    ? 'bg-indigo-600 text-white border-indigo-500 shadow-md scale-[1.02]'
+                    : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-2 ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-indigo-brand/10 text-indigo-brand'
+                  isActive ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400'
                 }`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="text-[11px] font-bold leading-tight truncate">
                   {sec.title.split('. ')[1]}
                 </div>
-                <div className={`text-[9px] font-mono mt-1 ${isActive ? 'text-indigo-100' : 'text-on-surface-variant'}`}>
+                <div className={`text-[9px] font-mono mt-1 ${isActive ? 'text-indigo-100' : 'text-slate-500'}`}>
                   0{idx + 1}
                 </div>
               </button>
@@ -151,54 +160,51 @@ export const TermsAndConditions: React.FC = () => {
           })}
         </div>
 
-        {/* Active Policy Deep-Dive Panel */}
-        <div className="glass rounded-3xl p-6 sm:p-10 border border-surface-container shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-surface-container/60 mb-6">
+        {/* Active Section Panel */}
+        <div className="bg-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800 mb-6">
             <div>
-              <div className="text-xs font-bold text-indigo-brand uppercase tracking-wider mb-1">
+              <div className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">
                 Official Platform Policy • Section 0{activeTab + 1}
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-on-surface">
+              <h3 className="text-xl sm:text-2xl font-bold text-white">
                 {sections[activeTab].title}
               </h3>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success-dark text-xs font-bold border border-success/20 shrink-0">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20 shrink-0">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Platform Policy (Effective Upon Employer Partnership Agreement)</span>
             </div>
           </div>
 
-          {/* Executive Summary */}
-          <div className="p-4 rounded-2xl bg-surface-bright border border-surface-container mb-6 text-sm text-on-surface font-medium leading-relaxed">
+          <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 mb-6 text-sm text-slate-200 font-medium leading-relaxed">
             {sections[activeTab].summary}
           </div>
 
-          {/* Detailed Clauses */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sections[activeTab].details.map((clause, i) => (
-              <div key={i} className="p-4 rounded-2xl bg-surface border border-surface-container flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-indigo-brand/10 text-indigo-brand text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+              <div key={i} className="p-4 rounded-2xl bg-slate-800/40 border border-slate-800 flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                   {i + 1}
                 </span>
-                <p className="text-xs text-on-surface-variant leading-relaxed">
+                <p className="text-xs text-slate-300 leading-relaxed">
                   {clause}
                 </p>
               </div>
             ))}
           </div>
 
-          {/* Bottom Compliance Guarantee Banner */}
-          <div className="mt-8 pt-6 border-t border-surface-container/60 flex flex-wrap items-center justify-between gap-4 text-[11px] text-on-surface-variant">
+          <div className="mt-8 pt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-[11px] text-slate-400">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-success" />
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>GenuAI Trust Framework • Continuous Audit &amp; Fair Recruitment Standard</span>
             </div>
-            <div className="font-mono text-indigo-brand font-semibold">
-              Doc Ref: GENUAI-TOS-2026-V2.1
+            <div className="font-mono text-indigo-400 font-semibold">
+              Doc Ref: GENUAI-TOS-2026-V2.2
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
-};
+}

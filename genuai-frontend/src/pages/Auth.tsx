@@ -924,13 +924,22 @@ export default function Auth({ onLogin }: Props) {
                     <span
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate("/home#terms-and-conditions");
+                        navigate("/terms");
                       }}
                       className="text-indigo-600 font-semibold underline hover:text-indigo-800 transition-colors cursor-pointer"
                     >
                       Terms and Conditions
                     </span>{" "}
-                    and candidate assessment policies.
+                    and{" "}
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate("/privacy");
+                      }}
+                      className="text-indigo-600 font-semibold underline hover:text-indigo-800 transition-colors cursor-pointer"
+                    >
+                      Privacy Policy
+                    </span>.
                   </label>
                 </div>
 
