@@ -46,16 +46,12 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
   };
 
   const navLinks = [
-    { label: 'Ecosystem', href: '/ecosystem', isRoute: true },
-    { label: 'Experience', href: '#about' },
-    { label: 'Problem', href: '#problem' },
-    { label: 'Solution', href: '#solution' },
-    { label: 'Innovation', href: '#core-usp' },
-    { label: 'Candidates', href: '#candidates' },
-    { label: 'Companies', href: '#companies' },
-    { label: 'Learning Hub', href: '#learning-hub' },
-    { label: 'Pricing', href: '#pricing' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Terms & Conditions', href: '/terms', isRoute: true },
+    { label: 'Privacy Policy', href: '/privacy', isRoute: true },
+    { label: 'Ecosystem Pricing', href: '/pricing', isRoute: true },
+    { label: 'Product Roadmap', href: '/roadmap', isRoute: true },
+    { label: 'Security Center', href: '/security', isRoute: true },
+    { label: 'Role Agreements', href: '/agreements', isRoute: true },
   ];
 
   return (
