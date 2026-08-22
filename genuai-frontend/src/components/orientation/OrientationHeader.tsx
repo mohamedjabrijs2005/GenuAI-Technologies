@@ -28,11 +28,11 @@ export const OrientationHeader: React.FC<OrientationHeaderProps> = ({ currentSte
         <div className="flex items-center justify-between gap-4 h-14">
           {/* Left */}
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/terms')}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer group"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="hidden sm:inline">Back to Home</span>
+            <span className="hidden sm:inline">Start from Step 1</span>
           </button>
 
           {/* Center: current step title */}

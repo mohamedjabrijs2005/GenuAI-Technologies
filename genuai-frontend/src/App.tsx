@@ -65,10 +65,10 @@ export default function App() {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-        {/* Public Home Page & Auth Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/ecosystem" element={<EcosystemOverviewPage />} />
+        {/* Root & Public Orientation Routes */}
+        <Route path="/" element={<Navigate to="/terms" replace />} />
+        <Route path="/home" element={<Navigate to="/terms" replace />} />
+        <Route path="/ecosystem" element={<Navigate to="/terms" replace />} />
 
         {/* Dedicated Reference Routes */}
         <Route path="/terms" element={<TermsPage />} />
