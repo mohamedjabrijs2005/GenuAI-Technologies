@@ -61,10 +61,9 @@ export default function HomePage() {
   const handleLoginRegisterFromModal = (intent?: string) => {
     setModalState({ isOpen: false, config: null });
     if (intent) {
-      navigate(`/auth?intent=${encodeURIComponent(intent)}`);
-    } else {
-      navigate('/auth');
+      sessionStorage.setItem('genuai_target_intent', intent);
     }
+    navigate('/terms');
   };
 
   const handleCloseModal = () => {
