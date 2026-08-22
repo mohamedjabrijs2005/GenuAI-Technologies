@@ -1,10 +1,9 @@
 import React from 'react';
-import { ShieldCheck, Cpu, Eye, Fingerprint, Lock, AlertTriangle, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShieldCheck, Cpu, CheckCircle2 } from 'lucide-react';
+import { OrientationHeader } from '../components/orientation/OrientationHeader';
+import { OrientationFooter } from '../components/orientation/OrientationFooter';
 
 export default function SecurityPage() {
-  const navigate = useNavigate();
-
   const layers = [
     { num: '01', name: 'Biometric Face Recognition', desc: 'Continuous facial landmark tracking confirming identity consistency throughout testing.' },
     { num: '02', name: 'Voice Timbre & Frequency Match', desc: 'Acoustic waveform analysis ensuring the registered candidate remains the sole speaker.' },
@@ -19,22 +18,16 @@ export default function SecurityPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <button
-          onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-900 hover:border-slate-300 transition-all shadow-xs cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4 text-emerald-600" />
-          <span>Back to Home</span>
-        </button>
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-16">
+      <OrientationHeader currentStep={5} title="Security Center" />
 
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-wider mb-3 border border-emerald-200/80">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Anti-Proxy Security Infrastructure</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-3">
             Security &amp; Trust Center
           </h1>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -81,8 +74,17 @@ export default function SecurityPage() {
             ))}
           </div>
         </div>
+
+        {/* Orientation Consent Footer */}
+        <OrientationFooter
+          currentStep={5}
+          pageTitle="Security Center"
+          nextPath="/learning-hub"
+          nextTitle="Step 6: Learning Hub"
+        />
       </div>
     </div>
   );
 }
+
 

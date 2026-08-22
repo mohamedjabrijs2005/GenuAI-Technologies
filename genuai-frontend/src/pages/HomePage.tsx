@@ -7,34 +7,17 @@ import { Problem } from '../components/home/Problem';
 import { Solution } from '../components/home/Solution';
 import { CoreUSP } from '../components/home/CoreUSP';
 import { WhyCompanies } from '../components/home/WhyCompanies';
-import { AssessmentWorkflow } from '../components/home/AssessmentWorkflow';
-import { TrustVerification } from '../components/home/TrustVerification';
-import { TrustScore } from '../components/home/TrustScore';
-import { SoftwareInnovation } from '../components/home/SoftwareInnovation';
-import { CandidateSection } from '../components/home/CandidateSection';
-import { CompanySection } from '../components/home/CompanySection';
-import { AdminSection } from '../components/home/AdminSection';
-import { LearningHub } from '../components/home/LearningHub';
-import { RecruitmentIntelligence } from '../components/home/RecruitmentIntelligence';
-import { Comparison } from '../components/home/Comparison';
-import { TechStack } from '../components/home/TechStack';
-import { WhyGenuAI } from '../components/home/WhyGenuAI';
-import { Roadmap } from '../components/home/Roadmap';
-import { SubscriptionPricing } from '../components/home/SubscriptionPricing';
 import { ContactForm } from '../components/home/ContactForm';
-import { TermsAndConditions } from '../components/home/TermsAndConditions';
-import { VideoSection } from '../components/home/VideoSection';
-import { FounderSection } from '../components/home/FounderSection';
 import { FinalCTA } from '../components/home/FinalCTA';
 import { Footer } from '../components/home/Footer';
 import { LoginRequiredModal, ProtectedActionConfig } from '../components/home/LoginRequiredModal';
 import { useAuth } from '../context/AuthContext';
+import { ShieldCheck, ArrowRight, CheckCircle2, FileText, Lock, Zap, Sparkles, Cpu, BookOpen } from 'lucide-react';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // State for Login Required Modal over Home Page
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     config: ProtectedActionConfig | null;
@@ -43,12 +26,14 @@ export default function HomePage() {
     config: null,
   });
 
-  // Main primary entry point: GET STARTED directly enters /auth without intermediate modal
   const handleGetStarted = () => {
     navigate('/auth');
   };
 
-  // Smooth scroll explore without route changes
+  const handleStartOrientation = () => {
+    navigate('/terms');
+  };
+
   const handleExplore = () => {
     const el = document.getElementById('about');
     if (el) {
@@ -56,28 +41,7 @@ export default function HomePage() {
     }
   };
 
-  // Handle hash navigation (e.g. #terms-and-conditions) on mount or hash change
-  React.useEffect(() => {
-    const scrollToHash = () => {
-      const hash = window.location.hash || (window.location.href.includes('#') ? '#' + window.location.href.split('#')[1] : '');
-      if (hash) {
-        const id = hash.replace('#', '');
-        const el = document.getElementById(id);
-        if (el) {
-          setTimeout(() => {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 150);
-        }
-      }
-    };
-    scrollToHash();
-    window.addEventListener('hashchange', scrollToHash);
-    return () => window.removeEventListener('hashchange', scrollToHash);
-  }, []);
-
-  // Protected actions on the Home Page
   const handleProtectedAction = (config: ProtectedActionConfig) => {
-    // 1. Check if user is already authenticated with real verified session
     if (user) {
       const role = user.role;
       if (config.intent === 'company' || role === 'company') {
@@ -92,14 +56,12 @@ export default function HomePage() {
       return;
     }
 
-    // 2. Not logged in: Show Login Required Modal OVER Home Page, preserving scroll position
     setModalState({
       isOpen: true,
       config,
     });
   };
 
-  // Modal Login / Register clicked -> Navigate to /auth with intent
   const handleLoginRegisterFromModal = (intent?: string) => {
     setModalState({ isOpen: false, config: null });
     if (intent) {
@@ -109,101 +71,111 @@ export default function HomePage() {
     }
   };
 
-  // Modal Continue Exploring clicked -> Close modal, remain on Home Page at current scroll
   const handleCloseModal = () => {
     setModalState({ isOpen: false, config: null });
   };
 
+  const orientationSteps = [
+    { step: '01', title: 'Terms & Conditions', path: '/terms', icon: FileText },
+    { step: '02', title: 'Privacy Policy', path: '/privacy', icon: Lock },
+    { step: '03', title: 'Ecosystem Pricing', path: '/pricing', icon: Zap },
+    { step: '04', title: 'Product Roadmap', path: '/roadmap', icon: Sparkles },
+    { step: '05', title: 'Security Center', path: '/security', icon: ShieldCheck },
+    { step: '06', title: 'Learning Hub', path: '/learning-hub', icon: BookOpen },
+    { step: '07', title: 'Technology Stack', path: '/technology', icon: Cpu },
+  ];
+
   return (
     <div className="min-h-screen bg-background text-on-background font-body-base antialiased selection:bg-indigo-brand selection:text-white">
-      {/* 1. Fixed Glassmorphism Navbar with direct Get Started */}
+      {/* Navbar */}
       <Navbar onGetStarted={handleGetStarted} />
 
       <main>
-        {/* 2. Hero Section with Animated AI Recruitment Visual */}
+        {/* Hero Section */}
         <Hero
           onGetStarted={handleGetStarted}
           onExplore={handleExplore}
           onProtectedAction={handleProtectedAction}
         />
 
-        {/* 3. About GenuAI Section (Candidate, Company, GenuAI Ecosystem Cards) */}
+        {/* Guided 7-Step Orientation Callout Banner */}
+        <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-900 to-slate-950 text-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-slate-900/90 border border-indigo-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-2 border border-indigo-500/20">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Sequential Platform Orientation</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-black text-white">
+                    7-Step Guided Policy &amp; Platform Tour
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl font-normal">
+                    Review each reference module sequentially, confirm consent checkboxes, and proceed seamlessly to login.
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleStartOrientation}
+                  className="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm transition-all shadow-lg flex items-center gap-2 shrink-0 cursor-pointer"
+                >
+                  <span>Start Step 1: Terms &amp; Conditions</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* 7 Steps Horizontal Timeline Bar */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 pt-4 border-t border-slate-800">
+                {orientationSteps.map((s) => {
+                  const Icon = s.icon;
+                  return (
+                    <button
+                      key={s.step}
+                      onClick={() => navigate(s.path)}
+                      className="p-3 rounded-2xl bg-slate-800/60 border border-slate-700/80 hover:border-indigo-500/50 hover:bg-slate-800 transition-all text-left space-y-2 cursor-pointer group"
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-mono font-bold text-indigo-400">
+                        <span>Step {s.step}</span>
+                        <Icon className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-400 transition-colors" />
+                      </div>
+                      <div className="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors truncate">
+                        {s.title}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* About GenuAI Section */}
         <About onProtectedAction={handleProtectedAction} />
 
-        {/* 4. The Problem Section */}
+        {/* Problem Section */}
         <Problem />
 
-        {/* 5. GenuAI Solution Section */}
+        {/* Solution Section */}
         <Solution />
 
-        {/* 6. Core USP: One Assessment -> Multiple Companies */}
+        {/* Core USP */}
         <CoreUSP onProtectedAction={handleProtectedAction} />
 
-        {/* 7. Why Companies Need GenuAI */}
+        {/* Why Companies Need GenuAI */}
         <WhyCompanies onProtectedAction={handleProtectedAction} />
 
-        {/* 8. 10-Step Assessment Workflow Ecosystem */}
-        <AssessmentWorkflow onProtectedAction={handleProtectedAction} />
-
-        {/* 9. AI Anti-Proxy System (Multi-Modal AI Verification) */}
-        <TrustVerification onProtectedAction={handleProtectedAction} />
-
-        {/* 10. AI Trust Score & Verification Dashboard */}
-        <TrustScore onProtectedAction={handleProtectedAction} />
-
-        {/* 11. AI-Powered Recruitment Intelligence (Software Innovation) */}
-        <SoftwareInnovation onProtectedAction={handleProtectedAction} />
-
-        {/* 12. Candidate Experience */}
-        <CandidateSection onProtectedAction={handleProtectedAction} />
-
-        {/* 13. Company Experience */}
-        <CompanySection onProtectedAction={handleProtectedAction} />
-
-        {/* 14. Admin & Institution Experience */}
-        <AdminSection onProtectedAction={handleProtectedAction} />
-
-        {/* 15. Intensive Learning Hub & Multilingual Vision */}
-        <LearningHub onProtectedAction={handleProtectedAction} />
-
-        {/* 16. Recruitment Intelligence & Analytics */}
-        <RecruitmentIntelligence onProtectedAction={handleProtectedAction} />
-
-        {/* 17. Traditional vs GenuAI Comparison */}
-        <Comparison />
-
-        {/* 18. Technology Stack (Pure Software Stack) */}
-        <TechStack />
-
-        {/* 19. Why GenuAI (5 Core Value Pillars) */}
-        <WhyGenuAI />
-
-        {/* 20. Subscription / Pricing Section */}
-        <SubscriptionPricing onProtectedAction={handleProtectedAction} />
-
-        {/* 21. Future Roadmap */}
-        <Roadmap />
-
-        {/* 22. Send a Message / Public Contact Form */}
+        {/* Public Contact Form */}
         <ContactForm />
 
-        {/* 23. Complete Terms & Conditions (Single Source Anchor: id="terms-and-conditions") */}
-        <TermsAndConditions />
-
-        {/* 24. See GenuAI in Action YouTube Video Section */}
-        <VideoSection />
-
-        {/* 25. Founder Details & Leadership Vision */}
-        <FounderSection />
-
-        {/* 26. Final Call to Action */}
+        {/* Final CTA */}
         <FinalCTA onGetStarted={handleGetStarted} onExplore={handleExplore} />
       </main>
 
-      {/* 27. Footer */}
+      {/* Footer */}
       <Footer />
 
-      {/* 28. Login Required Modal Overlay */}
+      {/* Login Required Modal Overlay */}
       <LoginRequiredModal
         isOpen={modalState.isOpen}
         config={modalState.config}
@@ -213,3 +185,4 @@ export default function HomePage() {
     </div>
   );
 }
+

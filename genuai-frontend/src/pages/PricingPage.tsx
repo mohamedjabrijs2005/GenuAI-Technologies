@@ -1,27 +1,20 @@
 import React from 'react';
-import { CheckCircle2, ShieldCheck, Zap, Building2, GraduationCap, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { CheckCircle2, Zap, Building2, GraduationCap } from 'lucide-react';
+import { OrientationHeader } from '../components/orientation/OrientationHeader';
+import { OrientationFooter } from '../components/orientation/OrientationFooter';
 
 export default function PricingPage() {
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <button
-          onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-900 hover:border-slate-300 transition-all shadow-xs cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4 text-amber-600" />
-          <span>Back to Home</span>
-        </button>
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-16">
+      <OrientationHeader currentStep={3} title="Ecosystem Pricing" />
 
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-wider mb-3 border border-amber-200/80">
             <Zap className="w-3.5 h-3.5" />
             <span>Transparent Subscription Plans</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-3">
             Ecosystem Pricing &amp; Plans
           </h1>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
@@ -66,12 +59,6 @@ export default function PricingPage() {
                 </li>
               </ul>
             </div>
-            <button
-              onClick={() => navigate('/auth')}
-              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all cursor-pointer shadow-xs"
-            >
-              Get Started Free
-            </button>
           </div>
 
           {/* Company Tier */}
@@ -112,17 +99,9 @@ export default function PricingPage() {
                 </li>
               </ul>
             </div>
-            <div>
-              <p className="text-[10px] text-slate-500 italic mb-3">
-                * Target capacity at full scale — current pilot capacity available on request
-              </p>
-              <button
-                onClick={() => navigate('/auth')}
-                className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all cursor-pointer shadow-xs"
-              >
-                Start Employer Trial
-              </button>
-            </div>
+            <p className="text-[10px] text-slate-500 italic">
+              * Target capacity at full scale — current pilot capacity available on request
+            </p>
           </div>
 
           {/* Institution Tier */}
@@ -156,21 +135,22 @@ export default function PricingPage() {
                 </li>
               </ul>
             </div>
-            <div>
-              <p className="text-[10px] text-slate-500 italic mb-3">
-                * Target capacity at full scale — current pilot capacity available on request
-              </p>
-              <button
-                onClick={() => navigate('/auth')}
-                className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all cursor-pointer shadow-xs"
-              >
-                Contact Campus Team
-              </button>
-            </div>
+            <p className="text-[10px] text-slate-500 italic">
+              * Target capacity at full scale — current pilot capacity available on request
+            </p>
           </div>
         </div>
+
+        {/* Orientation Consent Footer */}
+        <OrientationFooter
+          currentStep={3}
+          pageTitle="Ecosystem Pricing"
+          nextPath="/roadmap"
+          nextTitle="Step 4: Product Roadmap"
+        />
       </div>
     </div>
   );
 }
+
 

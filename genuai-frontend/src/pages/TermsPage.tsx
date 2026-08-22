@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { ShieldCheck, FileText, Lock, Scale, AlertTriangle, Eye, RefreshCw, CheckCircle2, UserCheck, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShieldCheck, FileText, Lock, Scale, AlertTriangle, Eye, RefreshCw, CheckCircle2, UserCheck, ChevronRight } from 'lucide-react';
+import { OrientationHeader } from '../components/orientation/OrientationHeader';
+import { OrientationFooter } from '../components/orientation/OrientationFooter';
 
 export default function TermsPage() {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeSection, setActiveSection] = useState('portability');
 
   const sections = [
     {
       id: 'portability',
-      title: '01. Assessment Portability & Score Validity',
+      num: '01',
+      title: 'Assessment Portability & Score Validity',
       icon: RefreshCw,
       summary: 'Candidates complete one unified official evaluation; the resulting authenticated scorecard remains valid for 12 months across all selected partner employers.',
       details: [
@@ -21,7 +22,8 @@ export default function TermsPage() {
     },
     {
       id: 'consent',
-      title: '02. Multi-Company Consent & Data Distribution',
+      num: '02',
+      title: 'Multi-Company Consent & Data Distribution',
       icon: UserCheck,
       summary: 'Candidate data is dispatched strictly based on explicit user selection before or after testing; no blind distribution to unauthorized third parties.',
       details: [
@@ -33,7 +35,8 @@ export default function TermsPage() {
     },
     {
       id: 'proctoring',
-      title: '03. Anti-Cheating & Biometric Proctoring Rules',
+      num: '03',
+      title: 'Anti-Cheating & Biometric Proctoring Rules',
       icon: AlertTriangle,
       summary: 'Strict zero-tolerance policy against proxy test-takers, second-person whispering, unauthorized phones, and external unproctored AI assistance.',
       details: [
@@ -45,7 +48,8 @@ export default function TermsPage() {
     },
     {
       id: 'trust-score',
-      title: '04. AI Trust Score & Evidentiary Standard',
+      num: '04',
+      title: 'AI Trust Score & Evidentiary Standard',
       icon: ShieldCheck,
       summary: 'The AI Trust Score is an aggregated evidentiary metric designed to assist human recruiters in evaluating test authenticity objectively.',
       details: [
@@ -57,7 +61,8 @@ export default function TermsPage() {
     },
     {
       id: 'privacy',
-      title: '05. Candidate Privacy, DPDP & GDPR Compliance',
+      num: '05',
+      title: 'Candidate Privacy, DPDP & GDPR Compliance',
       icon: Lock,
       summary: 'Comprehensive candidate data rights under DPDP 2023, GDPR, and international data protection laws with explicit retention lifecycles.',
       details: [
@@ -69,7 +74,8 @@ export default function TermsPage() {
     },
     {
       id: 'non-discrimination',
-      title: '06. Non-Discrimination & Algorithmic Fairness',
+      num: '06',
+      title: 'Non-Discrimination & Algorithmic Fairness',
       icon: Scale,
       summary: 'Algorithmic models are continuously audited against gender, ethnic, dialectal, and institutional pedigree bias.',
       details: [
@@ -81,7 +87,8 @@ export default function TermsPage() {
     },
     {
       id: 'appeals',
-      title: '07. Score Review & Candidate Appeal Procedure',
+      num: '07',
+      title: 'Score Review & Candidate Appeal Procedure',
       icon: FileText,
       summary: 'Candidates retain the legal right to contest flagged proctoring warnings and request a certified human review within 14 business days.',
       details: [
@@ -93,7 +100,8 @@ export default function TermsPage() {
     },
     {
       id: 'ip',
-      title: '08. Intellectual Property & Assessment Copyright',
+      num: '08',
+      title: 'Intellectual Property & Assessment Copyright',
       icon: Eye,
       summary: 'All question banks, SVAR speech models, compiler architectures, and scoring algorithms are proprietary assets of GenuAI Technologies.',
       details: [
@@ -105,107 +113,121 @@ export default function TermsPage() {
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <button
-          onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-700 hover:text-slate-900 hover:border-slate-300 transition-all shadow-xs cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4 text-indigo-600" />
-          <span>Back to Home</span>
-        </button>
+  const scrollToSection = (id: string) => {
+    setActiveSection(id);
+    const element = document.getElementById(`terms-sec-${id}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+  return (
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-16">
+      <OrientationHeader currentStep={1} title="Terms & Conditions" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Document Header Title */}
+        <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-3 border border-indigo-200/80">
             <Scale className="w-3.5 h-3.5" />
-            <span>Ecosystem Governance &amp; Compliance</span>
+            <span>Platform Governance &amp; Operating Agreement</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-4">
-            Terms &amp; Conditions
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 mb-3">
+            Terms &amp; Conditions Document
           </h1>
           <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-normal">
-            Our legal, operational, and ethical framework guarantees assessment integrity, candidate data protection, multi-company scorecard portability, and non-discriminatory hiring standards.
+            Read through our ecosystem terms governing score portability, candidate consent, biometric proctoring, and algorithmic fairness.
           </p>
         </div>
 
-        {/* 8-Tab Navigation Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 mb-8">
-          {sections.map((sec, idx) => {
-            const Icon = sec.icon;
-            const isActive = activeTab === idx;
-            return (
-              <button
-                key={sec.id}
-                onClick={() => setActiveTab(idx)}
-                className={`p-3.5 rounded-2xl border text-left transition-all duration-200 flex flex-col justify-between cursor-pointer ${
-                  isActive
-                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-md scale-[1.02]'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-xs'
-                }`}
-              >
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-2 ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-indigo-50 text-indigo-600'
-                }`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <div className="text-[11px] font-bold leading-tight truncate">
-                  {sec.title.split('. ')[1]}
-                </div>
-                <div className={`text-[9px] font-mono mt-1 font-semibold ${isActive ? 'text-indigo-100' : 'text-slate-400'}`}>
-                  0{idx + 1}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Active Section Panel */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
-            <div>
-              <div className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
-                Official Platform Policy • Section 0{activeTab + 1}
-              </div>
-              <h3 className="text-xl sm:text-2xl font-black text-slate-900">
-                {sections[activeTab].title}
-              </h3>
+        {/* Executive 2-Column Document Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left Column: Sticky Table of Contents Sidebar */}
+          <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-3 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs">
+            <div className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-2 pb-2 border-b border-slate-100">
+              <FileText className="w-4 h-4 text-indigo-600" />
+              <span>Document Table of Contents</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200/80 shrink-0">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Platform Policy (Effective Upon Employer Partnership Agreement)</span>
+
+            <div className="space-y-1">
+              {sections.map((sec) => {
+                const Icon = sec.icon;
+                const isSelected = activeSection === sec.id;
+                return (
+                  <button
+                    key={sec.id}
+                    onClick={() => scrollToSection(sec.id)}
+                    className={`w-full p-2.5 rounded-xl border text-left transition-all flex items-center justify-between cursor-pointer ${
+                      isSelected
+                        ? 'bg-indigo-600 text-white border-indigo-600 font-bold shadow-xs'
+                        : 'bg-white border-transparent text-slate-700 hover:bg-slate-50 hover:border-slate-200 font-medium'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 truncate">
+                      <span className={`text-[10px] font-mono font-bold ${isSelected ? 'text-indigo-100' : 'text-slate-400'}`}>
+                        {sec.num}
+                      </span>
+                      <span className="text-xs truncate">{sec.title.split('. ')[1]}</span>
+                    </div>
+                    <ChevronRight className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-white' : 'text-slate-400'}`} />
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100/80 text-sm text-slate-800 font-medium leading-relaxed">
-            {sections[activeTab].summary}
-          </div>
+          {/* Right Column: Full Continuous Document Flow */}
+          <div className="lg:col-span-8 space-y-6">
+            {sections.map((sec) => {
+              const Icon = sec.icon;
+              return (
+                <div
+                  key={sec.id}
+                  id={`terms-sec-${sec.id}`}
+                  className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-4 scroll-mt-24"
+                >
+                  <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                    <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold shrink-0">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-mono font-bold text-indigo-600 uppercase tracking-widest block">
+                        Section {sec.num}
+                      </span>
+                      <h3 className="text-lg font-bold text-slate-900">{sec.title}</h3>
+                    </div>
+                  </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sections[activeTab].details.map((clause, i) => (
-              <div key={i} className="p-4.5 rounded-2xl bg-slate-50/80 border border-slate-200/60 flex items-start gap-3.5">
-                <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
-                  {i + 1}
-                </span>
-                <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                  {clause}
-                </p>
-              </div>
-            ))}
-          </div>
+                  <div className="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100/80 text-xs text-slate-800 font-medium leading-relaxed">
+                    {sec.summary}
+                  </div>
 
-          <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center justify-between gap-4 text-[11px] text-slate-500 font-medium">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>GenuAI Trust Framework • Continuous Audit &amp; Fair Recruitment Standard</span>
-            </div>
-            <div className="font-mono text-indigo-600 font-bold">
-              Doc Ref: GENUAI-TOS-2026-V2.2
-            </div>
+                  <div className="space-y-2.5 pt-1">
+                    {sec.details.map((clause, idx) => (
+                      <div key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/50">
+                        <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                          {idx + 1}
+                        </span>
+                        <p className="text-xs text-slate-700 leading-relaxed font-normal">{clause}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Guided Orientation Step 1 Consent Footer */}
+            <OrientationFooter
+              currentStep={1}
+              pageTitle="Terms & Conditions"
+              nextPath="/privacy"
+              nextTitle="Step 2: Privacy Policy"
+            />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
