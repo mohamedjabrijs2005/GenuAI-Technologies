@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
+import { GenuAILogo } from '../components/common/GenuAILogo';
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -468,7 +469,7 @@ export default function AMCATTest({ user, role, assessmentId, onComplete, onTerm
       {/* Header */}
       <div className="glass border-b border-surface-container flex justify-between items-center p-sm px-lg shadow-sm z-10 shrink-0">
         <div className="flex items-center gap-sm">
-          <img src="/logo.png" className="w-10 h-10 object-contain gold-glow-subtle" alt="logo" />
+          <GenuAILogo size="xs" />
           <div>
             <div className="text-on-surface font-bold text-sm">Section {currentSection + 1}/4: <span className="text-indigo-brand">{sec?.name}</span></div>
             <div className="text-on-surface-variant text-xs font-semibold">Question {currentQ + 1} of {sec?.questions?.length || 20} — {role}</div>

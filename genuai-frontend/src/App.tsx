@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { GenuAILogo } from "./components/common/GenuAILogo";
 
 const HomePage             = lazy(() => import("./pages/HomePage"));
 const EcosystemOverviewPage = lazy(() => import("./pages/EcosystemOverviewPage"));
@@ -36,7 +37,7 @@ function PageLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-4">
-        <img src="/logo.png" alt="GenuAI Technologies" className="w-16 h-16 object-contain animate-pulse" />
+        <GenuAILogo size="xl" className="animate-pulse" />
         <p className="text-on-surface-variant text-sm font-medium">Loading GenuAI...</p>
       </div>
     </div>

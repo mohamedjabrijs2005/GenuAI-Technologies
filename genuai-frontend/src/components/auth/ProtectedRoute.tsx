@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { GenuAILogo } from '../common/GenuAILogo';
 
 interface Props {
   children: React.ReactElement;
@@ -15,7 +16,7 @@ export const ProtectedRoute: React.FC<Props> = ({ children, allowedRoles }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <img src="/logo.png" alt="GenuAI Technologies" className="w-16 h-16 object-contain animate-pulse" />
+          <GenuAILogo size="xl" className="animate-pulse" />
           <p className="text-on-surface-variant text-sm font-medium">Verifying authenticated session...</p>
         </div>
       </div>

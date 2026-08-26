@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { GenuAILogo } from '../common/GenuAILogo';
 
 export const Footer: React.FC = () => {
   return (
@@ -10,7 +11,7 @@ export const Footer: React.FC = () => {
           {/* Col 1: Brand */}
           <div className="space-y-3.5 md:col-span-2">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="GenuAI Technologies" className="w-8 h-8 object-contain" onError={(e) => ((e.target as HTMLElement).style.display = 'none')} />
+              <GenuAILogo size="sm" />
               <div className="font-bold text-lg text-on-surface">
                 Genu<span className="text-indigo-brand">AI</span> Technologies
               </div>

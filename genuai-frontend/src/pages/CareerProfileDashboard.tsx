@@ -3,6 +3,7 @@ import ResumeGenerator from './ResumeGenerator';
 import CoverLetterGenerator from './CoverLetterGenerator';
 import ATSChecker from './ATSChecker';
 import PortfolioManager from './PortfolioManager';
+import { GenuAILogo } from '../components/common/GenuAILogo';
 
 interface Props { user: any; onBack: () => void; }
 
@@ -27,7 +28,7 @@ export default function CareerProfileDashboard({ user, onBack }: Props) {
       {/* Header */}
       <nav className="glass border-b border-surface-container px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between shadow-xs sticky top-0 z-40 gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <img src="/logo.png" alt="GenuAI" className="w-7 h-7 sm:w-9 sm:h-9 object-contain shrink-0" />
+          <GenuAILogo size="xs" />
           <div className="min-w-0 truncate">
             <div className="font-black text-xs sm:text-sm text-on-surface truncate leading-tight">GenuAI Technologies</div>
             <div className="text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-wider truncate">Career Profile Hub</div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getSavedSelections, CompanyRoleSelectionItem } from '../services/genuaiWorksService';
+import { GenuAILogo } from '../components/common/GenuAILogo';
 
 interface Props {
   user: any;
@@ -29,7 +30,7 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
       {/* Navbar */}
       <nav className="h-16 border-b border-surface-container/50 bg-surface/85 backdrop-blur-xl px-4 sm:px-8 lg:px-12 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="GenuAI" className="w-10 h-10 object-contain drop-shadow-sm" />
+          <GenuAILogo size="sm" />
           <div>
             <div className="font-extrabold text-on-surface text-sm sm:text-base leading-tight tracking-tight">
               Genu<span className="text-indigo-brand">AI</span> Technologies

@@ -12,6 +12,7 @@ import {
   Menu,
   Clock,
 } from "lucide-react";
+import { GenuAILogo } from "../common/GenuAILogo";
 
 export interface NavItem {
   id: string;
@@ -138,7 +139,7 @@ export default function DashboardLayout({
             {/* BRAND */}
             <div className="flex items-center gap-2.5 shrink-0">
               <div className="relative">
-                <img src="/logo.png" alt="GenuAI" className="w-8 h-8 sm:w-9 sm:h-9 object-contain" />
+                <GenuAILogo size="sm" />
                 <span className="w-2 h-2 rounded-full bg-emerald-500 absolute -bottom-0.5 -right-0.5 ring-2 ring-white" />
               </div>
               <div className="hidden xs:block sm:block">

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { GenuAILogo } from "../components/common/GenuAILogo";
 
 const API = import.meta.env.VITE_API_URL;
 import {
@@ -356,7 +357,7 @@ export default function CandidateDashboard({ user, onLogout, onInterview, onResu
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-xl glass p-sm rounded-xl">
           <div className="flex items-center gap-sm px-sm">
-            <img src="/logo.png" alt="GenuAI" className="w-11 h-11 object-contain gold-glow-subtle" />
+            <GenuAILogo size="sm" />
             <div>
               <div className="font-bold text-lg text-on-surface leading-tight">Genu<span className="text-accent-gold">AI</span></div>
               <div className="text-[10px] text-on-surface-variant font-semibold tracking-widest uppercase">TECHNOLOGIES</div>

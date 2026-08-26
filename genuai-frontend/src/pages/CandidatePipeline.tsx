@@ -5,6 +5,7 @@ import Module3_SVARTest from './Module3_SVARTest';
 import Module4_Hackathon from './Module4_Hackathon';
 import Module6_GroupDiscussion from './Module6_GroupDiscussion';
 import { submitAssessment } from '../services/api';
+import { GenuAILogo } from '../components/common/GenuAILogo';
 import axios from 'axios';
 
 const API = import.meta.env.VITE_API_URL;
@@ -390,7 +391,7 @@ export default function CandidatePipeline({ user, onLogout, onInterview }: Props
 
       <div className="relative z-10 glass border-b border-surface-container/50 p-sm md:px-xl flex justify-between items-center shadow-sm">
         <div className="flex items-center gap-sm">
-          <img src="/logo.png" alt="GenuAI" className="w-11 h-11 object-contain gold-glow-subtle" />
+          <GenuAILogo size="sm" />
           <div>
             <div className="font-bold text-lg text-on-surface leading-tight">Genu<span className="text-accent-gold">AI</span></div>
             <div className="text-[10px] text-on-surface-variant font-semibold tracking-widest uppercase">Candidate Pipeline</div>

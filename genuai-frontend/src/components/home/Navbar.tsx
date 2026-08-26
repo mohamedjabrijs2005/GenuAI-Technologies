@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { GenuAILogo } from '../common/GenuAILogo';
 
 interface Props {
   onGetStarted?: () => void;
@@ -71,14 +72,7 @@ export const Navbar: React.FC<Props> = ({ onGetStarted }) => {
             className="flex items-center gap-2.5 sm:gap-3 group shrink-0 cursor-pointer max-w-[70%] sm:max-w-none"
           >
             <div className="relative shrink-0">
-              <img
-                src="/logo.png"
-                alt="GenuAI Technologies Logo"
-                className="w-8 sm:w-10 h-8 sm:h-10 object-contain transition-transform duration-300 group-hover:scale-105"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
+              <GenuAILogo size="sm" />
               <div className="absolute -inset-1 bg-accent-gold/20 blur-md rounded-full -z-10 group-hover:bg-indigo-brand/30 transition-all" />
             </div>
             <div className="truncate">

@@ -1,3 +1,5 @@
+import { GenuAILogo } from '../components/common/GenuAILogo';
+
 interface Props { user: any; onStartTest: () => void; }
 
 const MODULES = [
@@ -25,7 +27,7 @@ export default function CompanyOverview({ user, onStartTest }: Props) {
       {/* Navbar */}
       <nav className="h-16 border-b border-surface-container/50 bg-surface/80 backdrop-blur-xl px-margin-mobile md:px-margin-desktop flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-sm">
-          <img src="/logo.png" alt="GenuAI" className="w-11 h-11 object-contain gold-glow-subtle" />
+          <GenuAILogo size="sm" />
           <div className="hidden sm:block">
             <div className="font-headline-md text-on-surface text-[16px] leading-tight">GenuAI Technologies</div>
             <div className="text-[10px] font-bold text-on-surface-variant/80 uppercase tracking-widest">Recruitment Intelligence</div>
@@ -39,9 +41,9 @@ export default function CompanyOverview({ user, onStartTest }: Props) {
 
       {/* Hero Banner */}
       <div className="quantum-gradient py-xxl px-margin-mobile md:px-margin-desktop text-center relative z-10 border-b border-surface-container/50 shadow-sm">
-        <div className="w-24 h-24 mx-auto mb-md relative group">
+        <div className="w-24 h-24 mx-auto mb-md relative group flex items-center justify-center">
           <div className="absolute -inset-4 bg-accent-gold/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-          <img src="/logo.png" alt="GenuAI" className="relative w-full h-full object-contain gold-glow-subtle transition-transform duration-700 group-hover:scale-105" />
+          <GenuAILogo size="xl" />
         </div>
         <h1 className="text-display-md font-display-md text-on-surface mb-xs hero-title-weight">Official Candidate Assessment</h1>
         <p className="text-headline-sm font-headline-sm text-accent-gold mb-sm drop-shadow-sm">AI-Powered Proctored Evaluation Pipeline &amp; Rules</p>

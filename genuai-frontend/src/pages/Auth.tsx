@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Eye, EyeOff, ShieldCheck, Lock, Mail, CheckCircle2, User, Building2, Phone, AlertCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { GenuAILogo } from "../components/common/GenuAILogo";
 
 interface Props {
   onLogin?: (user: any) => void;
@@ -393,7 +394,7 @@ export default function Auth({ onLogin }: Props) {
         <div className="lg:hidden flex flex-col items-center text-center pt-8 pb-6 px-4 relative z-10 space-y-4 max-w-xl mx-auto">
           <div className="relative group inline-block">
             <div className="absolute -inset-3 bg-accent-gold/20 blur-xl rounded-full opacity-75"></div>
-            <img src="/logo.png" alt="GenuAI Shield" className="relative w-16 h-16 object-contain gold-glow-subtle" />
+            <GenuAILogo size="xl" />
           </div>
 
           <div className="space-y-1">
@@ -468,7 +469,7 @@ export default function Auth({ onLogin }: Props) {
             <div className="flex flex-col items-start mb-8">
               <div className="relative group inline-block mb-4">
                 <div className="absolute -inset-4 bg-accent-gold/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <img src="/logo.png" alt="GenuAI Shield" className="relative w-20 h-20 object-contain gold-glow-subtle transition-transform duration-700 group-hover:scale-105" />
+                <GenuAILogo size="xl" />
               </div>
               <div className="flex flex-col gap-2 mb-4">
                 <h2 className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[#667EEA] via-[#764BA2] to-[#0891B2] tracking-tight">

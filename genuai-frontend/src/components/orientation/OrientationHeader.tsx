@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowLeft, CheckCircle2, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { GenuAILogo } from '../common/GenuAILogo';
 
 export interface OrientationHeaderProps {
   currentStep: number;
@@ -64,14 +65,7 @@ export const OrientationHeader: React.FC<OrientationHeaderProps> = ({ currentSte
               className="flex items-center gap-2 group cursor-pointer"
               title="GenuAI Technologies Home"
             >
-              <img
-                src="/logo.png"
-                alt="GenuAI Technologies"
-                className="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow-xs transition-transform group-hover:scale-105"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-              />
+              <GenuAILogo size="xs" />
               <span className="font-extrabold text-xs sm:text-sm text-slate-900 tracking-tight hidden md:inline-block">
                 Genu<span className="text-indigo-600">AI</span>
               </span>

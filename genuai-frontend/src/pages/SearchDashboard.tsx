@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getJobs, getNetworkPosts, createNetworkPost, getEvents, getPMStatus, getNews } from '../services/api';
+import { GenuAILogo } from '../components/common/GenuAILogo';
 
 interface Props { user: any; onBack: () => void; }
 
@@ -112,7 +113,7 @@ function JobBoard({ user, onBack, initialFilter = 'All' }: { user: any, onBack: 
                   <div className="flex justify-between items-start mb-md">
                     <div className="flex gap-md">
                       <div className="w-12 h-12 rounded-xl bg-surface-bright border border-surface-container flex items-center justify-center shrink-0">
-                        <img src="/logo.png" alt="" className="w-8 h-8 object-contain" />
+                        <GenuAILogo size="xs" />
                       </div>
                       <div>
                         <h3 className="text-title-sm font-title-sm text-on-surface mb-xs">{job.title}</h3>
@@ -582,7 +583,7 @@ export default function SearchDashboard({ user, onBack }: Props) {
       {/* Header */}
       <nav className="glass border-b border-surface-container px-lg md:px-xl h-16 flex items-center justify-between shadow-sm sticky top-0 z-40">
         <div className="flex items-center gap-sm">
-          <img src="/logo.png" alt="GenuAI" className="w-10 h-10 object-contain drop-shadow-md" />
+          <GenuAILogo size="sm" />
           <div>
             <div className="font-black text-sm text-on-surface">GenuAI Technologies</div>
             <div className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Search Hub</div>
