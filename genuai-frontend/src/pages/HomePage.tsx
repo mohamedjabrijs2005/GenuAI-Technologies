@@ -27,6 +27,13 @@ export default function HomePage() {
   });
 
   const handleGetStarted = () => {
+    try {
+      for (let i = 1; i <= 6; i++) {
+        sessionStorage.removeItem(`genuai_orientation_step_${i}_consent`);
+      }
+    } catch {
+      // ignore
+    }
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
@@ -63,6 +70,13 @@ export default function HomePage() {
 
   const handleLoginRegisterFromModal = (intent?: string) => {
     setModalState({ isOpen: false, config: null });
+    try {
+      for (let i = 1; i <= 6; i++) {
+        sessionStorage.removeItem(`genuai_orientation_step_${i}_consent`);
+      }
+    } catch {
+      // ignore
+    }
     if (intent) {
       sessionStorage.setItem('genuai_target_intent', intent);
     }

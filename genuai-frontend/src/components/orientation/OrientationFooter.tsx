@@ -17,22 +17,13 @@ export const OrientationFooter: React.FC<OrientationFooterProps> = ({
 }) => {
   const navigate = useNavigate();
   const storageKey = `genuai_orientation_step_${currentStep}_consent`;
-  const [agreed, setAgreed] = useState<boolean>(() => {
-    try {
-      return sessionStorage.getItem(storageKey) === 'true';
-    } catch {
-      return false;
-    }
-  });
+  // Start unchecked on each visit so the user must actively read and tick the box
+  const [agreed, setAgreed] = useState<boolean>(false);
 
   useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem(storageKey) === 'true';
-      setAgreed(saved);
-    } catch {
-      // ignore
-    }
-  }, [currentStep, storageKey]);
+    // Reset agreed to false whenever the step changes
+    setAgreed(false);
+  }, [currentStep]);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = e.target.checked;

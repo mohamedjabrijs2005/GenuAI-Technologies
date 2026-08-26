@@ -51,23 +51,49 @@ export const OrientationHeader: React.FC<OrientationHeaderProps> = ({ currentSte
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-[0_1px_4px_0_rgba(0,0,0,0.06)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top row: back button + title + step badge */}
-        <div className="flex items-center justify-between gap-4 h-14">
-          {/* Left */}
-          <button
-            type="button"
-            onClick={handleBackHome}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-indigo-600 transition-colors cursor-pointer group"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="hidden sm:inline">Back to Home Page</span>
-          </button>
+        {/* Top row: brand + back button + title + step badge */}
+        <div className="flex items-center justify-between gap-3 sm:gap-4 h-14">
+          {/* Left: Brand Logo & Back link */}
+          <div className="flex items-center gap-3">
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                handleBackHome();
+              }}
+              className="flex items-center gap-2 group cursor-pointer"
+              title="GenuAI Technologies Home"
+            >
+              <img
+                src="/logo.png"
+                alt="GenuAI Technologies"
+                className="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow-xs transition-transform group-hover:scale-105"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+              <span className="font-extrabold text-xs sm:text-sm text-slate-900 tracking-tight hidden md:inline-block">
+                Genu<span className="text-indigo-600">AI</span>
+              </span>
+            </a>
+
+            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+
+            <button
+              type="button"
+              onClick={handleBackHome}
+              className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-slate-500 hover:text-indigo-600 transition-colors cursor-pointer group"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+              <span className="hidden sm:inline">Home</span>
+            </button>
+          </div>
 
           {/* Center: current step title */}
-          <div className="text-xs font-bold text-slate-900 text-center truncate">
-            <span className="text-indigo-600">Step {currentStep} of {totalSteps}</span>
-            <span className="mx-2 text-slate-300">·</span>
-            <span>{title}</span>
+          <div className="text-xs font-bold text-slate-900 text-center truncate px-2">
+            <span className="text-indigo-600 font-extrabold">Step {currentStep}/{totalSteps}</span>
+            <span className="mx-1.5 text-slate-300">·</span>
+            <span className="text-slate-800 font-bold">{title}</span>
           </div>
 
           {/* Right: percent badge */}
