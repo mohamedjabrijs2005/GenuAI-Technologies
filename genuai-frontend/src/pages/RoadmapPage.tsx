@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, UserCheck, Building2, Cpu, CheckCircle2, ArrowRight, Calendar, Target, Award, Rocket } from 'lucide-react';
 import { OrientationHeader } from '../components/orientation/OrientationHeader';
 import { OrientationFooter } from '../components/orientation/OrientationFooter';
 
 export default function RoadmapPage() {
   const [activeTab, setActiveTab] = useState<'candidate' | 'company' | 'admin'>('candidate');
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
 
   const roadmaps = {
     candidate: {

@@ -27,6 +27,9 @@ export default function HomePage() {
   });
 
   const handleGetStarted = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     navigate('/terms');
   };
 
@@ -63,6 +66,9 @@ export default function HomePage() {
     if (intent) {
       sessionStorage.setItem('genuai_target_intent', intent);
     }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     navigate('/terms');
   };
 

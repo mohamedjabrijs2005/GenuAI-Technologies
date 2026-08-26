@@ -85,40 +85,93 @@ export const getAvailableCompanies = async (): Promise<CompanyOption[]> => {
   try {
     const res = await apiClient.get('/genuai-works/companies');
     return res.data.companies || [];
-  } catch {
-    // Fallback static demo data if backend fails
-    return [
-      {
-        id: 101,
-        companyName: 'Zoho',
-        industry: 'Technology',
-        location: 'Chennai, India',
-        roles: [
-          { id: 1, title: 'Sales Executive', canonicalRole: 'SALES_EXECUTIVE', configStatus: 'locked', version: 1 },
-          { id: 2, title: 'Software Developer', canonicalRole: 'SOFTWARE_ENGINEER', configStatus: 'locked', version: 1 },
-        ],
-      },
-      {
-        id: 102,
-        companyName: 'Apple',
-        industry: 'Technology',
-        location: 'Cupertino, CA, USA',
-        roles: [
-          { id: 3, title: 'Software Engineer', canonicalRole: 'SOFTWARE_ENGINEER', configStatus: 'locked', version: 1 },
-          { id: 4, title: 'Sales Executive', canonicalRole: 'SALES_EXECUTIVE', configStatus: 'locked', version: 1 },
-        ],
-      },
-      {
-        id: 103,
-        companyName: 'Google',
-        industry: 'Technology',
-        location: 'Mountain View, CA, USA',
-        roles: [
-          { id: 5, title: 'Software Engineer', canonicalRole: 'SOFTWARE_ENGINEER', configStatus: 'locked', version: 1 },
-          { id: 6, title: 'Data Analyst', canonicalRole: 'DATA_ANALYST', configStatus: 'locked', version: 1 },
-        ],
-      },
-    ];
+  } catch (err) {
+    console.error('Failed to fetch companies:', err);
+    return [];
+  }
+};
+
+// 1b. Fetch all assessment modules
+export const getModules = async (): Promise<any[]> => {
+  try {
+    const res = await apiClient.get('/modules');
+    return res.data.modules || [];
+  } catch (err) {
+    console.error('Failed to fetch modules:', err);
+    return [];
+  }
+};
+
+// 1c. Fetch role taxonomy
+export const getRoleTaxonomy = async (): Promise<any[]> => {
+  try {
+    const res = await apiClient.get('/roles/taxonomy');
+    return res.data.taxonomy || res.data.roles || [];
+  } catch (err) {
+    console.error('Failed to fetch role taxonomy:', err);
+    return [];
+  }
+};
+
+// 1d. Create company role
+export const createCompanyRole = async (data: {
+  companyId: number;
+  title: string;
+  description?: string;
+  canonicalRoleId?: number;
+}): Promise<any> => {
+  const res = await apiClient.post('/company-roles', data);
+  return res.data;
+};
+
+// 1e. Save draft configuration
+export const saveCompanyRoleConfig = async (
+  roleId: number,
+  data: { companyId: number; modules: number[]; moduleWeights?: Record<number, number> }
+): Promise<any> => {
+  const res = await apiClient.post(`/company-roles/${roleId}/configuration`, data);
+  return res.data;
+};
+
+// 1f. Record agreement confirmation
+export const agreeCompanyRoleConfig = async (
+  roleId: number,
+  data: { companyId: number; acceptedBy?: number; ipAddress?: string; agreementText?: string }
+): Promise<any> => {
+  const res = await apiClient.post(`/company-roles/${roleId}/configuration/agree`, data);
+  return res.data;
+};
+
+// 1g. Fetch real company candidate matches
+export const getCompanyRoleMatches = async (companyId: number | string): Promise<any[]> => {
+  try {
+    const res = await apiClient.get(`/company-roles/matches/${companyId}`);
+    return res.data.matches || [];
+  } catch (err) {
+    console.error('Failed to fetch company matches:', err);
+    return [];
+  }
+};
+
+// 1h. Fetch candidate match groups & pattern
+export const getCandidateMatchGroups = async (candidateId: number | string): Promise<any[]> => {
+  try {
+    const res = await apiClient.get(`/candidate/match/groups/${candidateId}`);
+    return res.data.groups || [];
+  } catch (err) {
+    console.error('Failed to fetch candidate match groups:', err);
+    return [];
+  }
+};
+
+// 1i. Fetch candidate company matches
+export const getCandidateCompanyMatches = async (candidateId: number | string): Promise<any[]> => {
+  try {
+    const res = await apiClient.get(`/candidate/${candidateId}/company-matches`);
+    return res.data.matches || [];
+  } catch (err) {
+    console.error('Failed to fetch candidate matches:', err);
+    return [];
   }
 };
 

@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ShieldCheck, Cpu, CheckCircle2 } from 'lucide-react';
 import { OrientationHeader } from '../components/orientation/OrientationHeader';
 import { OrientationFooter } from '../components/orientation/OrientationFooter';
 
 export default function SecurityPage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
   const layers = [
     { num: '01', name: 'Biometric Face Recognition', desc: 'Continuous facial landmark tracking confirming identity consistency throughout testing.' },
     { num: '02', name: 'Voice Timbre & Frequency Match', desc: 'Acoustic waveform analysis ensuring the registered candidate remains the sole speaker.' },

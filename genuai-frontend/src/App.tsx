@@ -2,6 +2,7 @@ import React, { useState, Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 const HomePage             = lazy(() => import("./pages/HomePage"));
 const EcosystemOverviewPage = lazy(() => import("./pages/EcosystemOverviewPage"));
@@ -64,6 +65,7 @@ export default function App() {
 
   return (
     <Suspense fallback={<PageLoader />}>
+      <ScrollToTop />
       <Routes>
         {/* Public Home Page & Auth Routes */}
         <Route path="/" element={<HomePage />} />
@@ -105,11 +107,8 @@ export default function App() {
                   if (path === "practice") navigate("/practice");
                   else if (path === "search") navigate("/search");
                   else if (path === "career-profile") navigate("/career-profile");
-                  else if (path === "companies") navigate("/companies");
-                  else {
-                    sessionStorage.setItem("genuai_pipeline_stage", "interest");
-                    navigate("/pipeline");
-                  }
+                  else if (path === "my-assessment") navigate("/my-assessment");
+                  else navigate("/companies");
                 }}
               />
             </ProtectedRoute>

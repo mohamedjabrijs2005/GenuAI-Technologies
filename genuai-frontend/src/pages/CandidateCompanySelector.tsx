@@ -27,27 +27,6 @@ export default function CandidateCompanySelector({ user, onBack }: { user?: any;
         for (const item of saved) {
           initialMap[item.companyId] = item;
         }
-      } else {
-        // Pre-select Zoho (Sales Executive) & Apple (Software Engineer) as initial demo selection
-        const zoho = coList.find((c) => c.companyName.toLowerCase().includes('zoho'));
-        const apple = coList.find((c) => c.companyName.toLowerCase().includes('apple'));
-
-        if (zoho && zoho.roles.length > 0) {
-          initialMap[zoho.id] = {
-            companyId: zoho.id,
-            companyName: zoho.companyName,
-            companyRoleId: zoho.roles[0].id,
-            roleTitle: zoho.roles[0].title,
-          };
-        }
-        if (apple && apple.roles.length > 0) {
-          initialMap[apple.id] = {
-            companyId: apple.id,
-            companyName: apple.companyName,
-            companyRoleId: apple.roles[0].id,
-            roleTitle: apple.roles[0].title,
-          };
-        }
       }
 
       setSelectedCompanies(initialMap);

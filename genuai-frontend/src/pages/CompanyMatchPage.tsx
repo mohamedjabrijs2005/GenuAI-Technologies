@@ -16,17 +16,14 @@ export default function CompanyMatchPage({ user, onBack }: { user?: any; onBack?
   useEffect(() => {
     async function loadMatches() {
       const saved = getSavedSelections();
-      const selectionsList: CompanyRoleSelectionItem[] =
-        saved.length > 0
-          ? saved
-          : [
-              { companyId: 101, companyName: 'Zoho', roleTitle: 'Sales Executive' },
-              { companyId: 102, companyName: 'Apple', roleTitle: 'Sales Executive' },
-              { companyId: 103, companyName: 'Google', roleTitle: 'Data Analyst' },
-            ];
+      if (saved.length === 0) {
+        setMatches([]);
+        setLoading(false);
+        return;
+      }
 
       try {
-        const matchData = await getCompanyMatches(user?.id || 1, selectionsList);
+        const matchData = await getCompanyMatches(user?.id || 1, saved);
         setMatches(matchData);
       } catch (err: any) {
         console.error('Failed to load matches:', err);
@@ -69,6 +66,20 @@ export default function CompanyMatchPage({ user, onBack }: { user?: any; onBack?
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-400"></div>
+          </div>
+        ) : matches.length === 0 ? (
+          <div className="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-12 text-center space-y-4">
+            <Building2 className="w-12 h-12 text-slate-500 mx-auto" />
+            <h2 className="text-lg font-bold text-white">No Target Selections Found</h2>
+            <p className="text-sm text-slate-400 max-w-md mx-auto">
+              Please choose target companies and desired roles in Step 1 to generate version-bound match scores.
+            </p>
+            <button
+              onClick={() => navigate('/target-companies')}
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition"
+            >
+              Select Target Companies →
+            </button>
           </div>
         ) : (
           <div className="space-y-6">

@@ -211,10 +211,10 @@ export default function Module1_ProfileResume({ user, onComplete }: Props) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-md mb-xl">
             {[
-              { label: 'ATS Resume Score', value: (analysis.ats_score || 86) + '%', color: 'text-indigo-brand', bg: 'bg-indigo-brand/10', border: 'border-indigo-brand/20' },
-              { label: 'GitHub Quality', value: (analysis.github_score || 89) + '%', color: 'text-indigo-brand-dark', bg: 'bg-indigo-brand/10', border: 'border-indigo-brand/20' },
-              { label: 'LinkedIn Match', value: (analysis.linkedin_score || 92) + '%', color: 'text-success', bg: 'bg-success/10', border: 'border-success/20' },
-              { label: 'Overall Match Score', value: (analysis.match_percentage || 88) + '%', color: 'text-warning-dark', bg: 'bg-warning/10', border: 'border-warning/20' }
+              { label: 'ATS Resume Score', value: (analysis.ats_score ?? 0) + '%', color: 'text-indigo-brand', bg: 'bg-indigo-brand/10', border: 'border-indigo-brand/20' },
+              { label: 'GitHub Quality', value: (analysis.github_score ?? 0) + '%', color: 'text-indigo-brand-dark', bg: 'bg-indigo-brand/10', border: 'border-indigo-brand/20' },
+              { label: 'LinkedIn Match', value: (analysis.linkedin_score ?? 0) + '%', color: 'text-success', bg: 'bg-success/10', border: 'border-success/20' },
+              { label: 'Overall Match Score', value: (analysis.match_percentage ?? 0) + '%', color: 'text-warning-dark', bg: 'bg-warning/10', border: 'border-warning/20' }
             ].map((s, i) => (
               <div key={i} className={`rounded-2xl p-md text-center border ${s.bg} ${s.border}`}>
                 <div className={`${s.color} text-3xl font-black drop-shadow-sm`}>{s.value}</div>
@@ -258,7 +258,7 @@ export default function Module1_ProfileResume({ user, onComplete }: Props) {
           </div>
 
           <button
-            onClick={() => onComplete({ role, github, linkedin, portfolio, photo, analysis, overall: analysis.match_percentage || 88 })}
+            onClick={() => onComplete({ role, github, linkedin, portfolio, photo, analysis, overall: analysis.match_percentage ?? 0 })}
             className="w-full py-md bg-gradient-to-r from-indigo-brand to-[#7C3AED] text-white rounded-xl font-bold text-body-base hover:shadow-[0_4px_15px_rgba(102,126,234,0.4)] hover:scale-[1.01] transition-all cursor-pointer"
           >
             Continue to GenuAI Skill Test →

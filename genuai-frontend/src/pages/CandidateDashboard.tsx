@@ -291,8 +291,8 @@ export default function CandidateDashboard({ user, onLogout, onInterview, onResu
     setLoading(true);
     try {
       const r = await checkATS({ resume_text: resumeText + " github:" + github + " linkedin:" + linkedin, job_description: "Looking for " + role + " with skills in " + skills });
-      setAtsScore(r.data.ats_score || 70);
-    } catch { setAtsScore(70); }
+      setAtsScore(r.data.ats_score ?? 0);
+    } catch { setAtsScore(0); }
     setLoading(false);
     setStep(2);
   };
@@ -308,29 +308,29 @@ export default function CandidateDashboard({ user, onLogout, onInterview, onResu
       const skillsArr = skills.split(",").map((s: string) => s.trim());
 
       const [fakeRes, skillRes, aiRes] = await Promise.all([
-        detectFake({ resume_text: resumeText, skills: skillsArr, test_score: 70, interview_score: 70 }),
+        detectFake({ resume_text: resumeText, skills: skillsArr, test_score: 0, interview_score: 0 }),
         scoreSkills({ answers, cheat_events: cheatCount }),
-        evaluateAI({ resume_text: resumeText, skills: skillsArr, test_score: 70, interview_pitch: pitch, role }),
+        evaluateAI({ resume_text: resumeText, skills: skillsArr, test_score: 0, interview_pitch: pitch, role }),
       ]);
 
       const triangleRes = await runTriangle({
         resume_score: atsScore,
-        interview_score: aiRes.data.interview_score || 70,
-        test_score: skillRes.data.test_score || 70,
-        authenticity_score: fakeRes.data.authenticity_score || 80,
+        interview_score: aiRes.data.interview_score ?? 0,
+        test_score: skillRes.data.test_score ?? 0,
+        authenticity_score: fakeRes.data.authenticity_score ?? 0,
       });
 
       const final: any = {
         ...triangleRes.data, ...aiRes.data,
         ats_score: atsScore,
-        test_score: skillRes.data.test_score || 70,
-        authenticity_score: fakeRes.data.authenticity_score || 80,
+        test_score: skillRes.data.test_score ?? 0,
+        authenticity_score: fakeRes.data.authenticity_score ?? 0,
         cheat_count: cheatCount,
-        key_strengths: aiRes.data.key_strengths || ["Problem Solving", "Communication", "Technical Skills"],
-        improvement_plan: aiRes.data.improvement_plan || ["Practice more coding challenges", "Improve system design knowledge", "Work on communication skills"],
+        key_strengths: aiRes.data.key_strengths || [],
+        improvement_plan: aiRes.data.improvement_plan || [],
       };
 
-      await submitAssessment({ user_id: userId, resume_text: resumeText, skills, ats_score: atsScore, resume_score: atsScore, interview_score: final.interview_score || 70, test_score: final.test_score, consistency_score: final.consistency_score, overall_score: final.overall_score, authenticity_score: final.authenticity_score, verdict: final.verdict, triangle_status: final.triangle_status, salary_min: final.salary_min, salary_max: final.salary_max, improvement_plan: JSON.stringify(final.improvement_plan || []), company_ids: selectedCompanies });
+      await submitAssessment({ user_id: userId, resume_text: resumeText, skills, ats_score: atsScore, resume_score: atsScore, interview_score: final.interview_score ?? 0, test_score: final.test_score, consistency_score: final.consistency_score, overall_score: final.overall_score, authenticity_score: final.authenticity_score, verdict: final.verdict, triangle_status: final.triangle_status, salary_min: final.salary_min, salary_max: final.salary_max, improvement_plan: JSON.stringify(final.improvement_plan || []), company_ids: selectedCompanies });
       await sendEmail({ candidateEmail: userEmail, candidateName: userName, overallScore: final.overall_score, verdict: final.verdict, salaryMin: final.salary_min, salaryMax: final.salary_max, atsScore: final.ats_score || atsScore, testScore: final.test_score || 0, interviewScore: final.interview_score || 0, authenticityScore: final.authenticity_score || 0, triangleStatus: final.triangle_status || "", role, keyStrengths: final.key_strengths || [], improvementPlan: final.improvement_plan || [] });
       setResult(final);
       setStep(4);
@@ -340,11 +340,11 @@ export default function CandidateDashboard({ user, onLogout, onInterview, onResu
 
   const vc = getVerdictColor(result?.verdict || "");
   const radarData = result ? [
-    { s: "ATS", v: result.ats_score },
-    { s: "Test", v: result.test_score },
-    { s: "Interview", v: result.interview_score || 70 },
-    { s: "Authentic", v: result.authenticity_score },
-    { s: "Consistency", v: result.consistency_score },
+    { s: "ATS", v: result.ats_score ?? 0 },
+    { s: "Test", v: result.test_score ?? 0 },
+    { s: "Interview", v: result.interview_score ?? 0 },
+    { s: "Authentic", v: result.authenticity_score ?? 0 },
+    { s: "Consistency", v: result.consistency_score ?? 0 },
   ] : [];
 
   return (

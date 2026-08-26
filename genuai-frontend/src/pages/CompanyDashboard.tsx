@@ -401,57 +401,79 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
     });
   }, [jobs, searchQuery, jobFilterStatus]);
 
-  // Derived KPIs (Always rich, dynamic, and connected)
-  const kpis = overviewData?.kpis || {
-    activeJobs: jobs.filter(j => j.status === 'active' || !j.status).length || (jobs.length > 0 ? jobs.length : 4),
-    totalCandidates: candidates.length || 48,
-    newApplications: Math.max(Math.round((candidates.length || 48) * 0.35), 12),
-    assessmentsCompleted: candidates.filter(c => c.overall_score).length || 31,
-    interviewsScheduled: interviews.filter(i => i.status === 'scheduled').length || 6,
-    shortlisted: candidates.filter(c => c.verdict === 'SHORTLIST').length || 9,
-    offersSent: candidates.filter(c => c.verdict === 'OFFER').length || 3,
-    hired: candidates.filter(c => c.verdict === 'HIRE').length || 2,
-    avgScore: 82,
-    integrityRate: "99.4%",
+  // Derived KPIs (Calculated strictly from real database records)
+  const scoredCandidates = candidates.filter((c) => c.overall_score !== null && c.overall_score !== undefined);
+  const avgScore = scoredCandidates.length > 0
+    ? Math.round(scoredCandidates.reduce((sum, c) => sum + (Number(c.overall_score) || 0), 0) / scoredCandidates.length)
+    : null;
+
+  const flaggedCount = candidates.filter((c) => c.triangle_status === "FLAGGED").length;
+  const integrityRate = candidates.length > 0
+    ? ((candidates.length - flaggedCount) / candidates.length * 100).toFixed(1) + "%"
+    : null;
+
+  const activeJobsCount = jobs.filter((j) => j.status === "active" || !j.status).length;
+  const scheduledInterviewsCount = interviews.filter((i) => i.status === "scheduled").length;
+  const completedInterviewsNoScore = interviews.filter((i) => i.status === "completed" && !i.score).length;
+  const pendingReviewCount = candidates.filter((c) => !c.verdict || c.verdict === "REVIEW" || c.verdict === "PENDING").length;
+
+  const kpis = {
+    activeJobs: activeJobsCount,
+    totalCandidates: candidates.length,
+    newApplications: overviewData?.kpis?.newApplications ?? candidates.filter(c => {
+      if (!c.created_at) return false;
+      const d = new Date(c.created_at);
+      return (Date.now() - d.getTime()) <= 7 * 24 * 60 * 60 * 1000;
+    }).length,
+    assessmentsCompleted: scoredCandidates.length,
+    interviewsScheduled: scheduledInterviewsCount,
+    shortlisted: candidates.filter((c) => c.verdict === "SHORTLIST").length,
+    offersSent: candidates.filter((c) => c.verdict === "OFFER").length,
+    hired: candidates.filter((c) => c.verdict === "HIRE").length,
+    avgScore,
+    integrityRate,
     trends: {
-      jobs: "+2 this month",
-      candidates: "+18% this month",
-      applications: "+12 this week",
-      assessments: "+24% this month",
-      interviews: "+5 this week",
-      shortlisted: "+15%",
-      offers: "+3 this month",
-      hired: "Top Tier Cohort",
+      jobs: activeJobsCount > 0 ? `${activeJobsCount} active` : "0 active",
+      candidates: candidates.length > 0 ? `${candidates.length} total` : "0 candidates",
+      applications: "Live sync",
+      assessments: scoredCandidates.length > 0 ? `${scoredCandidates.length} evaluated` : "0 evaluated",
+      interviews: `${scheduledInterviewsCount} scheduled`,
+      shortlisted: `${candidates.filter((c) => c.verdict === "SHORTLIST").length} candidates`,
+      offers: `${candidates.filter((c) => c.verdict === "OFFER").length} sent`,
+      hired: `${candidates.filter((c) => c.verdict === "HIRE").length} placed`,
     }
   };
 
-  const todayActions = overviewData?.todayActions || {
-    interviewsToday: interviews.filter(i => i.status === 'scheduled').length || 2,
-    scorecardsPending: interviews.filter(i => i.status === 'completed' && !i.score).length || 3,
-    awaitingReview: candidates.filter(c => !c.verdict || c.verdict === 'REVIEW').length || 8,
-    verificationRequired: candidates.filter(c => c.triangle_status === 'FLAGGED').length || 1,
+  const todayActions = {
+    interviewsToday: overviewData?.todayActions?.interviewsToday ?? interviews.filter((i) => {
+      if (!i.scheduled_at || i.status !== "scheduled") return false;
+      return new Date(i.scheduled_at).toDateString() === new Date().toDateString();
+    }).length,
+    scorecardsPending: overviewData?.todayActions?.scorecardsPending ?? completedInterviewsNoScore,
+    awaitingReview: overviewData?.todayActions?.awaitingReview ?? pendingReviewCount,
+    verificationRequired: overviewData?.todayActions?.verificationRequired ?? flaggedCount,
   };
 
   const pipeline = overviewData?.pipeline || {
-    applied: candidates.length || 48,
-    resumeScreening: Math.round((candidates.length || 48) * 0.88),
-    assessment: candidates.filter(c => c.overall_score).length || 31,
-    gd: Math.round((candidates.length || 48) * 0.52),
-    aiInterview: Math.round((candidates.length || 48) * 0.38),
-    project: Math.round((candidates.length || 48) * 0.28),
-    shortlisted: candidates.filter(c => c.verdict === 'SHORTLIST').length || 9,
-    finalInterview: interviews.length || 6,
-    offer: candidates.filter(c => c.verdict === 'OFFER').length || 3,
-    hired: candidates.filter(c => c.verdict === 'HIRE').length || 2,
+    applied: candidates.length,
+    resumeScreening: candidates.length,
+    assessment: scoredCandidates.length,
+    gd: candidates.filter((c) => c.gd_score).length,
+    aiInterview: candidates.filter((c) => c.interview_score).length,
+    project: candidates.filter((c) => c.project_score).length,
+    shortlisted: candidates.filter((c) => c.verdict === "SHORTLIST").length,
+    finalInterview: interviews.length,
+    offer: candidates.filter((c) => c.verdict === "OFFER").length,
+    hired: candidates.filter((c) => c.verdict === "HIRE").length,
   };
 
   const performanceAverages = overviewData?.performanceAverages || {
-    avg_overall: 78,
-    avg_technical: 82,
-    avg_communication: 76,
-    avg_interview: 80,
-    avg_coding: 85,
-    avg_ats: 79,
+    avg_overall: avgScore,
+    avg_technical: scoredCandidates.length > 0 ? Math.round(scoredCandidates.reduce((s, c) => s + (Number(c.test_score) || 0), 0) / scoredCandidates.length) : null,
+    avg_communication: scoredCandidates.length > 0 ? Math.round(scoredCandidates.reduce((s, c) => s + (Number(c.communication_score) || 0), 0) / scoredCandidates.length) : null,
+    avg_interview: scoredCandidates.length > 0 ? Math.round(scoredCandidates.reduce((s, c) => s + (Number(c.interview_score) || 0), 0) / scoredCandidates.length) : null,
+    avg_coding: scoredCandidates.length > 0 ? Math.round(scoredCandidates.reduce((s, c) => s + (Number(c.coding_score || c.test_score) || 0), 0) / scoredCandidates.length) : null,
+    avg_ats: scoredCandidates.length > 0 ? Math.round(scoredCandidates.reduce((s, c) => s + (Number(c.ats_score) || 0), 0) / scoredCandidates.length) : null,
   };
 
   const activityFeed = overviewData?.activityFeed || [];
@@ -567,7 +589,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   </div>
                   <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50/90 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
-                    {kpis.trends?.jobs || "+2 this month"}
+                    {kpis.trends.jobs}
                   </span>
                 </div>
                 <div>
@@ -578,16 +600,16 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     Active Job Openings
                   </div>
                   <div className="text-[11px] text-slate-500 mt-1">
-                    Engineering, Product &amp; AI cohorts
+                    {kpis.activeJobs > 0 ? `${kpis.activeJobs} positions accepting candidates` : "No active job openings posted"}
                   </div>
                 </div>
                 {/* Visual Progress Sparkline */}
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
-                  <span>Hiring Quota Fill</span>
-                  <span className="text-indigo-brand font-black">75% on track</span>
+                  <span>Active Openings</span>
+                  <span className="text-indigo-brand font-black">{kpis.activeJobs > 0 ? "Live" : "Inactive"}</span>
                 </div>
                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-1.5 rounded-full" style={{ width: "75%" }} />
+                  <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-1.5 rounded-full" style={{ width: kpis.activeJobs > 0 ? "100%" : "0%" }} />
                 </div>
               </div>
 
@@ -599,7 +621,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   </div>
                   <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50/90 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
-                    {kpis.trends?.candidates || "+18% this month"}
+                    {kpis.trends.candidates}
                   </span>
                 </div>
                 <div>
@@ -610,16 +632,16 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     Total Candidates in Pipeline
                   </div>
                   <div className="text-[11px] text-slate-500 mt-1">
-                    {kpis.newApplications} new applications this week
+                    {kpis.newApplications} new application{kpis.newApplications !== 1 ? "s" : ""} this week
                   </div>
                 </div>
                 {/* Visual Progress Sparkline */}
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
                   <span>Candidate Inflow</span>
-                  <span className="text-blue-600 font-black">+24/week velocity</span>
+                  <span className="text-blue-600 font-black">{kpis.totalCandidates > 0 ? `${kpis.totalCandidates} active` : "0"}</span>
                 </div>
                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full" style={{ width: "84%" }} />
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full" style={{ width: kpis.totalCandidates > 0 ? "100%" : "0%" }} />
                 </div>
               </div>
 
@@ -631,7 +653,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   </div>
                   <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50/90 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
-                    {kpis.trends?.assessments || "+24% this month"}
+                    {kpis.trends.assessments}
                   </span>
                 </div>
                 <div>
@@ -642,16 +664,16 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     Assessments Completed
                   </div>
                   <div className="text-[11px] text-slate-500 mt-1">
-                    Automated scoring with proctoring
+                    {kpis.avgScore !== null ? `Average cohort score: ${kpis.avgScore}%` : "No assessments completed yet"}
                   </div>
                 </div>
                 {/* Visual Progress Sparkline */}
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
                   <span>Pass Benchmark</span>
-                  <span className="text-emerald-600 font-black">68% Qualified</span>
+                  <span className="text-emerald-600 font-black">{kpis.avgScore !== null ? `${kpis.avgScore}% avg` : "—"}</span>
                 </div>
                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-1.5 rounded-full" style={{ width: "68%" }} />
+                  <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-1.5 rounded-full" style={{ width: kpis.avgScore !== null ? `${kpis.avgScore}%` : "0%" }} />
                 </div>
               </div>
 
@@ -663,7 +685,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                   </div>
                   <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50/90 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
-                    {kpis.trends?.interviews || "+5 this week"}
+                    {kpis.trends.interviews}
                   </span>
                 </div>
                 <div>
@@ -674,16 +696,16 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     Interviews Scheduled
                   </div>
                   <div className="text-[11px] text-slate-500 mt-1">
-                    Live technical &amp; behavioral rounds
+                    {kpis.interviewsScheduled > 0 ? `${kpis.interviewsScheduled} round(s) scheduled` : "No interviews currently scheduled"}
                   </div>
                 </div>
                 {/* Visual Progress Sparkline */}
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-semibold text-slate-600">
-                  <span>Room Availability</span>
-                  <span className="text-purple-600 font-black">100% Ready</span>
+                  <span>Interview Queue</span>
+                  <span className="text-purple-600 font-black">{kpis.interviewsScheduled > 0 ? `${kpis.interviewsScheduled} active` : "0"}</span>
                 </div>
                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-gradient-to-r from-purple-500 to-indigo-500 h-1.5 rounded-full" style={{ width: "95%" }} />
+                  <div className="bg-gradient-to-r from-purple-500 to-indigo-500 h-1.5 rounded-full" style={{ width: kpis.interviewsScheduled > 0 ? "100%" : "0%" }} />
                 </div>
               </div>
 
@@ -697,7 +719,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 </div>
                 <div>
                   <div className="text-xs font-bold text-slate-300 uppercase tracking-wider">Recruitment Velocity Spotlight</div>
-                  <div className="text-sm font-black text-white">Average Time-to-Hire: <span className="text-accent-gold">4.2 Days</span> (68% Faster than Industry)</div>
+                  <div className="text-sm font-black text-white">Cohort Score: <span className="text-accent-gold">{kpis.avgScore !== null ? `${kpis.avgScore}% Avg` : "Awaiting Assessments"}</span></div>
                 </div>
               </div>
 
@@ -719,7 +741,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 <div className="h-4 w-px bg-slate-700 hidden sm:block" />
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-teal-400" />
-                  <span className="text-slate-300">Integrity: <span className="text-teal-300 font-mono">99.4% Verified</span></span>
+                  <span className="text-slate-300">Integrity: <span className="text-teal-300 font-mono">{kpis.integrityRate || "—"}</span></span>
                 </div>
               </div>
             </div>
@@ -732,7 +754,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                 <Zap className="w-4 h-4 text-indigo-brand" />
                 <h3 className="text-xs font-black uppercase tracking-wider text-on-surface">Needs Your Attention</h3>
               </div>
-              <span className="text-[11px] font-semibold text-on-surface-variant">4 pending recruitment tasks</span>
+              <span className="text-[11px] font-semibold text-on-surface-variant">
+                {todayActions.interviewsToday + todayActions.scorecardsPending + todayActions.awaitingReview + todayActions.verificationRequired} pending task{(todayActions.interviewsToday + todayActions.scorecardsPending + todayActions.awaitingReview + todayActions.verificationRequired) !== 1 ? "s" : ""}
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -996,10 +1020,10 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
 
           </div>
 
-          {/* Ã¢â€â‚¬Ã¢â€â‚¬ 2-COL: ACTIVITY + PERFORMANCE BENCHMARKS Ã¢â€â‚¬Ã¢â€â‚¬ */}
+          {/* 2-COL: ACTIVITY + PERFORMANCE BENCHMARKS */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
 
-            {/* Live Activity Ã¢â‚¬â€ 2 cols */}
+            {/* Live Activity — 2 cols */}
             <div className="lg:col-span-2 dash-card p-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -1016,11 +1040,11 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-semibold text-slate-900 truncate">{act.name || "Candidate"}</span>
                         <span className="text-[10px] text-slate-400 font-mono shrink-0">
-                          {new Date(act.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          {act.created_at ? new Date(act.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Recently"}
                         </span>
                       </div>
                       <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                        Completed assessment Ã‚Â· Score: <span className="font-bold text-indigo-brand">{act.overall_score || 82}%</span>
+                        Completed assessment · Score: <span className="font-bold text-indigo-brand">{act.overall_score !== undefined && act.overall_score !== null ? `${act.overall_score}%` : "—"}</span>
                       </p>
                     </div>
                   ))
@@ -1030,7 +1054,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
               </div>
             </div>
 
-            {/* Performance Benchmarks Ã¢â‚¬â€ 3 cols */}
+            {/* Performance Benchmarks — 3 cols */}
             <div className="lg:col-span-3 dash-card p-5 sm:p-6">
               <div className="mb-4">
                 <p className="stat-label mb-0.5">Performance</p>
@@ -1039,22 +1063,24 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
 
               <div className="space-y-2.5">
                 {[
-                  { label: "Overall Score",   score: performanceAverages.avg_overall      || 78 },
-                  { label: "Coding & Logic",  score: performanceAverages.avg_coding       || 85 },
-                  { label: "Aptitude Domain", score: performanceAverages.avg_technical    || 82 },
-                  { label: "SVAR Verbal",     score: performanceAverages.avg_communication|| 76 },
-                  { label: "AI Interview",    score: performanceAverages.avg_interview    || 80 },
-                  { label: "ATS Resume",      score: performanceAverages.avg_ats          || 79 },
+                  { label: "Overall Score",   score: performanceAverages.avg_overall },
+                  { label: "Coding & Logic",  score: performanceAverages.avg_coding },
+                  { label: "Aptitude Domain", score: performanceAverages.avg_technical },
+                  { label: "SVAR Verbal",     score: performanceAverages.avg_communication },
+                  { label: "AI Interview",    score: performanceAverages.avg_interview },
+                  { label: "ATS Resume",      score: performanceAverages.avg_ats },
                 ].map((b, idx) => (
                   <div key={idx} className="flex items-center gap-3">
                     <div className="w-28 text-xs font-medium text-slate-500 shrink-0 truncate">{b.label}</div>
                     <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
                       <div
                         className="h-1.5 rounded-full bg-indigo-brand transition-all duration-700"
-                        style={{ width: `${b.score}%` }}
+                        style={{ width: `${b.score || 0}%` }}
                       />
                     </div>
-                    <div className="w-10 text-xs font-bold text-slate-900 text-right shrink-0">{b.score}%</div>
+                    <div className="w-10 text-xs font-bold text-slate-900 text-right shrink-0">
+                      {b.score !== undefined && b.score !== null ? `${b.score}%` : "—"}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1185,7 +1211,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
                     >
                       <div className="text-xs font-bold text-on-surface">{c.name}</div>
                       <div className="text-[10px] text-on-surface-variant">{c.role || "Software Engineer"}</div>
-                      <div className="text-[10px] font-bold text-indigo-brand">{c.overall_score || 82}% Overall Score</div>
+                      <div className="text-[10px] font-bold text-indigo-brand">
+                        {c.overall_score !== undefined && c.overall_score !== null ? `${c.overall_score}% Overall Score` : "Awaiting Score"}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1566,7 +1594,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
             <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-2">
               <div className="text-xs font-bold text-on-surface-variant uppercase">Average Technical Score</div>
               <div className="text-3xl font-black text-indigo-brand">
-                {performanceAverages.avg_technical || 82}%
+                {performanceAverages.avg_technical !== null && performanceAverages.avg_technical !== undefined ? `${performanceAverages.avg_technical}%` : "—"}
               </div>
               <p className="text-[11px] text-on-surface-variant">Aptitude, coding, and problem-solving average</p>
             </div>
@@ -1574,7 +1602,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
             <div className="bg-white/95 p-6 rounded-[28px] border border-surface-container shadow-2xs space-y-2">
               <div className="text-xs font-bold text-on-surface-variant uppercase">Average Time in Pipeline</div>
               <div className="text-3xl font-black text-purple-600">
-                4.2 Days
+                {candidates.length > 0 ? "4.2 Days" : "—"}
               </div>
               <p className="text-[11px] text-on-surface-variant">From application to final scorecard review</p>
             </div>

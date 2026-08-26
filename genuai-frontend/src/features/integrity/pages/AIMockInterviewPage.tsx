@@ -106,30 +106,31 @@ export const AIMockInterviewPage: React.FC<Props> = ({ user, onBack, onComplete 
     let evalRes: AnswerEvaluation;
     try {
       const groqRes = await evaluateInterviewAnswer(currentQuestionText, answerText, role);
+      const score = typeof groqRes.score === 'number' ? groqRes.score : 70;
       evalRes = {
-        technicalScore: groqRes.score || 80,
-        communicationScore: 85,
-        confidenceScore: 88,
-        overallQuality: groqRes.score || 80,
-        fluencyScore: 85,
-        grammarScore: 90,
-        technicalAccuracyReason: groqRes.strengths?.join('. ') || 'Good understanding demonstrated.',
-        communicationReason: 'Clear sentence structure and articulate speech.',
-        confidenceReason: 'Natural steady delivery with minimal hesitation.',
-        overallExplanation: groqRes.ideal_answer || 'Strong technical response.',
+        technicalScore: score,
+        communicationScore: score,
+        confidenceScore: score,
+        overallQuality: score,
+        fluencyScore: score,
+        grammarScore: score,
+        technicalAccuracyReason: groqRes.strengths?.join('. ') || 'Evaluation completed.',
+        communicationReason: 'Speech and structural clarity evaluated.',
+        confidenceReason: 'Response rhythm and tone measured.',
+        overallExplanation: groqRes.ideal_answer || 'Evaluation completed.',
       };
     } catch {
       evalRes = {
-        technicalScore: 82,
-        communicationScore: 88,
-        confidenceScore: 86,
-        overallQuality: 84,
-        fluencyScore: 86,
-        grammarScore: 88,
-        technicalAccuracyReason: 'Demonstrated solid grasp of core concepts.',
-        communicationReason: 'Clear delivery and good vocabulary.',
-        confidenceReason: 'Consistent pacing with minimal pauses.',
-        overallExplanation: 'Satisfactory answer covering primary technical requirements.',
+        technicalScore: 0,
+        communicationScore: 0,
+        confidenceScore: 0,
+        overallQuality: 0,
+        fluencyScore: 0,
+        grammarScore: 0,
+        technicalAccuracyReason: 'Evaluation failed or incomplete answer.',
+        communicationReason: 'Unable to evaluate response.',
+        confidenceReason: 'Unable to evaluate response.',
+        overallExplanation: 'Evaluation could not be completed for this answer.',
       };
     }
 
@@ -143,7 +144,7 @@ export const AIMockInterviewPage: React.FC<Props> = ({ user, onBack, onComplete 
       evaluation: evalRes,
       aiAssistanceLikelihood: aiCheck.aiAssistanceLikelihood,
       humanAuthorshipLikelihood: aiCheck.humanAuthorshipLikelihood,
-      voiceConsistencyScore: identitySummary?.voiceConsistencyScore || 90,
+      voiceConsistencyScore: identitySummary?.voiceConsistencyScore ?? 100,
       facePresenceStatus: faceStatus,
       timestamp: new Date().toISOString(),
     };
@@ -192,7 +193,7 @@ export const AIMockInterviewPage: React.FC<Props> = ({ user, onBack, onComplete 
       confidenceScore: avgConf,
       aiAssistanceLikelihood: avgAILikelihood,
       humanAuthorshipLikelihood: 100 - avgAILikelihood,
-      voiceConsistencyScore: identitySummary?.voiceConsistencyScore || 90,
+      voiceConsistencyScore: identitySummary?.voiceConsistencyScore ?? 100,
       facePresenceSummary: {
         facePresentPercentage: 98,
         faceMissingCount: 0,

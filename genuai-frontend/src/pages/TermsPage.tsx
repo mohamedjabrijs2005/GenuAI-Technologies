@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   ShieldCheck, FileText, Lock, Scale, AlertTriangle,
   Eye, RefreshCw, UserCheck, CheckCircle2
@@ -7,6 +7,11 @@ import { OrientationHeader } from '../components/orientation/OrientationHeader';
 import { OrientationFooter } from '../components/orientation/OrientationFooter';
 
 export default function TermsPage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
   const sections = [
     {
       num: '01',

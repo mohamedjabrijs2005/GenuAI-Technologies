@@ -211,36 +211,36 @@ export default function AdminDashboard({ user, onLogout }: Props) {
   };
 
   // Derived KPIs
-  const kpis = overviewData?.kpis || {
-    totalCompanies: companiesList.length || 14,
-    activeCompanies: companiesList.filter(c => c.status === 'active').length || 14,
-    totalCandidates: candidatesList.length || 1248,
-    totalJobs: jobsList.length || 24,
-    totalAssessments: overviewData?.kpis?.totalAssessments || 840,
-    totalInterviews: overviewData?.kpis?.totalInterviews || 312,
-    successfulHires: overviewData?.kpis?.successfulHires || 32,
-    activeUsers: usersList.length || 1262,
+  const kpis = {
+    totalCompanies: companiesList.length,
+    activeCompanies: companiesList.filter(c => c.status === 'active' || !c.status).length,
+    totalCandidates: candidatesList.length,
+    totalJobs: jobsList.length,
+    totalAssessments: overviewData?.kpis?.totalAssessments ?? candidatesList.filter(c => c.overall_score).length,
+    totalInterviews: overviewData?.kpis?.totalInterviews ?? 0,
+    successfulHires: overviewData?.kpis?.successfulHires ?? candidatesList.filter(c => c.verdict === 'HIRE').length,
+    activeUsers: usersList.length,
     trends: {
-      companies: "+4 this month",
-      candidates: "+22% this month",
-      jobs: "+12 this week",
-      assessments: "+35% this month",
-      interviews: "+18% this month",
-      hires: "Top Tier Placement",
+      companies: `${companiesList.length} registered`,
+      candidates: `${candidatesList.length} total`,
+      jobs: `${jobsList.length} posted`,
+      assessments: "Real-time sync",
+      interviews: "Active rounds",
+      hires: "Platform verified",
     }
   };
 
   const liveMonitor = {
-    activeTakingTests: 42,
-    activeInterviews: 18,
-    onlineCompanies: 7,
+    activeTakingTests: candidatesList.filter(c => !c.overall_score && c.role).length,
+    activeInterviews: 0,
+    onlineCompanies: companiesList.filter(c => c.status === 'active').length,
     systemStatus: "All Systems Operational",
   };
 
   const todayActions = {
-    pendingCompanyApprovals: 2,
-    flaggedIntegritySignals: verificationEvents.filter(v => v.flagged).length || 5,
-    activeAnnouncements: broadcasts.length || 3,
+    pendingCompanyApprovals: companiesList.filter(c => c.status === 'pending').length,
+    flaggedIntegritySignals: verificationEvents.filter(v => v.flagged).length,
+    activeAnnouncements: broadcasts.length,
     systemAnomalies: 0,
   };
 

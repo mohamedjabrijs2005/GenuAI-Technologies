@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircle2, Zap, Building2, GraduationCap } from 'lucide-react';
 import { OrientationHeader } from '../components/orientation/OrientationHeader';
 import { OrientationFooter } from '../components/orientation/OrientationFooter';
 
 export default function PricingPage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
   return (
     <div className="min-h-screen bg-slate-50/70 text-slate-900 font-sans pb-16">
       <OrientationHeader currentStep={3} title="Ecosystem Pricing" />

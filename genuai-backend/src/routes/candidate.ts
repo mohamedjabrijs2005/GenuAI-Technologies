@@ -150,4 +150,62 @@ router.put('/profile/:userId', async (req, res) => {
   }
 });
 
+// ─────────────────────────────────────────────
+// 3. GET /candidate/:id/company-matches — Real candidate company match scores
+// ─────────────────────────────────────────────
+router.get('/:userId/company-matches', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const matchesRes = await pool.query(
+      `SELECT ccm.id, ccm.candidate_id, ccm.company_id, ccm.configuration_version_id,
+              ccm.match_score, ccm.score_components, ccm.strengths, ccm.weak_areas,
+              ccm.explanation, ccm.created_at,
+              COALESCE(cp.company_name, u.name, 'Company #' || ccm.company_id) as company_name,
+              cr.title as role_title,
+              ccv.version_number, ccv.created_at as version_locked_at,
+              cag.id as group_id, cag.assessment_pattern_hash, cag.pattern_description
+       FROM candidate_company_matches ccm
+       LEFT JOIN company_profiles cp ON ccm.company_id = cp.user_id
+       LEFT JOIN users u ON ccm.company_id = u.id
+       LEFT JOIN company_configuration_versions ccv ON ccm.configuration_version_id = ccv.id
+       LEFT JOIN company_roles cr ON ccv.company_role_id = cr.id
+       LEFT JOIN candidate_group_memberships cgm ON ccm.candidate_id = cgm.candidate_id
+       LEFT JOIN candidate_assessment_groups cag ON cgm.group_id = cag.id
+       WHERE ccm.candidate_id = $1
+       ORDER BY ccm.created_at DESC`,
+      [userId]
+    );
+
+    res.json({ matches: matchesRes.rows });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+// 4. GET /candidate/match/groups/:candidateId or /match/groups/:candidateId
+// ─────────────────────────────────────────────
+router.get('/match/groups/:candidateId', async (req, res) => {
+  try {
+    const { candidateId } = req.params;
+
+    const groupsRes = await pool.query(
+      `SELECT cgm.id as membership_id, cgm.candidate_id, cgm.group_id, cgm.dynamic_path_id, cgm.created_at,
+              cag.canonical_role_id, cag.configuration_version_id, cag.assessment_pattern_hash, cag.pattern_description,
+              rt.canonical_name as canonical_role_name
+       FROM candidate_group_memberships cgm
+       JOIN candidate_assessment_groups cag ON cgm.group_id = cag.id
+       LEFT JOIN role_taxonomy rt ON cag.canonical_role_id = rt.id
+       WHERE cgm.candidate_id = $1
+       ORDER BY cgm.created_at DESC`,
+      [candidateId]
+    );
+
+    res.json({ groups: groupsRes.rows });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

@@ -114,7 +114,7 @@ export default function CandidateReadinessPage() {
                 />
                 <path
                   className="text-indigo-500"
-                  strokeDasharray={`${readiness?.overallReadiness || 84}, 100`}
+                  strokeDasharray={`${readiness?.overallReadiness ?? 0}, 100`}
                   strokeWidth="3.5"
                   strokeLinecap="round"
                   stroke="currentColor"
@@ -123,12 +123,12 @@ export default function CandidateReadinessPage() {
                 />
               </svg>
               <div className="absolute flex flex-col items-center">
-                <span className="text-4xl font-black text-white">{readiness?.overallReadiness || 84}%</span>
+                <span className="text-4xl font-black text-white">{readiness?.overallReadiness ?? 0}%</span>
                 <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Readiness</span>
               </div>
             </div>
             <span className="text-xs font-bold text-emerald-400 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-              High Market Readiness
+              {(readiness?.overallReadiness ?? 0) >= 70 ? "High Market Readiness" : "Assessment in Progress"}
             </span>
           </div>
 

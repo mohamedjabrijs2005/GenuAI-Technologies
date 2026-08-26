@@ -52,6 +52,44 @@ app.use('/subscriptions', subscriptionsRoutes);
 app.use('/candidate', candidateRoutes);
 app.use('/candidate/interests', candidateInterestsRoutes);
 app.use('/genuai-works', genuaiWorksRoutes);
+
+// Direct top-level module library route (Fix 3)
+app.get('/modules', async (_req, res) => {
+  try {
+    const pool = (await import('./db')).default;
+    const result = await pool.query(
+      `SELECT id, name, canonical_name, category, description, is_composite, status
+       FROM assessment_modules
+       WHERE status = 'active' OR status IS NULL
+       ORDER BY id ASC`
+    );
+    res.json({ modules: result.rows });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Direct top-level candidate match groups route (Fix 3)
+app.get('/match/groups/:candidateId', async (req, res) => {
+  try {
+    const pool = (await import('./db')).default;
+    const { candidateId } = req.params;
+    const groupsRes = await pool.query(
+      `SELECT cgm.id as membership_id, cgm.candidate_id, cgm.group_id, cgm.dynamic_path_id, cgm.created_at,
+              cag.canonical_role_id, cag.configuration_version_id, cag.assessment_pattern_hash, cag.pattern_description,
+              rt.canonical_name as canonical_role_name
+       FROM candidate_group_memberships cgm
+       JOIN candidate_assessment_groups cag ON cgm.group_id = cag.id
+       LEFT JOIN role_taxonomy rt ON cag.canonical_role_id = rt.id
+       WHERE cgm.candidate_id = $1
+       ORDER BY cgm.created_at DESC`,
+      [candidateId]
+    );
+    res.json({ groups: groupsRes.rows });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
 app.use('/skill', skillRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/coach', coachRoutes);

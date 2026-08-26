@@ -1,0 +1,11 @@
+{
+  "name": "GenuAI Technologies",
+  "description": "AI-powered recruitment intelligence ecosystem that verifies skills, detects recruitment fraud, and connects candidates with multiple companies through one trusted ecosystem.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
