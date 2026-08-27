@@ -204,23 +204,78 @@ export const saveCandidateSelections = async (
   candidateId: number | string,
   selections: CompanyRoleSelectionItem[]
 ): Promise<boolean> => {
+  const sanitized = sanitizeSelections(selections);
   try {
-    await apiClient.post(`/candidate/interests/${candidateId}`, { selections });
-    localStorage.setItem('genuai_selections', JSON.stringify(selections));
-    return true;
-  } catch {
-    localStorage.setItem('genuai_selections', JSON.stringify(selections));
-    return true;
+    await apiClient.post(`/candidate/interests/${candidateId}`, { selections: sanitized });
+  } catch (e) {
+    console.warn('[genuaiWorks] API save selections fallback:', e);
   }
+  localStorage.setItem('genuai_selections', JSON.stringify(sanitized));
+  return true;
 };
 
-// 5. Get candidate saved selections
+// Helper to sanitize & deduplicate company role selections
+export const sanitizeSelections = (list: CompanyRoleSelectionItem[]): CompanyRoleSelectionItem[] => {
+  if (!Array.isArray(list)) return [];
+  const seen = new Set<string>();
+  const valid: CompanyRoleSelectionItem[] = [];
+
+  const isBogusName = (name: string = '') => {
+    const l = name.toLowerCase().trim();
+    return (
+      l.includes('mohamed jabri') ||
+      l.includes('demo company') ||
+      l.includes('nigga') ||
+      l === 'company' ||
+      l === 'test' ||
+      l === 'test company' ||
+      l.length === 0
+    );
+  };
+
+  for (const item of list) {
+    if (!item || isBogusName(item.companyName)) continue;
+    const key = `${item.companyName.trim().toLowerCase()}-${(item.roleTitle || '').trim().toLowerCase()}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      valid.push({
+        companyId: item.companyId,
+        companyName: item.companyName.trim(),
+        companyRoleId: item.companyRoleId,
+        roleTitle: item.roleTitle?.trim() || 'Software Engineer',
+      });
+    }
+  }
+
+  return valid;
+};
+
+// 5. Get candidate saved selections with auto-purge of invalid test entries
 export const getSavedSelections = (): CompanyRoleSelectionItem[] => {
   try {
     const stored = localStorage.getItem('genuai_selections');
-    return stored ? JSON.parse(stored) : [];
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    const sanitized = sanitizeSelections(parsed);
+    if (sanitized.length !== parsed.length) {
+      localStorage.setItem('genuai_selections', JSON.stringify(sanitized));
+    }
+    return sanitized;
   } catch {
+    localStorage.removeItem('genuai_selections');
     return [];
+  }
+};
+
+// 5b. Clear candidate saved selections from storage & backend
+export const clearSavedSelections = async (candidateId?: number | string): Promise<void> => {
+  try {
+    localStorage.removeItem('genuai_selections');
+    if (candidateId) {
+      await apiClient.delete(`/candidate/interests/${candidateId}`);
+    }
+  } catch (e) {
+    console.warn('[genuaiWorks] Clear selections notice:', e);
   }
 };
 

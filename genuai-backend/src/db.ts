@@ -577,6 +577,37 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
         -- Extend jobs table to link company_roles
         ALTER TABLE jobs ADD COLUMN IF NOT EXISTS company_role_id INTEGER REFERENCES company_roles(id);
 
+        -- Clean up bogus/test company accounts and test candidate interests
+        DELETE FROM candidate_role_interests 
+        WHERE company_id IN (
+          SELECT id FROM users 
+          WHERE role = 'company' 
+            AND (LOWER(name) LIKE '%mohamed jabri%' 
+                 OR LOWER(name) LIKE '%demo company%' 
+                 OR LOWER(name) LIKE '%nigga%' 
+                 OR LOWER(TRIM(name)) = 'company' 
+                 OR LOWER(TRIM(name)) = 'test')
+        );
+
+        DELETE FROM candidate_company_interests 
+        WHERE company_id IN (
+          SELECT id FROM users 
+          WHERE role = 'company' 
+            AND (LOWER(name) LIKE '%mohamed jabri%' 
+                 OR LOWER(name) LIKE '%demo company%' 
+                 OR LOWER(name) LIKE '%nigga%' 
+                 OR LOWER(TRIM(name)) = 'company' 
+                 OR LOWER(TRIM(name)) = 'test')
+        );
+
+        DELETE FROM users 
+        WHERE role = 'company' 
+          AND (LOWER(name) LIKE '%mohamed jabri%' 
+               OR LOWER(name) LIKE '%demo company%' 
+               OR LOWER(name) LIKE '%nigga%' 
+               OR LOWER(TRIM(name)) = 'company' 
+               OR LOWER(TRIM(name)) = 'test');
+
         -- Indexes for performance
         CREATE INDEX IF NOT EXISTS idx_cand_company_interests ON candidate_company_interests(candidate_id);
         CREATE INDEX IF NOT EXISTS idx_cand_role_interests ON candidate_role_interests(candidate_id);

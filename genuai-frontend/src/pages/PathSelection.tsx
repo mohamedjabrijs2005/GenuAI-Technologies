@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getSavedSelections, CompanyRoleSelectionItem } from '../services/genuaiWorksService';
+import { getSavedSelections, clearSavedSelections, CompanyRoleSelectionItem } from '../services/genuaiWorksService';
 import { GenuAILogo } from '../components/common/GenuAILogo';
 
 interface Props {
@@ -17,6 +17,11 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
     const saved = getSavedSelections();
     setSavedSelections(saved);
   }, []);
+
+  const handleResetTargets = async () => {
+    await clearSavedSelections(user?.id || user?.user?.id);
+    setSavedSelections([]);
+  };
 
   const hasActivePath = savedSelections.length > 0;
 
@@ -85,12 +90,20 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
                   Continue Your Dynamic Assessment
                 </h2>
                 <p className="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed font-normal">
-                  You have an active dynamic assessment path configured for{' '}
-                  <strong className="text-slate-900">
-                    {savedSelections.map((s) => `${s.companyName} (${s.roleTitle})`).join(', ')}
-                  </strong>
-                  . Complete remaining modules to update your match scores across all selected employers simultaneously.
+                  You have an active role-aware assessment path configured. Complete remaining modules to update your match scores across your selected employers simultaneously.
                 </p>
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {savedSelections.map((s, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-lg border border-slate-200/80 transition-colors"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
+                      <span>{s.companyName}</span>
+                      <span className="text-slate-400 font-normal">({s.roleTitle})</span>
+                    </span>
+                  ))}
+                </div>
               </div>
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                 <button
@@ -107,6 +120,14 @@ export default function PathSelection({ user, onSelect, onLogout }: Props) {
                   className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-3.5 rounded-2xl transition-all text-xs sm:text-sm uppercase tracking-wider w-full sm:w-auto cursor-pointer"
                 >
                   <span>Change Targets</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetTargets}
+                  className="inline-flex items-center justify-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3.5 py-3.5 rounded-2xl transition-all text-xs uppercase tracking-wider w-full sm:w-auto cursor-pointer border border-rose-200/60"
+                  title="Clear all saved target selections"
+                >
+                  <span>Reset</span>
                 </button>
               </div>
             </div>

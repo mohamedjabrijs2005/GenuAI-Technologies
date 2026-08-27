@@ -46,7 +46,12 @@ router.get('/companies', async (_req, res) => {
         `SELECT u.id as company_id, COALESCE(cp.company_name, u.name) as company_name, cp.industry, cp.location
          FROM users u
          LEFT JOIN company_profiles cp ON u.id = cp.user_id
-         WHERE u.role = 'company' AND (u.status = 'active' OR u.status IS NULL)`
+         WHERE u.role = 'company' 
+           AND (u.status = 'active' OR u.status IS NULL)
+           AND LOWER(u.name) NOT LIKE '%mohamed jabri%'
+           AND LOWER(u.name) NOT LIKE '%demo company%'
+           AND LOWER(u.name) NOT LIKE '%nigga%'
+           AND LOWER(TRIM(u.name)) NOT IN ('company', 'test', 'admin')`
       );
 
       if (dbCompanies.rows.length > 0) {
