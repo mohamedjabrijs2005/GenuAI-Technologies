@@ -338,10 +338,14 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
           company_role_id INTEGER REFERENCES company_roles(id) ON DELETE CASCADE,
           canonical_role_id INTEGER REFERENCES role_taxonomy(id),
+          interest_status VARCHAR(50) DEFAULT 'INTERESTED',
           status VARCHAR(50) DEFAULT 'active',
           created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW(),
           UNIQUE(candidate_id, company_id, company_role_id)
         );
+        ALTER TABLE candidate_role_interests ADD COLUMN IF NOT EXISTS interest_status VARCHAR(50) DEFAULT 'INTERESTED';
+        ALTER TABLE candidate_role_interests ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();
 
         CREATE TABLE IF NOT EXISTS candidate_skill_profiles (
           id SERIAL PRIMARY KEY,
@@ -618,8 +622,61 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
         CREATE INDEX IF NOT EXISTS idx_matches_company ON candidate_company_matches(company_id);
         CREATE INDEX IF NOT EXISTS idx_config_versions_role ON company_configuration_versions(company_role_id);
         CREATE INDEX IF NOT EXISTS idx_groups_composite ON candidate_assessment_groups(canonical_role_id, configuration_version_id);
+
+        -- Ensure standard taxonomy roles
+        INSERT INTO role_taxonomy (canonical_name, category, description)
+        VALUES 
+          ('Software Engineer', 'Engineering', 'Core software engineering and application development'),
+          ('Frontend Engineer', 'Engineering', 'Client-side web and mobile interface engineering'),
+          ('Backend Engineer', 'Engineering', 'Server-side systems, API development, and data architecture'),
+          ('Data Analyst', 'Analytics', 'Data analytics, reporting, and statistical modeling'),
+          ('Management Resources', 'Management', 'Resource allocation, project coordination, and operations'),
+          ('Sales Executive', 'Sales', 'Enterprise sales, client relations, and growth strategy'),
+          ('Associate Consultant', 'Consulting', 'Technical consulting, system design, and client advisory')
+        ON CONFLICT (canonical_name) DO NOTHING;
+
+        -- Ensure standard enterprise companies
+        const enterpriseCompanies = [
+          { name: 'Zoho Corporation', email: 'careers@zoho.com', industry: 'SaaS & Enterprise Cloud', location: 'Chennai, India', roles: ['Software Developer', 'Sales Executive', 'Product Specialist'] },
+          { name: 'Google LLC', email: 'jobs@google.com', industry: 'Internet & Cloud Services', location: 'Mountain View, CA / Bengaluru, India', roles: ['Software Engineer', 'Data Analyst', 'Cloud Solutions Architect'] },
+          { name: 'Apple Inc.', email: 'recruiting@apple.com', industry: 'Consumer Electronics & OS', location: 'Cupertino, CA / Hyderabad, India', roles: ['Software Engineer', 'Systems Software Engineer', 'iOS Applications Engineer'] },
+          { name: 'Microsoft', email: 'talent@microsoft.com', industry: 'Software & Cloud Platform', location: 'Redmond, WA / Bengaluru, India', roles: ['Full Stack Software Engineer', 'AI Systems Engineer', 'Azure DevOps Specialist'] },
+          { name: 'Amazon', email: 'hiring@amazon.com', industry: 'Cloud & E-Commerce', location: 'Seattle, WA / Hyderabad, India', roles: ['Backend SDE', 'AWS Cloud Solutions Architect', 'Distributed Systems Specialist'] },
+          { name: 'Meta', email: 'careers@meta.com', industry: 'Social Tech & Infrastructure', location: 'Menlo Park, CA / London, UK', roles: ['Frontend Engineer (React/Infra)', 'Infrastructure Engineer'] },
+          { name: 'Infosys', email: 'talent@infosys.com', industry: 'IT & Digital Transformation', location: 'Bengaluru, India', roles: ['Digital Specialist Engineer', 'Systems Engineer'] },
+          { name: 'Tata Consultancy Services (TCS)', email: 'careers@tcs.com', industry: 'IT Services & Consulting', location: 'Mumbai, India', roles: ['Data Analyst', 'Digital Innovator', 'Solutions Architect'] },
+          { name: 'Psiog', email: 'careers@psiog.com', industry: 'Digital Solutions & Consulting', location: 'Chennai, India', roles: ['Management Resources', 'Associate Consultant', 'Business Analyst'] }
+        ];
+
+        for (const comp of enterpriseCompanies) {
+          const uRes = await client.query(
+            `INSERT INTO users (name, email, password, role)
+             VALUES ($1, $2, '$2a$10$defaultEnterpriseHashPlaceholder...', 'company')
+             ON CONFLICT (email) DO UPDATE SET name = $1, role = 'company'
+             RETURNING id`,
+            [comp.name, comp.email]
+          );
+          const compUserId = uRes.rows[0]?.id;
+          if (compUserId) {
+            await client.query(
+              `INSERT INTO company_profiles (user_id, company_name, industry, location, is_verified)
+               VALUES ($1, $2, $3, $4, true)
+               ON CONFLICT (user_id) DO UPDATE SET company_name = $2, industry = $3, location = $4, is_verified = true`,
+              [compUserId, comp.name, comp.industry, comp.location]
+            );
+
+            for (const rTitle of comp.roles) {
+              await client.query(
+                `INSERT INTO company_roles (company_id, title, status)
+                 VALUES ($1, $2, 'active')
+                 ON CONFLICT DO NOTHING`,
+                [compUserId, rTitle]
+              );
+            }
+          }
+        }
       `);
-      console.log('[DB] Enterprise tables & indexes verified successfully.');
+      console.log('[DB] Enterprise tables, indexes & baseline catalog verified successfully.');
       return;
     } catch (err: any) {
       console.warn(`[DB] Schema init attempt ${attempt}/${maxRetries} notice:`, err.message);
