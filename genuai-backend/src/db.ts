@@ -158,8 +158,31 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           location VARCHAR(255) DEFAULT 'Bengaluru, India',
           company_size VARCHAR(50) DEFAULT '50-200 employees',
           contact_email VARCHAR(255),
+          hiring_contact_name VARCHAR(255),
+          hiring_contact_email VARCHAR(255),
+          hiring_contact_phone VARCHAR(50),
+          verification_status VARCHAR(50) DEFAULT 'UNVERIFIED' CHECK (verification_status IN ('UNVERIFIED', 'VERIFIED', 'SUSPENDED')),
+          is_verified BOOLEAN DEFAULT false,
           team_members JSONB DEFAULT '[]',
           created_at TIMESTAMP DEFAULT NOW()
+        );
+        ALTER TABLE company_profiles ADD COLUMN IF NOT EXISTS verification_status VARCHAR(50) DEFAULT 'UNVERIFIED';
+        ALTER TABLE company_profiles ADD COLUMN IF NOT EXISTS hiring_contact_name VARCHAR(255);
+        ALTER TABLE company_profiles ADD COLUMN IF NOT EXISTS hiring_contact_email VARCHAR(255);
+        ALTER TABLE company_profiles ADD COLUMN IF NOT EXISTS hiring_contact_phone VARCHAR(50);
+        ALTER TABLE company_profiles ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT false;
+
+        -- Departments per company
+        CREATE TABLE IF NOT EXISTS departments (
+          id SERIAL PRIMARY KEY,
+          company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          name VARCHAR(255) NOT NULL,
+          code VARCHAR(50),
+          description TEXT,
+          status VARCHAR(50) DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW(),
+          UNIQUE(company_id, name)
         );
 
         CREATE TABLE IF NOT EXISTS question_bank (
@@ -221,7 +244,7 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           UNIQUE(company_id, company_role_title)
         );
 
-        -- Assessment module library
+        -- Centralized Assessment Module Library
         CREATE TABLE IF NOT EXISTS assessment_modules (
           id SERIAL PRIMARY KEY,
           name VARCHAR(100) UNIQUE NOT NULL,
@@ -257,14 +280,46 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
         -- COMPANY ROLE CONFIGURATION
         -- ─────────────────────────────────────────────
 
-        -- Company-specific roles (linked to canonical)
+        -- Company-specific roles (linked to department & canonical taxonomy)
         CREATE TABLE IF NOT EXISTS company_roles (
           id SERIAL PRIMARY KEY,
           company_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          department_id INTEGER REFERENCES departments(id) ON DELETE SET NULL,
           canonical_role_id INTEGER REFERENCES role_taxonomy(id),
           title VARCHAR(255) NOT NULL,
           description TEXT,
+          experience_level VARCHAR(50) DEFAULT 'Mid-Level',
+          employment_type VARCHAR(50) DEFAULT 'Full-time',
+          location VARCHAR(255) DEFAULT 'Remote',
+          vacancies INTEGER DEFAULT 1,
+          workflow_status VARCHAR(50) DEFAULT 'DRAFT' CHECK (workflow_status IN ('DRAFT','SUBMITTED','UNDER_REVIEW','APPROVED','NEEDS_CHANGES','ACTIVE')),
+          admin_feedback TEXT,
+          submitted_at TIMESTAMP,
+          reviewed_at TIMESTAMP,
+          reviewed_by INTEGER REFERENCES users(id),
           status VARCHAR(50) DEFAULT 'active',
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS department_id INTEGER REFERENCES departments(id) ON DELETE SET NULL;
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS experience_level VARCHAR(50) DEFAULT 'Mid-Level';
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS employment_type VARCHAR(50) DEFAULT 'Full-time';
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS location VARCHAR(255) DEFAULT 'Remote';
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS vacancies INTEGER DEFAULT 1;
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS workflow_status VARCHAR(50) DEFAULT 'DRAFT';
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS admin_feedback TEXT;
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMP;
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMP;
+        ALTER TABLE company_roles ADD COLUMN IF NOT EXISTS reviewed_by INTEGER REFERENCES users(id);
+
+        -- Company Role Skills (Technical, Non-Technical, Domain)
+        CREATE TABLE IF NOT EXISTS company_role_skills (
+          id SERIAL PRIMARY KEY,
+          company_role_id INTEGER REFERENCES company_roles(id) ON DELETE CASCADE,
+          skill_name VARCHAR(255) NOT NULL,
+          category VARCHAR(50) DEFAULT 'TECHNICAL' CHECK (category IN ('TECHNICAL', 'NON_TECHNICAL', 'DOMAIN')),
+          priority VARCHAR(50) DEFAULT 'HIGH' CHECK (priority IN ('HIGH', 'MEDIUM', 'LOW')),
+          is_required BOOLEAN DEFAULT true,
+          status VARCHAR(50) DEFAULT 'REQUIRED' CHECK (status IN ('REQUIRED', 'PREFERRED')),
           created_at TIMESTAMP DEFAULT NOW()
         );
 
@@ -280,7 +335,7 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           UNIQUE(company_id, company_role_id)
         );
 
-        -- Configuration versions — NEVER overwrite, only add new versions (Fix 2)
+        -- Configuration versions — NEVER overwrite, only add new versions
         CREATE TABLE IF NOT EXISTS company_configuration_versions (
           id SERIAL PRIMARY KEY,
           configuration_id INTEGER REFERENCES company_assessment_configurations(id) ON DELETE CASCADE,
@@ -302,10 +357,12 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           id SERIAL PRIMARY KEY,
           configuration_version_id INTEGER REFERENCES company_configuration_versions(id) ON DELETE CASCADE,
           assessment_module_id INTEGER REFERENCES assessment_modules(id) ON DELETE CASCADE,
+          priority VARCHAR(50) DEFAULT 'HIGH' CHECK (priority IN ('HIGH', 'MEDIUM', 'LOW')),
           weight DECIMAL(5,2) DEFAULT 1.0,
           is_required BOOLEAN DEFAULT true,
           created_at TIMESTAMP DEFAULT NOW()
         );
+        ALTER TABLE company_configuration_requirements ADD COLUMN IF NOT EXISTS priority VARCHAR(50) DEFAULT 'HIGH';
 
         -- Agreement acceptance records
         CREATE TABLE IF NOT EXISTS company_configuration_agreements (
@@ -623,6 +680,35 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
         CREATE INDEX IF NOT EXISTS idx_config_versions_role ON company_configuration_versions(company_role_id);
         CREATE INDEX IF NOT EXISTS idx_groups_composite ON candidate_assessment_groups(canonical_role_id, configuration_version_id);
 
+        -- Ensure standard assessment modules library (Technical, Non-Technical, Domain)
+        INSERT INTO assessment_modules (name, canonical_name, category, description)
+        VALUES 
+          -- TECHNICAL
+          ('Coding & Problem Solving', 'CODING', 'TECHNICAL', 'Core programming, algorithmic problem solving and code efficiency'),
+          ('Data Structures & Algorithms', 'DSA', 'TECHNICAL', 'Data structures mastery, tree/graph traversal, and algorithmic optimization'),
+          ('SQL & Database Architecture', 'SQL', 'TECHNICAL', 'Relational database queries, schema design, and query optimization'),
+          ('System Design & Microservices', 'SYSTEM_DESIGN', 'TECHNICAL', 'Distributed systems, microservices design, and scalability patterns'),
+          ('Automata & Core Logic', 'PROBLEM_SOLVING', 'TECHNICAL', 'Algorithmic logic, pattern recognition, and computational thinking'),
+          ('Programming Fundamentals', 'PROGRAMMING', 'TECHNICAL', 'Syntax proficiency, object-oriented concepts, and clean code principles'),
+
+          -- NON_TECHNICAL
+          ('Quantitative & Logical Aptitude', 'APTITUDE', 'NON_TECHNICAL', 'Mathematical reasoning, data interpretation, and deductive logic'),
+          ('Verbal Communication (SVAR)', 'COMMUNICATION', 'NON_TECHNICAL', 'Professional spoken English, clarity, articulation, and fluency'),
+          ('Situational Judgment & Workplace Ethics', 'SITUATIONAL_JUDGMENT', 'NON_TECHNICAL', 'Workplace scenario judgment, professional ethics, and decision making'),
+          ('Leadership & Cross-Functional Collaboration', 'LEADERSHIP', 'NON_TECHNICAL', 'Team leadership, empathy, conflict resolution, and cross-functional work'),
+          ('Analytical & Critical Thinking', 'ANALYTICAL_ABILITY', 'NON_TECHNICAL', 'Root cause analysis, business logic breakdown, and evidence-based reasoning'),
+
+          -- DOMAIN
+          ('HR Management & Talent Operations', 'HR_KNOWLEDGE', 'DOMAIN', 'Talent acquisition, organizational development, and employee relations'),
+          ('Financial Analysis & Accounting', 'FINANCE_KNOWLEDGE', 'DOMAIN', 'Financial modeling, budgeting, compliance, and corporate finance'),
+          ('Marketing & Growth Strategy', 'MARKETING_KNOWLEDGE', 'DOMAIN', 'Brand marketing, demand generation, product-led growth, and analytics'),
+          ('Enterprise Sales & Client Relations', 'SALES_KNOWLEDGE', 'DOMAIN', 'Enterprise sales pipeline, consultative selling, and client retention'),
+          ('Product Management & Roadmapping', 'PRODUCT_KNOWLEDGE', 'DOMAIN', 'User research, feature prioritization, metrics, and go-to-market execution')
+        ON CONFLICT (canonical_name) DO UPDATE SET 
+          name = EXCLUDED.name,
+          category = EXCLUDED.category,
+          description = EXCLUDED.description;
+
         -- Ensure standard taxonomy roles
         INSERT INTO role_taxonomy (canonical_name, category, description)
         VALUES 
@@ -634,48 +720,63 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           ('Sales Executive', 'Sales', 'Enterprise sales, client relations, and growth strategy'),
           ('Associate Consultant', 'Consulting', 'Technical consulting, system design, and client advisory')
         ON CONFLICT (canonical_name) DO NOTHING;
+      `);
 
-        -- Ensure standard enterprise companies
-        const enterpriseCompanies = [
-          { name: 'Zoho Corporation', email: 'careers@zoho.com', industry: 'SaaS & Enterprise Cloud', location: 'Chennai, India', roles: ['Software Developer', 'Sales Executive', 'Product Specialist'] },
-          { name: 'Google LLC', email: 'jobs@google.com', industry: 'Internet & Cloud Services', location: 'Mountain View, CA / Bengaluru, India', roles: ['Software Engineer', 'Data Analyst', 'Cloud Solutions Architect'] },
-          { name: 'Apple Inc.', email: 'recruiting@apple.com', industry: 'Consumer Electronics & OS', location: 'Cupertino, CA / Hyderabad, India', roles: ['Software Engineer', 'Systems Software Engineer', 'iOS Applications Engineer'] },
-          { name: 'Microsoft', email: 'talent@microsoft.com', industry: 'Software & Cloud Platform', location: 'Redmond, WA / Bengaluru, India', roles: ['Full Stack Software Engineer', 'AI Systems Engineer', 'Azure DevOps Specialist'] },
-          { name: 'Amazon', email: 'hiring@amazon.com', industry: 'Cloud & E-Commerce', location: 'Seattle, WA / Hyderabad, India', roles: ['Backend SDE', 'AWS Cloud Solutions Architect', 'Distributed Systems Specialist'] },
-          { name: 'Meta', email: 'careers@meta.com', industry: 'Social Tech & Infrastructure', location: 'Menlo Park, CA / London, UK', roles: ['Frontend Engineer (React/Infra)', 'Infrastructure Engineer'] },
-          { name: 'Infosys', email: 'talent@infosys.com', industry: 'IT & Digital Transformation', location: 'Bengaluru, India', roles: ['Digital Specialist Engineer', 'Systems Engineer'] },
-          { name: 'Tata Consultancy Services (TCS)', email: 'careers@tcs.com', industry: 'IT Services & Consulting', location: 'Mumbai, India', roles: ['Data Analyst', 'Digital Innovator', 'Solutions Architect'] },
-          { name: 'Psiog', email: 'careers@psiog.com', industry: 'Digital Solutions & Consulting', location: 'Chennai, India', roles: ['Management Resources', 'Associate Consultant', 'Business Analyst'] }
-        ];
+      // Ensure standard enterprise companies
+      const enterpriseCompanies = [
+        { name: 'Zoho Corporation', email: 'careers@zoho.com', industry: 'SaaS & Enterprise Cloud', location: 'Chennai, India', dept: 'Engineering', roles: ['Software Developer', 'Sales Executive', 'Product Specialist'] },
+        { name: 'Google LLC', email: 'jobs@google.com', industry: 'Internet & Cloud Services', location: 'Mountain View, CA / Bengaluru, India', dept: 'Core Systems', roles: ['Software Engineer', 'Data Analyst', 'Cloud Solutions Architect'] },
+        { name: 'Apple Inc.', email: 'recruiting@apple.com', industry: 'Consumer Electronics & OS', location: 'Cupertino, CA / Hyderabad, India', dept: 'Software Engineering', roles: ['Software Engineer', 'Systems Software Engineer', 'iOS Applications Engineer'] },
+        { name: 'Microsoft', email: 'talent@microsoft.com', industry: 'Software & Cloud Platform', location: 'Redmond, WA / Bengaluru, India', dept: 'Cloud & AI', roles: ['Full Stack Software Engineer', 'AI Systems Engineer', 'Azure DevOps Specialist'] },
+        { name: 'Amazon', email: 'hiring@amazon.com', industry: 'Cloud & E-Commerce', location: 'Seattle, WA / Hyderabad, India', dept: 'AWS Platform', roles: ['Backend SDE', 'AWS Cloud Solutions Architect', 'Distributed Systems Specialist'] },
+        { name: 'Meta', email: 'careers@meta.com', industry: 'Social Tech & Infrastructure', location: 'Menlo Park, CA / London, UK', dept: 'Infrastructure', roles: ['Frontend Engineer (React/Infra)', 'Infrastructure Engineer'] },
+        { name: 'Infosys', email: 'talent@infosys.com', industry: 'IT & Digital Transformation', location: 'Bengaluru, India', dept: 'Digital Engineering', roles: ['Digital Specialist Engineer', 'Systems Engineer'] },
+        { name: 'Tata Consultancy Services (TCS)', email: 'careers@tcs.com', industry: 'IT Services & Consulting', location: 'Mumbai, India', dept: 'Digital Innovations', roles: ['Data Analyst', 'Digital Innovator', 'Solutions Architect'] },
+        { name: 'Psiog', email: 'careers@psiog.com', industry: 'Digital Solutions & Consulting', location: 'Chennai, India', dept: 'Consulting & Advisory', roles: ['Management Resources', 'Associate Consultant', 'Business Analyst'] }
+      ];
 
-        for (const comp of enterpriseCompanies) {
-          const uRes = await client.query(
-            `INSERT INTO users (name, email, password, role)
-             VALUES ($1, $2, '$2a$10$defaultEnterpriseHashPlaceholder...', 'company')
-             ON CONFLICT (email) DO UPDATE SET name = $1, role = 'company'
-             RETURNING id`,
-            [comp.name, comp.email]
+      for (const comp of enterpriseCompanies) {
+        const uRes = await client.query(
+          `INSERT INTO users (name, email, password_hash, role)
+           VALUES ($1, $2, '$2a$10$defaultEnterpriseHashPlaceholder...', 'company')
+           ON CONFLICT (email) DO UPDATE SET name = $1, role = 'company'
+           RETURNING id`,
+          [comp.name, comp.email]
+        );
+        const compUserId = uRes.rows[0]?.id;
+        if (compUserId) {
+          await client.query(
+            `INSERT INTO company_profiles (user_id, company_name, industry, location, verification_status, is_verified)
+             VALUES ($1, $2, $3, $4, 'VERIFIED', true)
+             ON CONFLICT (user_id) DO UPDATE SET 
+               company_name = $2, 
+               industry = $3, 
+               location = $4, 
+               verification_status = 'VERIFIED', 
+               is_verified = true`,
+            [compUserId, comp.name, comp.industry, comp.location]
           );
-          const compUserId = uRes.rows[0]?.id;
-          if (compUserId) {
-            await client.query(
-              `INSERT INTO company_profiles (user_id, company_name, industry, location, is_verified)
-               VALUES ($1, $2, $3, $4, true)
-               ON CONFLICT (user_id) DO UPDATE SET company_name = $2, industry = $3, location = $4, is_verified = true`,
-              [compUserId, comp.name, comp.industry, comp.location]
-            );
 
-            for (const rTitle of comp.roles) {
-              await client.query(
-                `INSERT INTO company_roles (company_id, title, status)
-                 VALUES ($1, $2, 'active')
-                 ON CONFLICT DO NOTHING`,
-                [compUserId, rTitle]
-              );
-            }
+          // Create default department
+          const deptRes = await client.query(
+            `INSERT INTO departments (company_id, name, code, description, status)
+             VALUES ($1, $2, 'DEPT-01', 'Core operational department', 'active')
+             ON CONFLICT (company_id, name) DO UPDATE SET status = 'active'
+             RETURNING id`,
+            [compUserId, comp.dept]
+          );
+          const deptId = deptRes.rows[0]?.id;
+
+          for (const rTitle of comp.roles) {
+            await client.query(
+              `INSERT INTO company_roles (company_id, department_id, title, status, workflow_status)
+               VALUES ($1, $2, $3, 'active', 'ACTIVE')
+               ON CONFLICT DO NOTHING`,
+              [compUserId, deptId, rTitle]
+            );
           }
         }
-      `);
+      }
       console.log('[DB] Enterprise tables, indexes & baseline catalog verified successfully.');
       return;
     } catch (err: any) {

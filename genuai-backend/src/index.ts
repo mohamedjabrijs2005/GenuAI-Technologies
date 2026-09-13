@@ -25,6 +25,7 @@ import candidateInterestsRoutes from './routes/candidateInterests';
 import companyRolesRoutes from './routes/companyRoles';
 import rolesRoutes from './routes/roles';
 import subscriptionsRoutes from './routes/subscriptions';
+import pool from './db';
 import { initSocket } from './socket';
 
 dotenv.config();
@@ -56,7 +57,6 @@ app.use('/genuai-works', genuaiWorksRoutes);
 // Direct top-level module library route (Fix 3)
 app.get('/modules', async (_req, res) => {
   try {
-    const pool = (await import('./db')).default;
     const result = await pool.query(
       `SELECT id, name, canonical_name, category, description, is_composite, status
        FROM assessment_modules
@@ -72,7 +72,6 @@ app.get('/modules', async (_req, res) => {
 // Direct top-level candidate match groups route (Fix 3)
 app.get('/match/groups/:candidateId', async (req, res) => {
   try {
-    const pool = (await import('./db')).default;
     const { candidateId } = req.params;
     const groupsRes = await pool.query(
       `SELECT cgm.id as membership_id, cgm.candidate_id, cgm.group_id, cgm.dynamic_path_id, cgm.created_at,

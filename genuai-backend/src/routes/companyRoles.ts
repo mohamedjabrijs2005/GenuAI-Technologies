@@ -1,17 +1,20 @@
 import express from 'express';
 import pool from '../db';
-import { SubscriptionService } from '../services/subscriptionService';
 
 const router = express.Router();
 
-// 0. GET /company-roles/modules — List all available assessment modules
+// ─────────────────────────────────────────────
+// 0. Assessment Library & Departments
+// ─────────────────────────────────────────────
+
+// GET /company-roles/modules — List all available assessment modules from centralized library
 router.get('/modules', async (_req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, name, canonical_name, category, description, is_composite, status
        FROM assessment_modules
        WHERE status = 'active' OR status IS NULL
-       ORDER BY id ASC`
+       ORDER BY category ASC, id ASC`
     );
     res.json({ modules: result.rows });
   } catch (err: any) {
@@ -19,17 +22,114 @@ router.get('/modules', async (_req, res) => {
   }
 });
 
-// 1. GET /company-roles/:companyId — List company roles & configuration status
+// GET /company-roles/departments/:companyId — List company departments
+router.get('/departments/:companyId', async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    const result = await pool.query(
+      `SELECT d.*, 
+              (SELECT COUNT(*) FROM company_roles cr WHERE cr.department_id = d.id) as roles_count,
+              (SELECT COUNT(*) FROM company_roles cr WHERE cr.department_id = d.id AND cr.workflow_status = 'ACTIVE') as active_roles_count
+       FROM departments d
+       WHERE d.company_id = $1 OR LOWER(d.company_id::text) = LOWER($1::text)
+       ORDER BY d.created_at ASC`,
+      [companyId]
+    );
+    res.json({ departments: result.rows });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /company-roles/departments — Create department
+router.post('/departments', async (req, res) => {
+  try {
+    const { companyId, name, code, description } = req.body;
+    if (!companyId || !name) {
+      return res.status(400).json({ error: 'Company ID and Department Name are required.' });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO departments (company_id, name, code, description, status)
+       VALUES ($1, $2, $3, $4, 'active')
+       ON CONFLICT (company_id, name) DO UPDATE SET 
+         code = COALESCE($3, departments.code),
+         description = COALESCE($4, departments.description),
+         status = 'active',
+         updated_at = NOW()
+       RETURNING *`,
+      [companyId, name.trim(), code || null, description || null]
+    );
+
+    res.json({ success: true, department: result.rows[0] });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /company-roles/departments/:id — Update department
+router.put('/departments/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, code, description, status } = req.body;
+
+    const result = await pool.query(
+      `UPDATE departments SET
+         name = COALESCE($1, name),
+         code = COALESCE($2, code),
+         description = COALESCE($3, description),
+         status = COALESCE($4, status),
+         updated_at = NOW()
+       WHERE id = $5 RETURNING *`,
+      [name?.trim(), code, description, status, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Department not found.' });
+    }
+
+    res.json({ success: true, department: result.rows[0] });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE /company-roles/departments/:id — Deactivate department
+router.delete('/departments/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `UPDATE departments SET status = 'inactive', updated_at = NOW() WHERE id = $1 RETURNING *`,
+      [id]
+    );
+    res.json({ success: true, message: 'Department deactivated.', department: result.rows[0] });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ─────────────────────────────────────────────
+// 1. Roles & Requirements Management
+// ─────────────────────────────────────────────
+
+// GET /company-roles/:companyId — List all company roles with full status & department details
 router.get('/:companyId', async (req, res) => {
   try {
     const { companyId } = req.params;
 
     const result = await pool.query(
-      `SELECT cr.id, cr.title, cr.description, cr.status as role_status, cr.canonical_role_id,
+      `SELECT cr.id, cr.company_id, cr.department_id, cr.title, cr.description,
+              cr.experience_level, cr.employment_type, cr.location, cr.vacancies,
+              cr.workflow_status, cr.admin_feedback, cr.submitted_at, cr.reviewed_at,
+              cr.status as role_status, cr.canonical_role_id,
+              d.name as department_name, d.code as department_code,
               rt.canonical_name as canonical_role_name,
               cac.id as config_id, cac.status as config_status, cac.locked_at,
-              ccv.id as version_id, ccv.version_number, ccv.selected_module_ids, ccv.created_at as version_created_at
+              ccv.id as version_id, ccv.version_number, ccv.selected_module_ids, ccv.created_at as version_created_at,
+              (SELECT COUNT(*) FROM company_role_skills crs WHERE crs.company_role_id = cr.id) as skills_count,
+              (SELECT json_agg(crs.*) FROM company_role_skills crs WHERE crs.company_role_id = cr.id) as skills
        FROM company_roles cr
+       LEFT JOIN departments d ON cr.department_id = d.id
        LEFT JOIN role_taxonomy rt ON cr.canonical_role_id = rt.id
        LEFT JOIN company_assessment_configurations cac ON cr.id = cac.company_role_id
        LEFT JOIN company_configuration_versions ccv ON cac.id = ccv.configuration_id AND ccv.status = 'active'
@@ -44,76 +144,437 @@ router.get('/:companyId', async (req, res) => {
   }
 });
 
-// 2. POST /company-roles — Create new role for company
-router.post('/', async (req, res) => {
+// GET /company-roles/role/:roleId — Single role detailed view
+router.get('/role/:roleId', async (req, res) => {
   try {
-    const { companyId, title, description, canonicalRoleId } = req.body;
+    const { roleId } = req.params;
 
-    if (!title) {
-      return res.status(400).json({ error: 'Role title is required.' });
+    const roleRes = await pool.query(
+      `SELECT cr.*, 
+              d.name as department_name, d.code as department_code,
+              rt.canonical_name as canonical_role_name,
+              cac.id as config_id, cac.status as config_status, cac.locked_at,
+              ccv.id as version_id, ccv.version_number, ccv.selected_module_ids, ccv.weightages,
+              cp.company_name, cp.verification_status as company_verification_status
+       FROM company_roles cr
+       LEFT JOIN departments d ON cr.department_id = d.id
+       LEFT JOIN role_taxonomy rt ON cr.canonical_role_id = rt.id
+       LEFT JOIN company_assessment_configurations cac ON cr.id = cac.company_role_id
+       LEFT JOIN company_configuration_versions ccv ON cac.id = ccv.configuration_id AND ccv.status = 'active'
+       LEFT JOIN company_profiles cp ON cr.company_id = cp.user_id
+       WHERE cr.id = $1`,
+      [roleId]
+    );
+
+    if (roleRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Role not found.' });
     }
 
-    const crRes = await pool.query(
-      `INSERT INTO company_roles (company_id, canonical_role_id, title, description)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, title, company_id, canonical_role_id`,
-      [companyId || 1, canonicalRoleId || null, title, description || '']
+    const role = roleRes.rows[0];
+
+    // Fetch skills
+    const skillsRes = await pool.query(
+      `SELECT * FROM company_role_skills WHERE company_role_id = $1 ORDER BY category ASC, id ASC`,
+      [roleId]
     );
 
-    const companyRole = crRes.rows[0];
+    // Fetch requirements per module if version exists
+    let requirements: any[] = [];
+    if (role.version_id) {
+      const reqRes = await pool.query(
+        `SELECT ccr.*, am.name as module_name, am.canonical_name as module_canonical_name, am.category as module_category, am.description as module_description
+         FROM company_configuration_requirements ccr
+         JOIN assessment_modules am ON ccr.assessment_module_id = am.id
+         WHERE ccr.configuration_version_id = $1
+         ORDER BY am.category ASC, am.id ASC`,
+        [role.version_id]
+      );
+      requirements = reqRes.rows;
+    }
 
-    // Create draft configuration record
-    const configRes = await pool.query(
-      `INSERT INTO company_assessment_configurations (company_id, company_role_id, status)
-       VALUES ($1, $2, 'draft')
-       ON CONFLICT (company_id, company_role_id) DO UPDATE SET status = company_assessment_configurations.status
-       RETURNING id, status`,
-      [companyId || 1, companyRole.id]
-    );
-
-    res.json({ success: true, companyRole, configuration: configRes.rows[0] });
+    res.json({
+      role,
+      skills: skillsRes.rows,
+      requirements,
+    });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// 3. POST /company-roles/:id/configuration — Save draft module selections & weights
-router.post('/:id/configuration', async (req, res) => {
+// POST /company-roles — Create new role for company
+router.post('/', async (req, res) => {
+  try {
+    const {
+      companyId,
+      departmentId,
+      title,
+      description,
+      experienceLevel,
+      employmentType,
+      location,
+      vacancies,
+      canonicalRoleId,
+      skills,
+      selectedModuleIds,
+      modulePriorities,
+    } = req.body;
+
+    if (!companyId || !title) {
+      return res.status(400).json({ error: 'Company ID and Role Title are required.' });
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      const crRes = await client.query(
+        `INSERT INTO company_roles (
+           company_id, department_id, canonical_role_id, title, description,
+           experience_level, employment_type, location, vacancies, workflow_status, status
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'DRAFT', 'active')
+         RETURNING *`,
+        [
+          companyId,
+          departmentId || null,
+          canonicalRoleId || null,
+          title.trim(),
+          description || '',
+          experienceLevel || 'Mid-Level',
+          employmentType || 'Full-time',
+          location || 'Remote',
+          vacancies || 1,
+        ]
+      );
+
+      const companyRole = crRes.rows[0];
+
+      // Insert skills if provided
+      if (skills && Array.isArray(skills)) {
+        for (const s of skills) {
+          if (s.skill_name || s.name) {
+            await client.query(
+              `INSERT INTO company_role_skills (company_role_id, skill_name, category, priority, is_required, status)
+               VALUES ($1, $2, $3, $4, $5, $6)`,
+              [
+                companyRole.id,
+                (s.skill_name || s.name).trim(),
+                s.category || 'TECHNICAL',
+                s.priority || 'HIGH',
+                s.is_required !== false,
+                s.status || (s.is_required !== false ? 'REQUIRED' : 'PREFERRED'),
+              ]
+            );
+          }
+        }
+      }
+
+      // Create draft configuration record
+      const configRes = await client.query(
+        `INSERT INTO company_assessment_configurations (company_id, company_role_id, status)
+         VALUES ($1, $2, 'draft')
+         ON CONFLICT (company_id, company_role_id) DO UPDATE SET status = company_assessment_configurations.status
+         RETURNING id, status`,
+        [companyId, companyRole.id]
+      );
+      const configId = configRes.rows[0].id;
+
+      // Save initial module selection if provided
+      if (selectedModuleIds && Array.isArray(selectedModuleIds) && selectedModuleIds.length > 0) {
+        // Create draft version
+        const vRes = await client.query(
+          `INSERT INTO company_configuration_versions (
+             configuration_id, version_number, company_id, company_role_id,
+             canonical_role_id, selected_module_ids, weightages, status, created_by
+           ) VALUES ($1, 1, $2, $3, $4, $5, $6, 'active', $7)
+           RETURNING id`,
+          [
+            configId,
+            companyId,
+            companyRole.id,
+            canonicalRoleId || null,
+            selectedModuleIds,
+            JSON.stringify(modulePriorities || {}),
+            companyId,
+          ]
+        );
+        const versionId = vRes.rows[0].id;
+
+        for (const modId of selectedModuleIds) {
+          const prio = modulePriorities ? (modulePriorities[modId] || 'HIGH') : 'HIGH';
+          await client.query(
+            `INSERT INTO company_configuration_requirements (
+               configuration_version_id, assessment_module_id, priority, weight, is_required
+             ) VALUES ($1, $2, $3, $4, true)`,
+            [versionId, modId, prio, 1.0]
+          );
+        }
+      }
+
+      await client.query('COMMIT');
+      res.json({ success: true, companyRole, configuration: configRes.rows[0] });
+    } catch (txErr: any) {
+      await client.query('ROLLBACK');
+      throw txErr;
+    } finally {
+      client.release();
+    }
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /company-roles/:id — Update role basic info
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      departmentId,
+      title,
+      description,
+      experienceLevel,
+      employmentType,
+      location,
+      vacancies,
+      canonicalRoleId,
+    } = req.body;
+
+    const result = await pool.query(
+      `UPDATE company_roles SET
+         department_id = COALESCE($1, department_id),
+         canonical_role_id = COALESCE($2, canonical_role_id),
+         title = COALESCE($3, title),
+         description = COALESCE($4, description),
+         experience_level = COALESCE($5, experience_level),
+         employment_type = COALESCE($6, employment_type),
+         location = COALESCE($7, location),
+         vacancies = COALESCE($8, vacancies)
+       WHERE id = $9 RETURNING *`,
+      [departmentId, canonicalRoleId, title?.trim(), description, experienceLevel, employmentType, location, vacancies, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Role not found.' });
+    }
+
+    res.json({ success: true, companyRole: result.rows[0] });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /company-roles/:id/skills — Save / update skills for role
+router.put('/:id/skills', async (req, res) => {
   try {
     const { id } = req.params; // roleId
-    const { companyId, modules, moduleWeights } = req.body;
+    const { skills } = req.body; // array of { skill_name, category, priority, status, is_required }
 
-    // Check if configuration exists
-    let configRes = await pool.query(
-      `SELECT id, status FROM company_assessment_configurations WHERE company_role_id = $1 LIMIT 1`,
+    if (!Array.isArray(skills)) {
+      return res.status(400).json({ error: 'Skills must be an array.' });
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // Clear existing skills for this role
+      await client.query(`DELETE FROM company_role_skills WHERE company_role_id = $1`, [id]);
+
+      // Insert updated skills
+      for (const s of skills) {
+        if (s.skill_name || s.name) {
+          await client.query(
+            `INSERT INTO company_role_skills (company_role_id, skill_name, category, priority, is_required, status)
+             VALUES ($1, $2, $3, $4, $5, $6)`,
+            [
+              id,
+              (s.skill_name || s.name).trim(),
+              s.category || 'TECHNICAL',
+              s.priority || 'HIGH',
+              s.is_required !== false,
+              s.status || (s.is_required !== false ? 'REQUIRED' : 'PREFERRED'),
+            ]
+          );
+        }
+      }
+
+      await client.query('COMMIT');
+
+      const updatedSkills = await pool.query(
+        `SELECT * FROM company_role_skills WHERE company_role_id = $1 ORDER BY category ASC, id ASC`,
+        [id]
+      );
+
+      res.json({ success: true, skills: updatedSkills.rows });
+    } catch (txErr: any) {
+      await client.query('ROLLBACK');
+      throw txErr;
+    } finally {
+      client.release();
+    }
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /company-roles/:id/submit — Submit role configuration for GenuAI Admin verification
+router.post('/:id/submit', async (req, res) => {
+  try {
+    const { id } = req.params; // roleId
+    const { companyId } = req.body;
+
+    // 1. Verify role exists
+    const roleRes = await pool.query(`SELECT * FROM company_roles WHERE id = $1`, [id]);
+    if (roleRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Role not found.' });
+    }
+    const role = roleRes.rows[0];
+
+    // 2. Validate skill requirements
+    const skillsRes = await pool.query(`SELECT COUNT(*) FROM company_role_skills WHERE company_role_id = $1`, [id]);
+    const skillCount = parseInt(skillsRes.rows[0]?.count || '0', 10);
+    if (skillCount === 0) {
+      return res.status(400).json({ error: 'Please configure at least one required skill before submitting.' });
+    }
+
+    // 3. Validate assessment requirements exist
+    const configRes = await pool.query(
+      `SELECT ccv.* FROM company_assessment_configurations cac
+       JOIN company_configuration_versions ccv ON cac.id = ccv.configuration_id AND ccv.status = 'active'
+       WHERE cac.company_role_id = $1`,
       [id]
     );
 
-    let configId: number;
-    if (configRes.rows.length === 0) {
-      const insRes = await pool.query(
-        `INSERT INTO company_assessment_configurations (company_id, company_role_id, status)
-         VALUES ($1, $2, 'draft')
-         RETURNING id, status`,
-        [companyId || 1, id]
-      );
-      configId = insRes.rows[0].id;
-    } else {
-      if (configRes.rows[0].status === 'locked') {
-        return res.status(423).json({
-          error: 'Configuration is LOCKED. Direct edits are disabled. Please request a configuration change.',
-          isLocked: true,
-        });
-      }
-      configId = configRes.rows[0].id;
+    if (configRes.rows.length === 0 || !configRes.rows[0].selected_module_ids || configRes.rows[0].selected_module_ids.length === 0) {
+      return res.status(400).json({ error: 'Please select and save applicable assessment requirements before submitting.' });
     }
+
+    // 4. Update role status to SUBMITTED
+    const updateRes = await pool.query(
+      `UPDATE company_roles SET
+         workflow_status = 'SUBMITTED',
+         submitted_at = NOW(),
+         admin_feedback = NULL
+       WHERE id = $1 RETURNING *`,
+      [id]
+    );
 
     res.json({
       success: true,
-      configurationId: configId,
-      status: 'draft',
-      message: 'Draft configuration saved.',
+      workflow_status: 'SUBMITTED',
+      message: 'Role configuration submitted for GenuAI Admin verification.',
+      role: updateRes.rows[0],
     });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /company-roles/:id/configuration — Save draft module selections & priorities
+router.post('/:id/configuration', async (req, res) => {
+  try {
+    const { id } = req.params; // roleId
+    const { companyId, selectedModuleIds, modulePriorities, canonicalRoleId } = req.body;
+
+    if (!selectedModuleIds || !Array.isArray(selectedModuleIds) || selectedModuleIds.length === 0) {
+      return res.status(400).json({ error: 'Please select at least one assessment requirement.' });
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // 1. Get or create configuration
+      let configRes = await client.query(
+        `SELECT id, status FROM company_assessment_configurations WHERE company_role_id = $1 LIMIT 1`,
+        [id]
+      );
+
+      let configId: number;
+      if (configRes.rows.length === 0) {
+        const insRes = await client.query(
+          `INSERT INTO company_assessment_configurations (company_id, company_role_id, status)
+           VALUES ($1, $2, 'draft') RETURNING id`,
+          [companyId || 1, id]
+        );
+        configId = insRes.rows[0].id;
+      } else {
+        configId = configRes.rows[0].id;
+      }
+
+      // 2. Check if active version exists, or create new version
+      let versionRes = await client.query(
+        `SELECT id, version_number FROM company_configuration_versions
+         WHERE configuration_id = $1 AND status = 'active'
+         ORDER BY version_number DESC LIMIT 1`,
+        [configId]
+      );
+
+      let versionId: number;
+      if (versionRes.rows.length === 0) {
+        const vIns = await client.query(
+          `INSERT INTO company_configuration_versions (
+             configuration_id, version_number, company_id, company_role_id,
+             canonical_role_id, selected_module_ids, weightages, status, created_by
+           ) VALUES ($1, 1, $2, $3, $4, $5, $6, 'active', $7)
+           RETURNING id`,
+          [
+            configId,
+            companyId || 1,
+            id,
+            canonicalRoleId || null,
+            selectedModuleIds,
+            JSON.stringify(modulePriorities || {}),
+            companyId || 1,
+          ]
+        );
+        versionId = vIns.rows[0].id;
+      } else {
+        versionId = versionRes.rows[0].id;
+        // Update version module selection and priorities
+        await client.query(
+          `UPDATE company_configuration_versions SET
+             selected_module_ids = $1,
+             weightages = $2,
+             canonical_role_id = COALESCE($3, canonical_role_id)
+           WHERE id = $4`,
+          [selectedModuleIds, JSON.stringify(modulePriorities || {}), canonicalRoleId || null, versionId]
+        );
+
+        // Clear existing requirements for this version
+        await client.query(
+          `DELETE FROM company_configuration_requirements WHERE configuration_version_id = $1`,
+          [versionId]
+        );
+      }
+
+      // 3. Insert requirements for each module
+      for (const modId of selectedModuleIds) {
+        const prio = modulePriorities ? (modulePriorities[modId] || 'HIGH') : 'HIGH';
+        await client.query(
+          `INSERT INTO company_configuration_requirements (
+             configuration_version_id, assessment_module_id, priority, weight, is_required
+           ) VALUES ($1, $2, $3, $4, true)`,
+          [versionId, modId, prio, 1.0]
+        );
+      }
+
+      await client.query('COMMIT');
+
+      res.json({
+        success: true,
+        configurationId: configId,
+        versionId,
+        selectedModuleIds,
+        modulePriorities,
+        message: 'Assessment requirements configuration saved.',
+      });
+    } catch (txErr: any) {
+      await client.query('ROLLBACK');
+      throw txErr;
+    } finally {
+      client.release();
+    }
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -168,10 +629,10 @@ router.post('/:roleId/configuration/lock', async (req, res) => {
 
     // Validate weights sum to ~1.0 if provided
     if (moduleWeights && typeof moduleWeights === 'object') {
-      const sum = Object.values(moduleWeights).reduce((acc: number, val: any) => acc + (Number(val) || 0), 0);
-      if (Math.abs(sum - 1.0) > 0.05 && sum > 0) {
+      const sumVal: number = (Object.values(moduleWeights) as any[]).reduce((acc: number, val: any) => acc + (Number(val) || 0), 0);
+      if (Math.abs(sumVal - 1.0) > 0.05 && sumVal > 0) {
         return res.status(400).json({
-          error: `Requirement weights must sum to 1.0 (current sum: ${sum.toFixed(2)}).`,
+          error: `Requirement weights must sum to 1.0 (current sum: ${sumVal.toFixed(2)}).`,
         });
       }
     }

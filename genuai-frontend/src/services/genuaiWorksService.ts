@@ -451,3 +451,164 @@ export const confirmRoleEquivalency = async (id: number, canonicalRoleId?: numbe
   const res = await apiClient.put(`/roles/equivalency/${id}/confirm`, { canonicalRoleId });
   return res.data;
 };
+
+// ─────────────────────────────────────────────
+// PHASE 1: COMPANY CONFIGURATION FOUNDATION
+// ─────────────────────────────────────────────
+
+export interface DepartmentItem {
+  id: number;
+  company_id: number | string;
+  name: string;
+  code?: string;
+  description?: string;
+  status: 'active' | 'inactive';
+  roles_count?: number;
+  active_roles_count?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface RoleSkillItem {
+  id?: number;
+  company_role_id?: number;
+  skill_name: string;
+  category: 'TECHNICAL' | 'NON_TECHNICAL' | 'DOMAIN';
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  is_required: boolean;
+  status?: string;
+}
+
+export interface AssessmentModuleLibraryItem {
+  id: number;
+  name: string;
+  canonical_name: string;
+  category: 'TECHNICAL' | 'NON_TECHNICAL' | 'DOMAIN' | 'COGNITIVE';
+  description?: string;
+  is_composite?: boolean;
+  status?: string;
+}
+
+export interface AssessmentRequirementConfigItem {
+  id?: number;
+  moduleId: number;
+  name?: string;
+  canonical_name?: string;
+  category?: string;
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  weight?: number;
+  is_required?: boolean;
+}
+
+// 10. Central Assessment Modules Library
+export const getAssessmentModulesLibrary = async (): Promise<AssessmentModuleLibraryItem[]> => {
+  const res = await apiClient.get('/company-roles/modules');
+  return res.data.modules || [];
+};
+
+// 11. Company Departments CRUD
+export const getCompanyDepartments = async (companyId: number | string): Promise<DepartmentItem[]> => {
+  const res = await apiClient.get(`/company-roles/departments/${companyId}`);
+  return res.data.departments || [];
+};
+
+export const createCompanyDepartment = async (data: {
+  companyId: number | string;
+  name: string;
+  code?: string;
+  description?: string;
+}): Promise<DepartmentItem> => {
+  const res = await apiClient.post('/company-roles/departments', data);
+  return res.data.department;
+};
+
+export const updateCompanyDepartment = async (
+  id: number,
+  data: { name?: string; code?: string; description?: string; status?: string }
+): Promise<DepartmentItem> => {
+  const res = await apiClient.put(`/company-roles/departments/${id}`, data);
+  return res.data.department;
+};
+
+export const deleteCompanyDepartment = async (id: number): Promise<void> => {
+  await apiClient.delete(`/company-roles/departments/${id}`);
+};
+
+// 12. Detailed Company Roles & CRUD
+export const getDetailedCompanyRoles = async (companyId: number | string): Promise<any[]> => {
+  const res = await apiClient.get(`/company-roles/${companyId}`);
+  return res.data.roles || [];
+};
+
+export const getCompanyRoleDetail = async (roleId: number): Promise<any> => {
+  const res = await apiClient.get(`/company-roles/role/${roleId}`);
+  return res.data.role;
+};
+
+export const createCompanyRoleWithConfig = async (data: {
+  companyId: number | string;
+  departmentId?: number;
+  title: string;
+  description?: string;
+  experienceLevel?: string;
+  employmentType?: string;
+  location?: string;
+  vacancies?: number;
+  skills?: RoleSkillItem[];
+  assessmentRequirements?: Array<{ moduleId: number; priority: string; weight?: number; isRequired?: boolean }>;
+}): Promise<any> => {
+  const res = await apiClient.post('/company-roles', data);
+  return res.data;
+};
+
+export const updateCompanyRoleBasic = async (roleId: number, data: any): Promise<any> => {
+  const res = await apiClient.put(`/company-roles/${roleId}`, data);
+  return res.data.role;
+};
+
+export const updateCompanyRoleSkills = async (roleId: number, skills: RoleSkillItem[]): Promise<any> => {
+  const res = await apiClient.put(`/company-roles/${roleId}/skills`, { skills });
+  return res.data.skills;
+};
+
+export const saveRoleAssessmentConfiguration = async (
+  roleId: number,
+  data: {
+    companyId?: number | string;
+    requirements: Array<{ moduleId: number; priority: 'HIGH' | 'MEDIUM' | 'LOW'; weight?: number; isRequired?: boolean }>;
+  }
+): Promise<any> => {
+  const res = await apiClient.post(`/company-roles/${roleId}/configuration`, data);
+  return res.data;
+};
+
+export const submitRoleForVerification = async (roleId: number, companyId?: number | string): Promise<any> => {
+  const res = await apiClient.post(`/company-roles/${roleId}/submit`, { companyId });
+  return res.data;
+};
+
+// 13. Admin Verification APIs
+export const getAdminPendingVerifications = async (): Promise<{ companies: any[]; roles: any[]; counts: any }> => {
+  const res = await apiClient.get('/admin/pending-verifications');
+  return res.data;
+};
+
+export const verifyCompanyAccount = async (
+  companyId: number | string,
+  status: 'VERIFIED' | 'UNVERIFIED' | 'SUSPENDED',
+  adminEmail?: string
+): Promise<any> => {
+  const res = await apiClient.put(`/admin/company/${companyId}/verify`, { status, adminEmail });
+  return res.data;
+};
+
+export const reviewRoleConfiguration = async (
+  roleId: number,
+  action: 'APPROVE' | 'ACTIVATE' | 'REQUEST_CHANGES' | 'SET_UNDER_REVIEW',
+  feedback?: string,
+  adminEmail?: string
+): Promise<any> => {
+  const res = await apiClient.put(`/admin/role-config/${roleId}/review`, { action, feedback, adminEmail });
+  return res.data;
+};
+

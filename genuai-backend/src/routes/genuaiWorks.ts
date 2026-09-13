@@ -48,6 +48,7 @@ router.get('/companies', async (_req, res) => {
          LEFT JOIN company_profiles cp ON u.id = cp.user_id
          WHERE u.role = 'company' 
            AND (u.status = 'active' OR u.status IS NULL)
+           AND (cp.verification_status = 'VERIFIED' OR cp.is_verified = true)
            AND LOWER(u.name) NOT LIKE '%mohamed jabri%'
            AND LOWER(u.name) NOT LIKE '%demo company%'
            AND LOWER(u.name) NOT LIKE '%nigga%'
@@ -63,23 +64,27 @@ router.get('/companies', async (_req, res) => {
              LEFT JOIN role_taxonomy rt ON cr.canonical_role_id = rt.id
              LEFT JOIN company_assessment_configurations cac ON cr.id = cac.company_role_id
              LEFT JOIN company_configuration_versions ccv ON cac.id = ccv.configuration_id AND ccv.status = 'active'
-             WHERE cr.company_id = $1`,
+             WHERE cr.company_id = $1
+               AND (cr.workflow_status = 'ACTIVE' OR (cr.workflow_status IS NULL AND cr.status = 'active'))`,
             [co.company_id]
           );
 
-          resultCompanies.push({
-            id: co.company_id,
-            companyName: co.company_name,
-            industry: co.industry || 'Technology',
-            location: co.location || 'Remote',
-            roles: rolesRes.rows.map(r => ({
-              id: r.id,
-              title: r.title,
-              canonicalRole: r.canonical_role || 'GENERAL_ROLE',
-              configStatus: r.config_status || 'locked',
-              version: r.version_number || 1,
-            })),
-          });
+          // Only include company if it has at least one active role
+          if (rolesRes.rows.length > 0) {
+            resultCompanies.push({
+              id: co.company_id,
+              companyName: co.company_name,
+              industry: co.industry || 'Technology',
+              location: co.location || 'Remote',
+              roles: rolesRes.rows.map(r => ({
+                id: r.id,
+                title: r.title,
+                canonicalRole: r.canonical_role || 'GENERAL_ROLE',
+                configStatus: r.config_status || 'locked',
+                version: r.version_number || 1,
+              })),
+            });
+          }
         }
         return res.json({ companies: resultCompanies });
       }

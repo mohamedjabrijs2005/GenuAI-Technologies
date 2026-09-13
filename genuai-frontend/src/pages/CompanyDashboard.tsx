@@ -61,6 +61,7 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
 const COMPANY_NAV_ITEMS: NavItem[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "pipeline", label: "Recruitment Pipeline", icon: Layers },
+  { id: "departments-roles", label: "Departments & Roles", icon: Building2 },
   { id: "jobs", label: "Jobs", icon: Briefcase },
   { id: "candidates", label: "Candidates", icon: Users },
   { id: "assessments", label: "Assessments", icon: ClipboardCheck },
@@ -72,6 +73,7 @@ const COMPANY_NAV_ITEMS: NavItem[] = [
   { id: "profile", label: "Company Profile", icon: Building2 },
   { id: "settings", label: "Settings", icon: Settings },
 ];
+
 
 const PIPELINE_STAGES = [
   { key: "applied", label: "Applied", icon: FileText, color: "text-slate-700 bg-slate-100" },
@@ -169,9 +171,49 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
     description: "",
   });
 
+  // ─── PHASE 1: DEPARTMENT & ROLE CONFIGURATION STATE ───
+  const [departments, setDepartments] = useState<any[]>([]);
+  const [companyRoles, setCompanyRoles] = useState<any[]>([]);
+  const [assessmentModules, setAssessmentModules] = useState<any[]>([]);
+
+  // Department modal
+  const [showDeptModal, setShowDeptModal] = useState(false);
+  const [editingDept, setEditingDept] = useState<any | null>(null);
+  const [deptForm, setDeptForm] = useState({ name: "", code: "", description: "" });
+  const [deptSaving, setDeptSaving] = useState(false);
+
+  // Role Configuration Wizard
+  const [showRoleWizard, setShowRoleWizard] = useState(false);
+  const [roleWizardStep, setRoleWizardStep] = useState(1);
+  const [editingRole, setEditingRole] = useState<any | null>(null);
+  const [roleWizardForm, setRoleWizardForm] = useState({
+    departmentId: "" as string | number,
+    title: "",
+    description: "",
+    experienceLevel: "Mid-Level",
+    employmentType: "Full-time",
+    location: "Remote",
+    vacancies: 1,
+  });
+  const [roleSkills, setRoleSkills] = useState<Array<{
+    skill_name: string;
+    category: "TECHNICAL" | "NON_TECHNICAL" | "DOMAIN";
+    priority: "HIGH" | "MEDIUM" | "LOW";
+    is_required: boolean;
+  }>>([]);
+  const [newSkillForm, setNewSkillForm] = useState({ skill_name: "", category: "TECHNICAL" as "TECHNICAL" | "NON_TECHNICAL" | "DOMAIN", priority: "HIGH" as "HIGH" | "MEDIUM" | "LOW", is_required: true });
+  const [selectedModuleIds, setSelectedModuleIds] = useState<Set<number>>(new Set());
+  const [modulePriorities, setModulePriorities] = useState<Record<number, "HIGH" | "MEDIUM" | "LOW">>({});
+  const [roleWizardSaving, setRoleWizardSaving] = useState(false);
+  const [roleWizardCreatedId, setRoleWizardCreatedId] = useState<number | null>(null);
+
+  // Submission state
+  const [submittingRoleId, setSubmittingRoleId] = useState<number | null>(null);
+
   const companyId = user?.user?.id || user?.id;
   const companyName = user?.user?.name || user?.name || "Company";
   const token = user?.token || "";
+
 
   const addToast = (type: "success" | "error" | "info", message: string) => {
     const id = Date.now().toString();
@@ -188,7 +230,7 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
     setLoading(true);
     try {
       const headers = { Authorization: "Bearer " + token };
-      const [oRes, jRes, cRes, iRes, pRes, aRes, profRes, subRes] = await Promise.allSettled([
+      const [oRes, jRes, cRes, iRes, pRes, aRes, profRes, subRes, deptRes, rolesRes, modRes] = await Promise.allSettled([
         axios.get(`${API}/company/overview/${companyId}`, { headers }),
         axios.get(`${API}/company/jobs/${companyId}`, { headers }),
         axios.get(`${API}/company/candidates/${companyId}`, { headers }),
@@ -197,6 +239,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         axios.get(`${API}/company/ai-insights/${companyId}`, { headers }),
         axios.get(`${API}/company/profile/${companyId}`, { headers }),
         axios.get(`${API}/company/subscription/${companyId}`, { headers }),
+        axios.get(`${API}/company-roles/departments/${companyId}`, { headers }),
+        axios.get(`${API}/company-roles/${companyId}`, { headers }),
+        axios.get(`${API}/company-roles/modules`, { headers }),
       ]);
 
       if (oRes.status === "fulfilled") setOverviewData(oRes.value.data);
@@ -217,6 +262,9 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
         });
       }
       if (subRes.status === "fulfilled") setSubscription(subRes.value.data);
+      if (deptRes.status === "fulfilled") setDepartments(deptRes.value.data.departments || []);
+      if (rolesRes.status === "fulfilled") setCompanyRoles(rolesRes.value.data.roles || []);
+      if (modRes.status === "fulfilled") setAssessmentModules(modRes.value.data.modules || []);
     } catch (e: any) {
       console.error("[CompanyDashboard] Error loading data:", e);
       addToast("error", "Failed to refresh recruitment telemetry.");
@@ -241,6 +289,190 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
     }, 10000);
     return () => clearInterval(interval);
   }, [companyId, token]);
+
+  // ─── PHASE 1: DEPARTMENT HANDLERS ───────────────────────────────────────────
+  const openNewDeptModal = () => {
+    setEditingDept(null);
+    setDeptForm({ name: "", code: "", description: "" });
+    setShowDeptModal(true);
+  };
+
+  const openEditDeptModal = (dept: any) => {
+    setEditingDept(dept);
+    setDeptForm({ name: dept.name, code: dept.code || "", description: dept.description || "" });
+    setShowDeptModal(true);
+  };
+
+  const handleSaveDept = async () => {
+    if (!deptForm.name.trim()) { addToast("error", "Department name is required."); return; }
+    setDeptSaving(true);
+    try {
+      const headers = { Authorization: "Bearer " + token };
+      if (editingDept) {
+        await axios.put(`${API}/company-roles/departments/${editingDept.id}`, deptForm, { headers });
+        addToast("success", "Department updated successfully.");
+      } else {
+        await axios.post(`${API}/company-roles/departments`, { companyId, ...deptForm }, { headers });
+        addToast("success", "Department created successfully.");
+      }
+      setShowDeptModal(false);
+      const res = await axios.get(`${API}/company-roles/departments/${companyId}`, { headers });
+      setDepartments(res.data.departments || []);
+    } catch (e: any) {
+      addToast("error", e.response?.data?.error || "Failed to save department.");
+    } finally {
+      setDeptSaving(false);
+    }
+  };
+
+  const handleDeactivateDept = async (deptId: number) => {
+    try {
+      const headers = { Authorization: "Bearer " + token };
+      await axios.delete(`${API}/company-roles/departments/${deptId}`, { headers });
+      addToast("info", "Department deactivated.");
+      setDepartments(prev => prev.map(d => d.id === deptId ? { ...d, status: "inactive" } : d));
+    } catch {
+      addToast("error", "Failed to deactivate department.");
+    }
+  };
+
+  // ─── PHASE 1: ROLE WIZARD HANDLERS ──────────────────────────────────────────
+  const openNewRoleWizard = () => {
+    setEditingRole(null);
+    setRoleWizardStep(1);
+    setRoleWizardForm({ departmentId: departments[0]?.id || "", title: "", description: "", experienceLevel: "Mid-Level", employmentType: "Full-time", location: "Remote", vacancies: 1 });
+    setRoleSkills([]);
+    setSelectedModuleIds(new Set());
+    setModulePriorities({});
+    setRoleWizardCreatedId(null);
+    setShowRoleWizard(true);
+  };
+
+  const addSkill = () => {
+    if (!newSkillForm.skill_name.trim()) { addToast("error", "Skill name required."); return; }
+    setRoleSkills(prev => [...prev, { ...newSkillForm }]);
+    setNewSkillForm({ skill_name: "", category: "TECHNICAL", priority: "HIGH", is_required: true });
+  };
+
+  const removeSkill = (idx: number) => setRoleSkills(prev => prev.filter((_, i) => i !== idx));
+
+  const toggleModule = (modId: number) => {
+    setSelectedModuleIds(prev => {
+      const next = new Set(prev);
+      if (next.has(modId)) { next.delete(modId); } else { next.add(modId); }
+      return next;
+    });
+    if (!modulePriorities[modId]) {
+      setModulePriorities(prev => ({ ...prev, [modId]: "HIGH" }));
+    }
+  };
+
+  const handleRoleWizardNext = async () => {
+    // Step 1 → 2: Create / update basic role
+    if (roleWizardStep === 1) {
+      if (!roleWizardForm.title.trim()) { addToast("error", "Role title is required."); return; }
+      setRoleWizardSaving(true);
+      try {
+        const headers = { Authorization: "Bearer " + token };
+        if (!roleWizardCreatedId) {
+          const res = await axios.post(`${API}/company-roles`, {
+            companyId,
+            departmentId: roleWizardForm.departmentId || undefined,
+            title: roleWizardForm.title,
+            description: roleWizardForm.description,
+            experienceLevel: roleWizardForm.experienceLevel,
+            employmentType: roleWizardForm.employmentType,
+            location: roleWizardForm.location,
+            vacancies: roleWizardForm.vacancies,
+          }, { headers });
+          setRoleWizardCreatedId(res.data.role?.id || res.data.roleId || null);
+        } else {
+          await axios.put(`${API}/company-roles/${roleWizardCreatedId}`, {
+            title: roleWizardForm.title, description: roleWizardForm.description,
+            experience_level: roleWizardForm.experienceLevel, employment_type: roleWizardForm.employmentType,
+            location: roleWizardForm.location, vacancies: roleWizardForm.vacancies,
+            department_id: roleWizardForm.departmentId || undefined,
+          }, { headers });
+        }
+        setRoleWizardStep(2);
+      } catch (e: any) {
+        addToast("error", e.response?.data?.error || "Failed to save role.");
+      } finally {
+        setRoleWizardSaving(false);
+      }
+      return;
+    }
+
+    // Step 2 → 3: Save skills
+    if (roleWizardStep === 2) {
+      if (roleWizardCreatedId && roleSkills.length > 0) {
+        try {
+          const headers = { Authorization: "Bearer " + token };
+          await axios.put(`${API}/company-roles/${roleWizardCreatedId}/skills`, { skills: roleSkills }, { headers });
+        } catch { /* non-fatal, continue */ }
+      }
+      setRoleWizardStep(3);
+      return;
+    }
+
+    // Step 3 → 4: Save assessment config
+    if (roleWizardStep === 3) {
+      if (roleWizardCreatedId && selectedModuleIds.size > 0) {
+        try {
+          const headers = { Authorization: "Bearer " + token };
+          const requirements = Array.from(selectedModuleIds).map(id => ({
+            moduleId: id,
+            priority: modulePriorities[id] || "HIGH",
+            isRequired: true,
+          }));
+          await axios.post(`${API}/company-roles/${roleWizardCreatedId}/configuration`, { companyId, requirements }, { headers });
+        } catch { /* non-fatal */ }
+      }
+      setRoleWizardStep(4);
+      return;
+    }
+  };
+
+  const handleRoleWizardSubmit = async () => {
+    if (!roleWizardCreatedId) { addToast("error", "Please complete all steps first."); return; }
+    setRoleWizardSaving(true);
+    try {
+      const headers = { Authorization: "Bearer " + token };
+      await axios.post(`${API}/company-roles/${roleWizardCreatedId}/submit`, { companyId }, { headers });
+      addToast("success", "Role submitted for GenuAI verification! Admin will review it shortly.");
+      setShowRoleWizard(false);
+      const res = await axios.get(`${API}/company-roles/${companyId}`, { headers });
+      setCompanyRoles(res.data.roles || []);
+    } catch (e: any) {
+      addToast("error", e.response?.data?.error || "Submission failed.");
+    } finally {
+      setRoleWizardSaving(false);
+    }
+  };
+
+  const handleSaveDraft = () => {
+    addToast("success", "Role saved as draft. You can submit it for verification when ready.");
+    setShowRoleWizard(false);
+    const headers = { Authorization: "Bearer " + token };
+    axios.get(`${API}/company-roles/${companyId}`, { headers }).then(res => setCompanyRoles(res.data.roles || [])).catch(() => {});
+  };
+
+  const handleSubmitRole = async (roleId: number) => {
+    setSubmittingRoleId(roleId);
+    try {
+      const headers = { Authorization: "Bearer " + token };
+      await axios.post(`${API}/company-roles/${roleId}/submit`, { companyId }, { headers });
+      addToast("success", "Role submitted for GenuAI verification!");
+      const res = await axios.get(`${API}/company-roles/${companyId}`, { headers });
+      setCompanyRoles(res.data.roles || []);
+    } catch (e: any) {
+      addToast("error", e.response?.data?.error || "Submission failed.");
+    } finally {
+      setSubmittingRoleId(null);
+    }
+  };
+
+
 
   // Update verdict with GenuAI Waterfall cascade
   const handleUpdateVerdict = async (candidateAssessmentId: number, verdict: string) => {
@@ -1226,6 +1458,183 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           TAB: JOBS MANAGEMENT
       Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ─────────────────────────────────────────────
+          TAB: DEPARTMENTS & ROLES (PHASE 1)
+      ───────────────────────────────────────────── */}
+      {activeTab === "departments-roles" && (
+        <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
+          {/* Header */}
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                {profile?.verification_status === "VERIFIED" ? (
+                  <span className="flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <ShieldCheck className="w-3 h-3" /> Verified Employer
+                  </span>
+                ) : profile?.verification_status === "SUSPENDED" ? (
+                  <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">Suspended</span>
+                ) : (
+                  <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">Unverified — Verification Pending</span>
+                )}
+              </div>
+              <h2 className="text-lg font-black text-on-surface">Departments &amp; Role Configuration</h2>
+              <p className="text-xs text-on-surface-variant">Create departments, configure roles with skills and assessment modules, then submit for GenuAI verification.</p>
+            </div>
+            <button
+              type="button"
+              onClick={openNewRoleWizard}
+              className="flex items-center gap-2 px-5 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-2xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Configure New Role</span>
+            </button>
+          </div>
+
+          {/* Departments Section */}
+          <div className="bg-white/95 rounded-[32px] border border-surface-container shadow-2xs overflow-hidden">
+            <div className="p-5 border-b border-surface-container flex items-center justify-between bg-surface-bright/40">
+              <div>
+                <h3 className="text-sm font-black text-on-surface">Departments</h3>
+                <p className="text-[11px] text-on-surface-variant mt-0.5">{departments.filter(d => d.status !== "inactive").length} active departments</p>
+              </div>
+              <button
+                type="button"
+                onClick={openNewDeptModal}
+                className="flex items-center gap-1.5 px-3.5 py-2 bg-white hover:bg-surface-bright border border-surface-container rounded-xl text-xs font-bold text-on-surface transition-all cursor-pointer shadow-2xs"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Add Department
+              </button>
+            </div>
+            {departments.length > 0 ? (
+              <div className="divide-y divide-surface-container/50">
+                {departments.map((dept: any) => (
+                  <div key={dept.id} className={`flex items-center justify-between p-4 transition-colors hover:bg-surface-bright/40 ${dept.status === "inactive" ? "opacity-50" : ""}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-2xl bg-indigo-50 text-indigo-brand flex items-center justify-center font-black text-sm">
+                        {dept.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-on-surface flex items-center gap-2">
+                          {dept.name}
+                          {dept.code && <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-surface-bright border border-surface-container text-on-surface-variant">{dept.code}</span>}
+                        </div>
+                        <div className="text-[11px] text-on-surface-variant">{dept.description || "No description"}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <span className="text-xs font-bold text-on-surface">{dept.active_roles_count || 0}</span>
+                        <span className="text-[11px] text-on-surface-variant"> / {dept.roles_count || 0} roles active</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button type="button" onClick={() => openEditDeptModal(dept)} className="text-[11px] font-bold text-indigo-brand hover:underline cursor-pointer">Edit</button>
+                        {dept.status !== "inactive" && (
+                          <button type="button" onClick={() => handleDeactivateDept(dept.id)} className="text-[11px] font-bold text-rose-600 hover:underline cursor-pointer">Deactivate</button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 text-center text-xs text-on-surface-variant">
+                No departments yet. Create your first department to organize roles.
+              </div>
+            )}
+          </div>
+
+          {/* Roles Section */}
+          <div className="bg-white/95 rounded-[32px] border border-surface-container shadow-2xs overflow-hidden">
+            <div className="p-5 border-b border-surface-container flex items-center justify-between bg-surface-bright/40">
+              <div>
+                <h3 className="text-sm font-black text-on-surface">Role Configurations</h3>
+                <p className="text-[11px] text-on-surface-variant mt-0.5">{companyRoles.length} roles configured</p>
+              </div>
+            </div>
+            {companyRoles.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-surface-bright/70 border-b border-surface-container text-on-surface font-bold uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="p-4">Role Title</th>
+                      <th className="p-4">Department</th>
+                      <th className="p-4">Experience</th>
+                      <th className="p-4">Skills</th>
+                      <th className="p-4">Workflow Status</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-container/50">
+                    {companyRoles.map((role: any) => {
+                      const statusColor =
+                        role.workflow_status === "ACTIVE" ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        : role.workflow_status === "APPROVED" ? "bg-blue-50 text-blue-700 border-blue-200"
+                        : role.workflow_status === "SUBMITTED" ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                        : role.workflow_status === "UNDER_REVIEW" ? "bg-amber-50 text-amber-700 border-amber-200"
+                        : role.workflow_status === "NEEDS_CHANGES" ? "bg-rose-50 text-rose-700 border-rose-200"
+                        : "bg-slate-100 text-slate-700 border-slate-200";
+                      return (
+                        <tr key={role.id} className="hover:bg-surface-bright/50 transition-colors">
+                          <td className="p-4 font-bold text-on-surface">
+                            {role.title}
+                            {role.workflow_status === "NEEDS_CHANGES" && role.admin_feedback && (
+                              <div className="mt-1 text-[10px] font-normal text-rose-600 max-w-xs truncate">
+                                ⚠ Admin feedback: {role.admin_feedback}
+                              </div>
+                            )}
+                          </td>
+                          <td className="p-4 text-on-surface-variant">{role.department_name || "General"}</td>
+                          <td className="p-4 text-on-surface-variant">{role.experience_level || "Mid-Level"}</td>
+                          <td className="p-4">
+                            <span className="font-bold text-on-surface">{role.skills_count || 0}</span>
+                            <span className="text-on-surface-variant ml-1">skills</span>
+                          </td>
+                          <td className="p-4">
+                            <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border ${statusColor}`}>
+                              {role.workflow_status || "DRAFT"}
+                            </span>
+                          </td>
+                          <td className="p-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              {(role.workflow_status === "DRAFT" || role.workflow_status === "NEEDS_CHANGES") && (
+                                <button
+                                  type="button"
+                                  disabled={submittingRoleId === role.id}
+                                  onClick={() => handleSubmitRole(role.id)}
+                                  className="px-3 py-1.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
+                                >
+                                  {submittingRoleId === role.id ? "Submitting..." : "Submit for Verification"}
+                                </button>
+                              )}
+                              {role.workflow_status === "ACTIVE" && (
+                                <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1">
+                                  <CheckCircle2 className="w-3.5 h-3.5" /> Live
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-10 text-center space-y-3">
+                <Target className="w-10 h-10 text-on-surface-variant/30 mx-auto" />
+                <h3 className="text-sm font-bold text-on-surface">No role configurations yet</h3>
+                <p className="text-xs text-on-surface-variant max-w-sm mx-auto">Configure your first role with skills and assessment modules to start receiving verified candidates.</p>
+                <button type="button" onClick={openNewRoleWizard} className="px-5 py-2.5 bg-indigo-brand text-white rounded-2xl text-xs font-bold shadow-xs cursor-pointer">
+                  Configure First Role
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Jobs tab */}
       {activeTab === "jobs" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="flex flex-wrap items-center justify-between gap-3 bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
@@ -1669,6 +2078,389 @@ export default function CompanyDashboard({ user, onLogout }: Props) {
       {/* Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
           6-STEP JOB CREATION FLOW WIZARD MODAL
       Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ─────────────────────────────────────────────
+          MODAL: DEPARTMENT CREATE / EDIT
+      ───────────────────────────────────────────── */}
+      {showDeptModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
+          <div className="bg-white max-w-md w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-5">
+            <div className="flex items-center justify-between border-b border-surface-container pb-4">
+              <h3 className="text-sm font-black text-on-surface">{editingDept ? "Edit Department" : "New Department"}</h3>
+              <button type="button" onClick={() => setShowDeptModal(false)} className="p-1.5 text-on-surface-variant hover:text-on-surface cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="font-bold text-on-surface mb-1 block">Department Name *</label>
+                <input
+                  placeholder="e.g. Engineering, Product, Data Science"
+                  value={deptForm.name}
+                  onChange={(e) => setDeptForm(p => ({ ...p, name: e.target.value }))}
+                  className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                />
+              </div>
+              <div>
+                <label className="font-bold text-on-surface mb-1 block">Code (Optional)</label>
+                <input
+                  placeholder="ENG / PROD / DS"
+                  value={deptForm.code}
+                  onChange={(e) => setDeptForm(p => ({ ...p, code: e.target.value }))}
+                  className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                />
+              </div>
+              <div>
+                <label className="font-bold text-on-surface mb-1 block">Description (Optional)</label>
+                <textarea
+                  rows={2}
+                  placeholder="Brief description of this department..."
+                  value={deptForm.description}
+                  onChange={(e) => setDeptForm(p => ({ ...p, description: e.target.value }))}
+                  className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-4 border-t border-surface-container">
+              <button type="button" onClick={() => setShowDeptModal(false)} className="px-5 py-2.5 text-on-surface-variant font-bold text-xs cursor-pointer">Cancel</button>
+              <button
+                type="button"
+                disabled={deptSaving}
+                onClick={handleSaveDept}
+                className="px-6 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-2xl text-xs shadow-xs cursor-pointer disabled:opacity-60"
+              >
+                {deptSaving ? "Saving..." : editingDept ? "Save Changes" : "Create Department"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─────────────────────────────────────────────
+          MODAL: 4-STEP ROLE CONFIGURATION WIZARD
+      ───────────────────────────────────────────── */}
+      {showRoleWizard && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
+          <div className="bg-white max-w-2xl w-full rounded-[32px] border border-surface-container shadow-2xl max-h-[92vh] overflow-y-auto animate-[scaleUp_0.2s_ease]">
+            {/* Wizard Header */}
+            <div className="flex items-center justify-between border-b border-surface-container p-6">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  {[1,2,3,4].map(s => (
+                    <div key={s} className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition-all ${
+                      s < roleWizardStep ? "bg-indigo-brand border-indigo-brand text-white"
+                      : s === roleWizardStep ? "border-indigo-brand text-indigo-brand bg-indigo-50"
+                      : "border-surface-container text-on-surface-variant bg-surface-bright"
+                    }`}>{s < roleWizardStep ? <Check className="w-3 h-3" /> : s}</div>
+                  ))}
+                </div>
+                <h3 className="text-base font-black text-on-surface">
+                  {roleWizardStep === 1 && "Step 1: Role Details"}
+                  {roleWizardStep === 2 && "Step 2: Skills Configuration"}
+                  {roleWizardStep === 3 && "Step 3: Assessment Modules"}
+                  {roleWizardStep === 4 && "Step 4: Review & Submit"}
+                </h3>
+                <p className="text-[11px] text-on-surface-variant mt-0.5">
+                  {roleWizardStep === 1 && "Define the basic role information and department"}
+                  {roleWizardStep === 2 && "Add Technical, Non-Technical, and Domain skills with priority levels"}
+                  {roleWizardStep === 3 && "Select assessment modules from the GenuAI library"}
+                  {roleWizardStep === 4 && "Review configuration before submitting for GenuAI platform verification"}
+                </p>
+              </div>
+              <button type="button" onClick={() => setShowRoleWizard(false)} className="p-1.5 text-on-surface-variant hover:text-on-surface rounded-xl cursor-pointer shrink-0">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5">
+              {/* STEP 1: Role Details */}
+              {roleWizardStep === 1 && (
+                <div className="space-y-4 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="sm:col-span-2">
+                      <label className="font-bold text-on-surface mb-1 block">Role Title *</label>
+                      <input
+                        placeholder="e.g. Senior Software Engineer"
+                        value={roleWizardForm.title}
+                        onChange={(e) => setRoleWizardForm(p => ({ ...p, title: e.target.value }))}
+                        className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      />
+                    </div>
+                    <div>
+                      <label className="font-bold text-on-surface mb-1 block">Department</label>
+                      <select
+                        value={roleWizardForm.departmentId}
+                        onChange={(e) => setRoleWizardForm(p => ({ ...p, departmentId: e.target.value }))}
+                        className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      >
+                        <option value="">General (No Department)</option>
+                        {departments.filter(d => d.status !== "inactive").map((d: any) => (
+                          <option key={d.id} value={d.id}>{d.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="font-bold text-on-surface mb-1 block">Experience Level</label>
+                      <select
+                        value={roleWizardForm.experienceLevel}
+                        onChange={(e) => setRoleWizardForm(p => ({ ...p, experienceLevel: e.target.value }))}
+                        className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      >
+                        <option>Entry-Level</option>
+                        <option>Mid-Level</option>
+                        <option>Senior</option>
+                        <option>Lead / Staff</option>
+                        <option>Principal / Architect</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="font-bold text-on-surface mb-1 block">Employment Type</label>
+                      <select
+                        value={roleWizardForm.employmentType}
+                        onChange={(e) => setRoleWizardForm(p => ({ ...p, employmentType: e.target.value }))}
+                        className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      >
+                        <option>Full-time</option>
+                        <option>Part-time</option>
+                        <option>Contract</option>
+                        <option>Internship</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="font-bold text-on-surface mb-1 block">Location</label>
+                      <input
+                        placeholder="Remote / Bengaluru, India"
+                        value={roleWizardForm.location}
+                        onChange={(e) => setRoleWizardForm(p => ({ ...p, location: e.target.value }))}
+                        className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      />
+                    </div>
+                    <div>
+                      <label className="font-bold text-on-surface mb-1 block">Open Vacancies</label>
+                      <input
+                        type="number"
+                        min={1}
+                        value={roleWizardForm.vacancies}
+                        onChange={(e) => setRoleWizardForm(p => ({ ...p, vacancies: parseInt(e.target.value) || 1 }))}
+                        className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="font-bold text-on-surface mb-1 block">Role Description</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Key responsibilities, expected deliverables..."
+                        value={roleWizardForm.description}
+                        onChange={(e) => setRoleWizardForm(p => ({ ...p, description: e.target.value }))}
+                        className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-on-surface outline-none focus:border-indigo-brand"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2: Skills Configuration */}
+              {roleWizardStep === 2 && (
+                <div className="space-y-4 text-xs">
+                  {/* Add skill form */}
+                  <div className="p-4 rounded-2xl border border-surface-container bg-surface-bright/50 space-y-3">
+                    <div className="font-bold text-on-surface text-xs">Add a Skill</div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      <div className="sm:col-span-2">
+                        <input
+                          placeholder="Skill name (e.g. React, Python, Communication)"
+                          value={newSkillForm.skill_name}
+                          onChange={(e) => setNewSkillForm(p => ({ ...p, skill_name: e.target.value }))}
+                          onKeyDown={(e) => e.key === "Enter" && addSkill()}
+                          className="w-full p-3 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand"
+                        />
+                      </div>
+                      <div>
+                        <select
+                          value={newSkillForm.category}
+                          onChange={(e) => setNewSkillForm(p => ({ ...p, category: e.target.value as any }))}
+                          className="w-full p-3 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand"
+                        >
+                          <option value="TECHNICAL">Technical</option>
+                          <option value="NON_TECHNICAL">Non-Technical</option>
+                          <option value="DOMAIN">Domain</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <select
+                          value={newSkillForm.priority}
+                          onChange={(e) => setNewSkillForm(p => ({ ...p, priority: e.target.value as any }))}
+                          className="flex-1 p-3 bg-white border border-surface-container rounded-xl text-on-surface outline-none focus:border-indigo-brand"
+                        >
+                          <option value="HIGH">High</option>
+                          <option value="MEDIUM">Medium</option>
+                          <option value="LOW">Low</option>
+                        </select>
+                        <button type="button" onClick={addSkill} className="p-3 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-xl font-bold cursor-pointer">
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Skills list */}
+                  {roleSkills.length > 0 ? (
+                    <div className="space-y-2">
+                      {["TECHNICAL", "NON_TECHNICAL", "DOMAIN"].map(cat => {
+                        const catSkills = roleSkills.filter(s => s.category === cat);
+                        if (catSkills.length === 0) return null;
+                        return (
+                          <div key={cat} className="space-y-1">
+                            <div className={`text-[10px] font-black uppercase tracking-wider px-1 ${cat === "TECHNICAL" ? "text-indigo-brand" : cat === "NON_TECHNICAL" ? "text-purple-700" : "text-cyan-700"}`}>
+                              {cat.replace("_", "-")}
+                            </div>
+                            {catSkills.map((s, i) => (
+                              <div key={i} className="flex items-center justify-between p-3 bg-surface-bright rounded-2xl border border-surface-container">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-on-surface">{s.skill_name}</span>
+                                  <span className={`text-[9px] font-black px-1.5 py-0.2 rounded ${s.priority === "HIGH" ? "bg-rose-50 text-rose-700" : s.priority === "MEDIUM" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-700"}`}>{s.priority}</span>
+                                  {s.is_required && <span className="text-[9px] font-bold text-emerald-700">Required</span>}
+                                </div>
+                                <button type="button" onClick={() => removeSkill(roleSkills.indexOf(s))} className="text-rose-500 hover:text-rose-700 cursor-pointer">
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-on-surface-variant text-xs border border-dashed border-surface-container rounded-2xl">
+                      No skills added yet. Add Technical, Non-Technical, and Domain skills above.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* STEP 3: Assessment Modules */}
+              {roleWizardStep === 3 && (
+                <div className="space-y-3 text-xs">
+                  <p className="text-on-surface-variant">Select assessment modules from the GenuAI Library and set priority levels for each:</p>
+                  {assessmentModules.length > 0 ? (
+                    <div className="space-y-3">
+                      {["TECHNICAL", "NON_TECHNICAL", "DOMAIN", "COGNITIVE"].map(cat => {
+                        const catMods = assessmentModules.filter((m: any) => m.category === cat);
+                        if (catMods.length === 0) return null;
+                        return (
+                          <div key={cat} className="space-y-2">
+                            <div className={`text-[10px] font-black uppercase tracking-wider ${cat === "TECHNICAL" ? "text-indigo-brand" : cat === "NON_TECHNICAL" ? "text-purple-700" : cat === "DOMAIN" ? "text-cyan-700" : "text-amber-700"}`}>
+                              {cat.replace("_", "-")} Assessments
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {catMods.map((mod: any) => {
+                                const isSelected = selectedModuleIds.has(mod.id);
+                                return (
+                                  <label key={mod.id} className={`p-3 rounded-2xl border cursor-pointer flex items-start gap-2.5 transition-all ${isSelected ? "border-indigo-brand bg-indigo-50/60" : "border-surface-container bg-surface-bright/50 hover:border-indigo-brand/50"}`}>
+                                    <input type="checkbox" checked={isSelected} onChange={() => toggleModule(mod.id)} className="mt-0.5 rounded text-indigo-brand focus:ring-indigo-brand" />
+                                    <div className="flex-1">
+                                      <div className="font-bold text-on-surface">{mod.name}</div>
+                                      {mod.description && <div className="text-[10px] text-on-surface-variant mt-0.5 line-clamp-1">{mod.description}</div>}
+                                    </div>
+                                    {isSelected && (
+                                      <select
+                                        value={modulePriorities[mod.id] || "HIGH"}
+                                        onChange={(e) => setModulePriorities(p => ({ ...p, [mod.id]: e.target.value as any }))}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="text-[10px] font-bold bg-white border border-surface-container rounded-xl px-2 py-1 outline-none focus:border-indigo-brand shrink-0"
+                                      >
+                                        <option value="HIGH">High</option>
+                                        <option value="MEDIUM">Medium</option>
+                                        <option value="LOW">Low</option>
+                                      </select>
+                                    )}
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-on-surface-variant border border-dashed border-surface-container rounded-2xl">
+                      Loading assessment modules...
+                    </div>
+                  )}
+                  <div className="text-[11px] text-on-surface-variant">
+                    {selectedModuleIds.size} module{selectedModuleIds.size !== 1 ? "s" : ""} selected
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: Review & Submit */}
+              {roleWizardStep === 4 && (
+                <div className="space-y-4 text-xs">
+                  <div className="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100 space-y-3">
+                    <div className="font-black text-on-surface">Role Summary</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div><span className="text-on-surface-variant">Title:</span> <span className="font-bold text-on-surface">{roleWizardForm.title}</span></div>
+                      <div><span className="text-on-surface-variant">Experience:</span> <span className="font-bold text-on-surface">{roleWizardForm.experienceLevel}</span></div>
+                      <div><span className="text-on-surface-variant">Type:</span> <span className="font-bold text-on-surface">{roleWizardForm.employmentType}</span></div>
+                      <div><span className="text-on-surface-variant">Location:</span> <span className="font-bold text-on-surface">{roleWizardForm.location}</span></div>
+                      <div><span className="text-on-surface-variant">Vacancies:</span> <span className="font-bold text-on-surface">{roleWizardForm.vacancies}</span></div>
+                      <div><span className="text-on-surface-variant">Skills:</span> <span className="font-bold text-on-surface">{roleSkills.length} configured</span></div>
+                      <div><span className="text-on-surface-variant">Modules:</span> <span className="font-bold text-on-surface">{selectedModuleIds.size} selected</span></div>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs leading-relaxed">
+                    <strong>Verification Process:</strong> Once submitted, GenuAI Platform Governance will review your role configuration (skills + assessment priorities) and either approve, request changes, or activate it for live candidate assessments. Active roles are visible to matching candidates in the GenuAI Works engine.
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Wizard Footer */}
+            <div className="flex items-center justify-between p-6 border-t border-surface-container">
+              <button
+                type="button"
+                onClick={() => roleWizardStep > 1 ? setRoleWizardStep(s => s - 1) : setShowRoleWizard(false)}
+                className="px-4 py-2.5 text-on-surface-variant font-bold text-xs cursor-pointer flex items-center gap-1"
+              >
+                {roleWizardStep > 1 ? "← Back" : "Cancel"}
+              </button>
+
+              <div className="flex items-center gap-2">
+                {roleWizardStep === 4 && (
+                  <button
+                    type="button"
+                    disabled={roleWizardSaving}
+                    onClick={handleSaveDraft}
+                    className="px-4 py-2.5 bg-surface-bright hover:bg-surface-container border border-surface-container text-on-surface font-bold rounded-2xl text-xs cursor-pointer"
+                  >
+                    Save as Draft
+                  </button>
+                )}
+                {roleWizardStep < 4 ? (
+                  <button
+                    type="button"
+                    disabled={roleWizardSaving}
+                    onClick={handleRoleWizardNext}
+                    className="px-6 py-2.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-2xl text-xs shadow-xs cursor-pointer disabled:opacity-60 flex items-center gap-1.5"
+                  >
+                    {roleWizardSaving ? "Saving..." : "Continue →"}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={roleWizardSaving}
+                    onClick={handleRoleWizardSubmit}
+                    className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-xs shadow-xs cursor-pointer disabled:opacity-60 flex items-center gap-1.5"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    {roleWizardSaving ? "Submitting..." : "Submit for Verification"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showJobWizard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
           <div className="bg-white max-w-xl w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-6 animate-[scaleUp_0.2s_ease]">

@@ -212,6 +212,201 @@ router.get('/verification', async (req, res) => {
   }
 });
 
+// GET /admin/pending-verifications — Combined queue of pending companies & pending role configs
+router.get('/pending-verifications', async (_req, res) => {
+  try {
+    // 1. Companies with verification status
+    const companiesRes = await pool.query(
+      `SELECT u.id, u.name, u.email, u.status as user_status, u.created_at,
+              cp.company_name, cp.industry, cp.location, cp.website, cp.company_size,
+              cp.contact_email, cp.hiring_contact_name, cp.hiring_contact_email, cp.hiring_contact_phone,
+              COALESCE(cp.verification_status, 'UNVERIFIED') as verification_status,
+              (SELECT COUNT(*) FROM company_roles cr WHERE cr.company_id = u.id) as total_roles_count,
+              (SELECT COUNT(*) FROM company_roles cr WHERE cr.company_id = u.id AND cr.workflow_status = 'ACTIVE') as active_roles_count
+       FROM users u
+       LEFT JOIN company_profiles cp ON u.id = cp.user_id
+       WHERE u.role = 'company'
+       ORDER BY (CASE WHEN cp.verification_status = 'UNVERIFIED' THEN 0 WHEN cp.verification_status = 'SUSPENDED' THEN 1 ELSE 2 END) ASC, u.created_at DESC`
+    );
+
+    // 2. Roles pending verification or review
+    const rolesRes = await pool.query(
+      `SELECT cr.id, cr.company_id, cr.department_id, cr.title, cr.description,
+              cr.experience_level, cr.employment_type, cr.location, cr.vacancies,
+              cr.workflow_status, cr.admin_feedback, cr.submitted_at, cr.reviewed_at,
+              cr.status as role_status, cr.canonical_role_id,
+              d.name as department_name, d.code as department_code,
+              rt.canonical_name as canonical_role_name,
+              u.name as company_name, u.email as company_email,
+              cp.industry as company_industry, cp.verification_status as company_verification_status,
+              cac.id as config_id, cac.status as config_status,
+              ccv.id as version_id, ccv.version_number, ccv.selected_module_ids, ccv.weightages,
+              (SELECT COUNT(*) FROM company_role_skills crs WHERE crs.company_role_id = cr.id) as skills_count,
+              (SELECT json_agg(crs.*) FROM company_role_skills crs WHERE crs.company_role_id = cr.id) as skills,
+              (SELECT json_agg(json_build_object(
+                'id', am.id,
+                'name', am.name,
+                'canonical_name', am.canonical_name,
+                'category', am.category,
+                'priority', ccr.priority,
+                'weight', ccr.weight,
+                'is_required', ccr.is_required
+              ))
+               FROM company_configuration_requirements ccr
+               JOIN assessment_modules am ON ccr.assessment_module_id = am.id
+               WHERE ccr.configuration_version_id = ccv.id) as assessment_requirements
+       FROM company_roles cr
+       JOIN users u ON cr.company_id = u.id
+       LEFT JOIN company_profiles cp ON u.id = cp.user_id
+       LEFT JOIN departments d ON cr.department_id = d.id
+       LEFT JOIN role_taxonomy rt ON cr.canonical_role_id = rt.id
+       LEFT JOIN company_assessment_configurations cac ON cr.id = cac.company_role_id
+       LEFT JOIN company_configuration_versions ccv ON cac.id = ccv.configuration_id AND ccv.status = 'active'
+       ORDER BY (CASE 
+         WHEN cr.workflow_status = 'SUBMITTED' THEN 0 
+         WHEN cr.workflow_status = 'UNDER_REVIEW' THEN 1 
+         WHEN cr.workflow_status = 'NEEDS_CHANGES' THEN 2 
+         WHEN cr.workflow_status = 'APPROVED' THEN 3 
+         WHEN cr.workflow_status = 'DRAFT' THEN 4
+         ELSE 5 END) ASC, cr.submitted_at DESC NULLS LAST, cr.created_at DESC`
+    );
+
+    res.json({
+      companies: companiesRes.rows,
+      roles: rolesRes.rows,
+      counts: {
+        unverifiedCompanies: companiesRes.rows.filter(c => c.verification_status === 'UNVERIFIED').length,
+        submittedRoles: rolesRes.rows.filter(r => r.workflow_status === 'SUBMITTED').length,
+        underReviewRoles: rolesRes.rows.filter(r => r.workflow_status === 'UNDER_REVIEW').length,
+        needsChangesRoles: rolesRes.rows.filter(r => r.workflow_status === 'NEEDS_CHANGES').length,
+        approvedRoles: rolesRes.rows.filter(r => r.workflow_status === 'APPROVED').length,
+        activeRoles: rolesRes.rows.filter(r => r.workflow_status === 'ACTIVE').length,
+      }
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /admin/company/:companyId/verify — Verify or suspend company
+router.put('/company/:companyId/verify', async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    const { status, adminEmail } = req.body; // 'VERIFIED' | 'UNVERIFIED' | 'SUSPENDED'
+
+    const validStatuses = ['VERIFIED', 'UNVERIFIED', 'SUSPENDED'];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Status must be one of: VERIFIED, UNVERIFIED, SUSPENDED' });
+    }
+
+    const isVerified = status === 'VERIFIED';
+
+    const result = await pool.query(
+      `INSERT INTO company_profiles (user_id, verification_status, is_verified, created_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (user_id) DO UPDATE SET 
+         verification_status = $2,
+         is_verified = $3
+       RETURNING *`,
+      [companyId, status, isVerified]
+    );
+
+    // Audit log
+    await pool.query(
+      `INSERT INTO audit_logs (user_email, action, resource, details, status) VALUES ($1, $2, $3, $4, 'success')`,
+      [adminEmail || 'admin@genuai.tech', 'VERIFY_COMPANY', `Company #${companyId}`, `Set verification status to ${status}`]
+    ).catch(() => {});
+
+    res.json({ success: true, profile: result.rows[0], message: `Company verification status updated to ${status}.` });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /admin/role-config/:roleId/review — GenuAI Admin review of role configuration
+router.put('/role-config/:roleId/review', async (req, res) => {
+  try {
+    const { roleId } = req.params;
+    const { action, feedback, adminId, adminEmail } = req.body; 
+    // action: 'APPROVE' | 'ACTIVATE' | 'REQUEST_CHANGES' | 'SET_UNDER_REVIEW'
+
+    let targetWorkflowStatus: string;
+    if (action === 'ACTIVATE') {
+      targetWorkflowStatus = 'ACTIVE';
+    } else if (action === 'APPROVE') {
+      targetWorkflowStatus = 'APPROVED';
+    } else if (action === 'REQUEST_CHANGES') {
+      targetWorkflowStatus = 'NEEDS_CHANGES';
+    } else if (action === 'SET_UNDER_REVIEW') {
+      targetWorkflowStatus = 'UNDER_REVIEW';
+    } else {
+      return res.status(400).json({ error: 'Action must be one of: APPROVE, ACTIVATE, REQUEST_CHANGES, SET_UNDER_REVIEW' });
+    }
+
+    if (action === 'REQUEST_CHANGES' && !feedback) {
+      return res.status(400).json({ error: 'Feedback notes are required when requesting changes.' });
+    }
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // 1. Update role workflow status
+      const roleUpdate = await client.query(
+        `UPDATE company_roles SET
+           workflow_status = $1,
+           admin_feedback = $2,
+           reviewed_at = NOW(),
+           reviewed_by = $3,
+           status = (CASE WHEN $1 = 'ACTIVE' THEN 'active' ELSE status END)
+         WHERE id = $4
+         RETURNING *`,
+        [targetWorkflowStatus, feedback || null, adminId || null, roleId]
+      );
+
+      if (roleUpdate.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return res.status(404).json({ error: 'Role not found.' });
+      }
+
+      const role = roleUpdate.rows[0];
+
+      // 2. If activating, ensure configuration is locked
+      if (targetWorkflowStatus === 'ACTIVE') {
+        await client.query(
+          `UPDATE company_assessment_configurations SET
+             status = 'locked',
+             locked_at = NOW()
+           WHERE company_role_id = $1`,
+          [roleId]
+        );
+      }
+
+      // 3. Audit log
+      await client.query(
+        `INSERT INTO audit_logs (user_email, action, resource, details, status) VALUES ($1, $2, $3, $4, 'success')`,
+        [adminEmail || 'admin@genuai.tech', 'REVIEW_ROLE_CONFIG', `Role #${roleId} (${role.title})`, `Action: ${action}, Status: ${targetWorkflowStatus}, Feedback: ${feedback || 'None'}`]
+      );
+
+      await client.query('COMMIT');
+
+      res.json({
+        success: true,
+        workflow_status: targetWorkflowStatus,
+        role: roleUpdate.rows[0],
+        message: `Role configuration successfully updated to ${targetWorkflowStatus}.`,
+      });
+    } catch (txErr: any) {
+      await client.query('ROLLBACK');
+      throw txErr;
+    } finally {
+      client.release();
+    }
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ─────────────────────────────────────────────
 // 5. Institution Management
 // ─────────────────────────────────────────────

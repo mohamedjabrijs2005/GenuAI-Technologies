@@ -580,6 +580,10 @@ router.get('/profile/:companyId', async (req, res) => {
       description: '',
       company_size: '50-200 employees',
       contact_email: user?.email || '',
+      hiring_contact_name: '',
+      hiring_contact_email: '',
+      hiring_contact_phone: '',
+      verification_status: 'UNVERIFIED',
       team_members: [],
     };
 
@@ -592,7 +596,20 @@ router.get('/profile/:companyId', async (req, res) => {
 router.put('/profile/:companyId', async (req, res) => {
   try {
     const { companyId } = req.params;
-    const { company_name, logo_url, industry, website, description, location, company_size, contact_email, team_members } = req.body;
+    const {
+      company_name,
+      logo_url,
+      industry,
+      website,
+      description,
+      location,
+      company_size,
+      contact_email,
+      hiring_contact_name,
+      hiring_contact_email,
+      hiring_contact_phone,
+      team_members,
+    } = req.body;
 
     const check = await pool.query(`SELECT id FROM company_profiles WHERE user_id = $1`, [companyId]);
 
@@ -601,8 +618,9 @@ router.put('/profile/:companyId', async (req, res) => {
       result = await pool.query(
         `INSERT INTO company_profiles (
           user_id, company_name, logo_url, industry, website, description,
-          location, company_size, contact_email, team_members, created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW()) RETURNING *`,
+          location, company_size, contact_email, hiring_contact_name, hiring_contact_email,
+          hiring_contact_phone, verification_status, team_members, created_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'UNVERIFIED', $13, NOW()) RETURNING *`,
         [
           companyId,
           company_name,
@@ -613,6 +631,9 @@ router.put('/profile/:companyId', async (req, res) => {
           location || 'Bengaluru, India',
           company_size || '50-200 employees',
           contact_email || '',
+          hiring_contact_name || '',
+          hiring_contact_email || '',
+          hiring_contact_phone || '',
           JSON.stringify(team_members || []),
         ]
       );
@@ -627,8 +648,11 @@ router.put('/profile/:companyId', async (req, res) => {
           location = COALESCE($6, location),
           company_size = COALESCE($7, company_size),
           contact_email = COALESCE($8, contact_email),
-          team_members = COALESCE($9, team_members)
-         WHERE user_id = $10 RETURNING *`,
+          hiring_contact_name = COALESCE($9, hiring_contact_name),
+          hiring_contact_email = COALESCE($10, hiring_contact_email),
+          hiring_contact_phone = COALESCE($11, hiring_contact_phone),
+          team_members = COALESCE($12, team_members)
+         WHERE user_id = $13 RETURNING *`,
         [
           company_name,
           logo_url,
@@ -638,6 +662,9 @@ router.put('/profile/:companyId', async (req, res) => {
           location,
           company_size,
           contact_email,
+          hiring_contact_name,
+          hiring_contact_email,
+          hiring_contact_phone,
           JSON.stringify(team_members || []),
           companyId,
         ]

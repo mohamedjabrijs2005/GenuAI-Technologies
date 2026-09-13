@@ -18,6 +18,7 @@ import {
   Filter,
   Plus,
   Trash2,
+  Check,
   CheckCircle2,
   AlertCircle,
   Clock,
@@ -99,6 +100,17 @@ export default function AdminDashboard({ user, onLogout }: Props) {
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [broadcasts, setBroadcasts] = useState<any[]>([]);
 
+  // Phase 1: Company & Role Verification States
+  const [pendingVerificationData, setPendingVerificationData] = useState<{ companies: any[]; roles: any[]; counts: any }>({
+    companies: [],
+    roles: [],
+    counts: { unverifiedCompanies: 0, submittedRoles: 0, underReviewRoles: 0, needsChangesRoles: 0, approvedRoles: 0, activeRoles: 0 }
+  });
+  const [verificationSubTab, setVerificationSubTab] = useState<"roles" | "companies">("roles");
+  const [selectedRoleForReview, setSelectedRoleForReview] = useState<any | null>(null);
+  const [reviewFeedback, setReviewFeedback] = useState("");
+  const [reviewActionLoading, setReviewActionLoading] = useState(false);
+
   // Modals & Selected items
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
@@ -134,7 +146,7 @@ export default function AdminDashboard({ user, onLogout }: Props) {
     setLoading(true);
     try {
       const headers = { Authorization: "Bearer " + token };
-      const [oRes, uRes, cRes, compRes, jRes, vRes, hRes, aRes, nRes] = await Promise.allSettled([
+      const [oRes, uRes, cRes, compRes, jRes, vRes, hRes, aRes, nRes, pvRes] = await Promise.allSettled([
         axios.get(`${API}/admin/overview`, { headers }),
         axios.get(`${API}/admin/users`, { headers }),
         axios.get(`${API}/admin/candidates`, { headers }),
@@ -144,6 +156,7 @@ export default function AdminDashboard({ user, onLogout }: Props) {
         axios.get(`${API}/admin/system-health`, { headers }),
         axios.get(`${API}/admin/audit-logs`, { headers }),
         axios.get(`${API}/admin/notifications`, { headers }),
+        axios.get(`${API}/admin/pending-verifications`, { headers }),
       ]);
 
       if (oRes.status === "fulfilled") setOverviewData(oRes.value.data);
@@ -155,6 +168,7 @@ export default function AdminDashboard({ user, onLogout }: Props) {
       if (hRes.status === "fulfilled") setSystemHealth(hRes.value.data);
       if (aRes.status === "fulfilled") setAuditLogs(aRes.value.data.logs || []);
       if (nRes.status === "fulfilled") setBroadcasts(nRes.value.data.notifications || []);
+      if (pvRes.status === "fulfilled" && pvRes.value.data) setPendingVerificationData(pvRes.value.data);
     } catch (e: any) {
       console.error("[AdminDashboard] Load error:", e);
       addToast("error", "Unable to refresh platform data.");
@@ -207,6 +221,45 @@ export default function AdminDashboard({ user, onLogout }: Props) {
       loadAdminData();
     } catch {
       addToast("error", "Failed to send platform broadcast.");
+    }
+  };
+
+  // Handle Company Verification
+  const handleVerifyCompany = async (companyId: number, status: "VERIFIED" | "UNVERIFIED" | "SUSPENDED") => {
+    try {
+      const headers = { Authorization: "Bearer " + token };
+      await axios.put(`${API}/admin/company/${companyId}/verify`, { status, adminEmail }, { headers });
+      addToast("success", `Company status updated to ${status}.`);
+      loadAdminData();
+    } catch {
+      addToast("error", "Failed to update company verification status.");
+    }
+  };
+
+  // Handle Role Configuration Review Action
+  const handleReviewRole = async (action: "APPROVE" | "ACTIVATE" | "REQUEST_CHANGES" | "SET_UNDER_REVIEW") => {
+    if (!selectedRoleForReview) return;
+    if (action === "REQUEST_CHANGES" && !reviewFeedback.trim()) {
+      addToast("error", "Please provide feedback notes explaining the required changes.");
+      return;
+    }
+
+    setReviewActionLoading(true);
+    try {
+      const headers = { Authorization: "Bearer " + token };
+      await axios.put(
+        `${API}/admin/role-config/${selectedRoleForReview.id}/review`,
+        { action, feedback: reviewFeedback.trim(), adminEmail },
+        { headers }
+      );
+      addToast("success", `Role configuration ${action === "ACTIVATE" ? "activated live" : action.toLowerCase().replace("_", " ")} successfully.`);
+      setSelectedRoleForReview(null);
+      setReviewFeedback("");
+      loadAdminData();
+    } catch (e: any) {
+      addToast("error", e.response?.data?.error || "Failed to submit role review action.");
+    } finally {
+      setReviewActionLoading(false);
     }
   };
 
@@ -920,10 +973,10 @@ export default function AdminDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-          TAB: CANDIDATES MANAGEMENT & VERIFICATION
-      â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      {(activeTab === "candidates" || activeTab === "verification") && (
+      {/* ─────────────────────────────────────────────
+          TAB: CANDIDATES TALENT POOL
+      ───────────────────────────────────────────── */}
+      {activeTab === "candidates" && (
         <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
           <div className="bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
             <h2 className="text-lg font-black text-on-surface">Candidate Talent Pool &amp; Integrity Telemetry</h2>
@@ -950,7 +1003,7 @@ export default function AdminDashboard({ user, onLogout }: Props) {
                         <div className="text-[10px] text-on-surface-variant font-normal">{c.email}</div>
                       </td>
                       <td className="p-4 text-on-surface-variant font-medium">{c.role || "Candidate"}</td>
-                      <td className="p-4 font-black text-indigo-brand text-sm">{c.overall_score ?? "â€”"}%</td>
+                      <td className="p-4 font-black text-indigo-brand text-sm">{c.overall_score ?? "—"}%</td>
                       <td className="p-4">
                         <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                           {c.triangle_status || "Verified"}
@@ -962,7 +1015,7 @@ export default function AdminDashboard({ user, onLogout }: Props) {
                           onClick={() => setSelectedCandidate(c)}
                           className="text-xs font-bold text-indigo-brand hover:underline cursor-pointer"
                         >
-                          View Telemetry â†’
+                          View Telemetry →
                         </button>
                       </td>
                     </tr>
@@ -974,9 +1027,528 @@ export default function AdminDashboard({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {/* ─────────────────────────────────────────────
+          TAB: VERIFICATION QUEUE (PHASE 1)
+      ───────────────────────────────────────────── */}
+      {activeTab === "verification" && (
+        <div className="space-y-6 animate-[fadeIn_0.2s_ease]">
+          {/* Header & Sub-Navigation */}
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-white/95 p-6 rounded-[32px] border border-surface-container shadow-2xs">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <ShieldCheck className="w-5 h-5 text-indigo-brand" />
+                <h2 className="text-lg font-black text-on-surface">GenuAI Verification &amp; Governance Queue</h2>
+              </div>
+              <p className="text-xs text-on-surface-variant">
+                Audit employer company profiles and verify role assessment configurations before they go live.
+              </p>
+            </div>
+
+            {/* Sub-tab pills */}
+            <div className="flex items-center gap-1.5 p-1 bg-surface-bright rounded-2xl border border-surface-container">
+              <button
+                type="button"
+                onClick={() => setVerificationSubTab("roles")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  verificationSubTab === "roles"
+                    ? "bg-white text-indigo-brand shadow-xs border border-surface-container"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                <span>Role Configurations</span>
+                <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-indigo-50 text-indigo-700 font-black">
+                  {pendingVerificationData.counts?.submittedRoles || 0}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setVerificationSubTab("companies")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  verificationSubTab === "companies"
+                    ? "bg-white text-indigo-brand shadow-xs border border-surface-container"
+                    : "text-on-surface-variant hover:text-on-surface"
+                }`}
+              >
+                <span>Company Accounts</span>
+                <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-amber-50 text-amber-700 font-black">
+                  {pendingVerificationData.counts?.unverifiedCompanies || 0}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Telemetry KPI Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="bg-white/95 p-4 rounded-3xl border border-surface-container shadow-2xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant block mb-1">Submitted Roles</span>
+              <div className="text-2xl font-black text-indigo-brand">{pendingVerificationData.counts?.submittedRoles || 0}</div>
+              <span className="text-[10px] text-on-surface-variant">Awaiting admin review</span>
+            </div>
+            <div className="bg-white/95 p-4 rounded-3xl border border-surface-container shadow-2xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant block mb-1">Under Review</span>
+              <div className="text-2xl font-black text-amber-600">{pendingVerificationData.counts?.underReviewRoles || 0}</div>
+              <span className="text-[10px] text-on-surface-variant">In audit process</span>
+            </div>
+            <div className="bg-white/95 p-4 rounded-3xl border border-surface-container shadow-2xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant block mb-1">Unverified Companies</span>
+              <div className="text-2xl font-black text-rose-600">{pendingVerificationData.counts?.unverifiedCompanies || 0}</div>
+              <span className="text-[10px] text-on-surface-variant">Require identity verification</span>
+            </div>
+            <div className="bg-white/95 p-4 rounded-3xl border border-surface-container shadow-2xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant block mb-1">Live Active Roles</span>
+              <div className="text-2xl font-black text-emerald-600">{pendingVerificationData.counts?.activeRoles || 0}</div>
+              <span className="text-[10px] text-on-surface-variant">Locked &amp; Candidate Visible</span>
+            </div>
+          </div>
+
+          {/* SUBTAB 1: ROLE CONFIGURATIONS */}
+          {verificationSubTab === "roles" && (
+            <div className="bg-white/95 rounded-[32px] border border-surface-container shadow-2xs overflow-hidden">
+              <div className="p-4 border-b border-surface-container bg-surface-bright/40 flex items-center justify-between">
+                <span className="text-xs font-bold text-on-surface">Submitted &amp; Managed Role Configurations</span>
+                <span className="text-[11px] text-on-surface-variant">{pendingVerificationData.roles?.length || 0} total roles</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-surface-bright/80 border-b border-surface-container text-on-surface font-bold uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="p-4">Role Title &amp; Company</th>
+                      <th className="p-4">Department</th>
+                      <th className="p-4">Skills Defined</th>
+                      <th className="p-4">Assessment Modules</th>
+                      <th className="p-4">Workflow Status</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-container/50">
+                    {pendingVerificationData.roles?.length > 0 ? (
+                      pendingVerificationData.roles.map((r: any) => {
+                        const statusColor =
+                          r.workflow_status === "ACTIVE"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : r.workflow_status === "APPROVED"
+                            ? "bg-blue-50 text-blue-700 border-blue-200"
+                            : r.workflow_status === "SUBMITTED"
+                            ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                            : r.workflow_status === "UNDER_REVIEW"
+                            ? "bg-amber-50 text-amber-700 border-amber-200"
+                            : r.workflow_status === "NEEDS_CHANGES"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : "bg-slate-100 text-slate-700 border-slate-200";
+
+                        return (
+                          <tr key={r.id} className="hover:bg-surface-bright/50 transition-colors">
+                            <td className="p-4">
+                              <div className="font-bold text-on-surface">{r.title}</div>
+                              <div className="text-[10px] text-on-surface-variant font-medium flex items-center gap-1.5 mt-0.5">
+                                <Building2 className="w-3 h-3 text-on-surface-variant/70" />
+                                <span>{r.company_name}</span>
+                                {r.company_verification_status === "VERIFIED" && (
+                                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-600 border border-emerald-200">
+                                    Verified Employer
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="p-4 text-on-surface-variant font-medium">
+                              {r.department_name || "General"}
+                            </td>
+                            <td className="p-4">
+                              <span className="font-bold text-on-surface">{r.skills_count || 0}</span>
+                              <span className="text-[10px] text-on-surface-variant ml-1">configured</span>
+                            </td>
+                            <td className="p-4">
+                              <span className="font-bold text-indigo-brand">
+                                {r.assessment_requirements?.length || r.selected_module_ids?.length || 0}
+                              </span>
+                              <span className="text-[10px] text-on-surface-variant ml-1">modules</span>
+                            </td>
+                            <td className="p-4">
+                              <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border ${statusColor}`}>
+                                {r.workflow_status || "DRAFT"}
+                              </span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedRoleForReview(r);
+                                  setReviewFeedback(r.admin_feedback || "");
+                                }}
+                                className="px-3.5 py-1.5 bg-indigo-brand hover:bg-indigo-brand-dark text-white rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer inline-flex items-center gap-1"
+                              >
+                                <Eye className="w-3 h-3" />
+                                <span>Audit &amp; Verify</span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="p-8 text-center text-on-surface-variant">
+                          No role configurations in the queue.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* SUBTAB 2: COMPANY ACCOUNTS */}
+          {verificationSubTab === "companies" && (
+            <div className="bg-white/95 rounded-[32px] border border-surface-container shadow-2xs overflow-hidden">
+              <div className="p-4 border-b border-surface-container bg-surface-bright/40 flex items-center justify-between">
+                <span className="text-xs font-bold text-on-surface">Registered Employer Organizations</span>
+                <span className="text-[11px] text-on-surface-variant">{pendingVerificationData.companies?.length || 0} companies</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-surface-bright/80 border-b border-surface-container text-on-surface font-bold uppercase tracking-wider text-[10px]">
+                    <tr>
+                      <th className="p-4">Organization Name</th>
+                      <th className="p-4">Industry / Location</th>
+                      <th className="p-4">Hiring Contact</th>
+                      <th className="p-4">Roles Count</th>
+                      <th className="p-4">Verification Status</th>
+                      <th className="p-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-container/50">
+                    {pendingVerificationData.companies?.length > 0 ? (
+                      pendingVerificationData.companies.map((comp: any) => {
+                        const isVer = comp.verification_status === "VERIFIED";
+                        const isSusp = comp.verification_status === "SUSPENDED";
+                        return (
+                          <tr key={comp.id} className="hover:bg-surface-bright/50 transition-colors">
+                            <td className="p-4 font-bold text-on-surface">
+                              <div>{comp.company_name || comp.name}</div>
+                              <div className="text-[10px] text-on-surface-variant font-normal">{comp.email}</div>
+                            </td>
+                            <td className="p-4 text-on-surface-variant">
+                              <div>{comp.industry || "Technology"}</div>
+                              <div className="text-[10px] text-on-surface-variant/70">{comp.location || "Remote"}</div>
+                            </td>
+                            <td className="p-4 text-on-surface-variant">
+                              {comp.hiring_contact_name ? (
+                                <div>
+                                  <div className="font-medium text-on-surface">{comp.hiring_contact_name}</div>
+                                  <div className="text-[10px] text-on-surface-variant">{comp.hiring_contact_email || comp.contact_email}</div>
+                                </div>
+                              ) : (
+                                <span className="text-on-surface-variant/50">—</span>
+                              )}
+                            </td>
+                            <td className="p-4">
+                              <span className="font-bold text-on-surface">{comp.active_roles_count || 0}</span>
+                              <span className="text-[10px] text-on-surface-variant"> / {comp.total_roles_count || 0} total</span>
+                            </td>
+                            <td className="p-4">
+                              <span
+                                className={`text-[10px] font-black px-2.5 py-1 rounded-full border ${
+                                  isVer
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                    : isSusp
+                                    ? "bg-rose-50 text-rose-700 border-rose-200"
+                                    : "bg-amber-50 text-amber-700 border-amber-200"
+                                }`}
+                              >
+                                {comp.verification_status || "UNVERIFIED"}
+                              </span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                {!isVer ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleVerifyCompany(comp.id, "VERIFIED")}
+                                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                  >
+                                    Verify Company
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleVerifyCompany(comp.id, "UNVERIFIED")}
+                                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                  >
+                                    Set Unverified
+                                  </button>
+                                )}
+                                {!isSusp ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleVerifyCompany(comp.id, "SUSPENDED")}
+                                    className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                  >
+                                    Suspend
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleVerifyCompany(comp.id, "VERIFIED")}
+                                    className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                  >
+                                    Restore
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="p-8 text-center text-on-surface-variant">
+                          No company profiles found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─────────────────────────────────────────────
+          MODAL: ROLE CONFIGURATION AUDIT & VERIFICATION
+      ───────────────────────────────────────────── */}
+      {selectedRoleForReview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
+          <div className="bg-white max-w-3xl w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto animate-[scaleUp_0.2s_ease]">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-surface-container pb-4">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-brand">
+                  Role Configuration Audit
+                </span>
+                <h3 className="text-xl font-black text-on-surface mt-0.5">{selectedRoleForReview.title}</h3>
+                <p className="text-xs text-on-surface-variant flex items-center gap-2 mt-1">
+                  <span className="font-bold text-on-surface">{selectedRoleForReview.company_name}</span>
+                  <span>•</span>
+                  <span>Dept: {selectedRoleForReview.department_name || "General"}</span>
+                  <span>•</span>
+                  <span>Exp: {selectedRoleForReview.experience_level || "Mid-Level"}</span>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedRoleForReview(null)}
+                className="p-1.5 text-on-surface-variant hover:text-on-surface rounded-xl hover:bg-surface-bright cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Current Workflow Status Alert */}
+            <div className="p-4 rounded-2xl bg-surface-bright border border-surface-container flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="w-5 h-5 text-indigo-brand" />
+                <div>
+                  <div className="text-xs font-bold text-on-surface">Current Status: {selectedRoleForReview.workflow_status}</div>
+                  <div className="text-[11px] text-on-surface-variant">
+                    {selectedRoleForReview.workflow_status === "ACTIVE"
+                      ? "Configuration is locked and live for candidate dynamic assessments."
+                      : selectedRoleForReview.workflow_status === "APPROVED"
+                      ? "Configuration is approved by admin, ready for live activation."
+                      : selectedRoleForReview.workflow_status === "NEEDS_CHANGES"
+                      ? "Company has been notified to make modifications."
+                      : "Pending review by GenuAI Platform Governance."}
+                  </div>
+                </div>
+              </div>
+              <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-white border border-surface-container text-on-surface">
+                Version {selectedRoleForReview.version_number || 1}
+              </span>
+            </div>
+
+            {/* Configured Skills Breakdown */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-black uppercase tracking-wider text-on-surface flex items-center gap-2">
+                <span>Configured Role Skills</span>
+                <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-surface-bright text-on-surface-variant">
+                  {selectedRoleForReview.skills?.length || 0}
+                </span>
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Technical */}
+                <div className="p-3.5 rounded-2xl border border-surface-container bg-surface-bright/50 space-y-2">
+                  <span className="text-[10px] font-black uppercase text-indigo-brand">Technical Skills</span>
+                  <div className="space-y-1">
+                    {selectedRoleForReview.skills?.filter((s: any) => s.category === "TECHNICAL").length > 0 ? (
+                      selectedRoleForReview.skills
+                        ?.filter((s: any) => s.category === "TECHNICAL")
+                        .map((s: any, idx: number) => (
+                          <div key={idx} className="flex items-center justify-between text-xs bg-white p-2 rounded-xl border border-surface-container/60">
+                            <span className="font-bold text-on-surface">{s.skill_name}</span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700">
+                              {s.priority || "HIGH"}
+                            </span>
+                          </div>
+                        ))
+                    ) : (
+                      <span className="text-[11px] text-on-surface-variant italic">None specified</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Non-Technical */}
+                <div className="p-3.5 rounded-2xl border border-surface-container bg-surface-bright/50 space-y-2">
+                  <span className="text-[10px] font-black uppercase text-purple-700">Non-Technical Skills</span>
+                  <div className="space-y-1">
+                    {selectedRoleForReview.skills?.filter((s: any) => s.category === "NON_TECHNICAL").length > 0 ? (
+                      selectedRoleForReview.skills
+                        ?.filter((s: any) => s.category === "NON_TECHNICAL")
+                        .map((s: any, idx: number) => (
+                          <div key={idx} className="flex items-center justify-between text-xs bg-white p-2 rounded-xl border border-surface-container/60">
+                            <span className="font-bold text-on-surface">{s.skill_name}</span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-50 text-purple-700">
+                              {s.priority || "MEDIUM"}
+                            </span>
+                          </div>
+                        ))
+                    ) : (
+                      <span className="text-[11px] text-on-surface-variant italic">None specified</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Domain */}
+                <div className="p-3.5 rounded-2xl border border-surface-container bg-surface-bright/50 space-y-2">
+                  <span className="text-[10px] font-black uppercase text-cyan-700">Domain / Industry</span>
+                  <div className="space-y-1">
+                    {selectedRoleForReview.skills?.filter((s: any) => s.category === "DOMAIN").length > 0 ? (
+                      selectedRoleForReview.skills
+                        ?.filter((s: any) => s.category === "DOMAIN")
+                        .map((s: any, idx: number) => (
+                          <div key={idx} className="flex items-center justify-between text-xs bg-white p-2 rounded-xl border border-surface-container/60">
+                            <span className="font-bold text-on-surface">{s.skill_name}</span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-50 text-cyan-700">
+                              {s.priority || "MEDIUM"}
+                            </span>
+                          </div>
+                        ))
+                    ) : (
+                      <span className="text-[11px] text-on-surface-variant italic">None specified</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Assessment Requirements Breakdown */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-black uppercase tracking-wider text-on-surface">
+                Assessment Library Modules &amp; Priority Mapping
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {selectedRoleForReview.assessment_requirements?.length > 0 ? (
+                  selectedRoleForReview.assessment_requirements.map((mod: any, idx: number) => (
+                    <div key={idx} className="p-3 rounded-2xl border border-surface-container bg-surface-bright/60 flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-bold text-on-surface">{mod.name || mod.canonical_name}</div>
+                        <div className="text-[10px] text-on-surface-variant capitalize">{mod.category?.toLowerCase() || "Core"} Assessment</div>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={`text-[9px] font-black px-2 py-0.5 rounded-full ${
+                            mod.priority === "HIGH"
+                              ? "bg-rose-50 text-rose-700 border border-rose-200"
+                              : mod.priority === "MEDIUM"
+                              ? "bg-amber-50 text-amber-700 border border-amber-200"
+                              : "bg-slate-100 text-slate-700 border border-slate-200"
+                          }`}
+                        >
+                          {mod.priority || "HIGH"} PRIORITY
+                        </span>
+                        {mod.is_required && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            Required
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 rounded-2xl bg-surface-bright text-center text-xs text-on-surface-variant col-span-2">
+                    No specific assessment modules mapped yet.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Admin Feedback Notes */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-on-surface block">
+                Admin Audit Feedback &amp; Change Notes
+              </label>
+              <textarea
+                rows={2}
+                placeholder="Add audit notes, guidelines, or instructions for the hiring employer..."
+                value={reviewFeedback}
+                onChange={(e) => setReviewFeedback(e.target.value)}
+                className="w-full p-3.5 bg-white border border-surface-container rounded-2xl text-xs text-on-surface outline-none focus:border-indigo-brand leading-relaxed"
+              />
+            </div>
+
+            {/* Action Bar */}
+            <div className="flex flex-wrap items-center justify-end gap-2.5 pt-4 border-t border-surface-container">
+              <button
+                type="button"
+                onClick={() => setSelectedRoleForReview(null)}
+                className="px-4 py-2.5 text-on-surface-variant font-bold text-xs cursor-pointer"
+              >
+                Close
+              </button>
+
+              <button
+                type="button"
+                disabled={reviewActionLoading}
+                onClick={() => handleReviewRole("SET_UNDER_REVIEW")}
+                className="px-4 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-bold rounded-2xl text-xs transition-all cursor-pointer"
+              >
+                Set Under Review
+              </button>
+
+              <button
+                type="button"
+                disabled={reviewActionLoading}
+                onClick={() => handleReviewRole("REQUEST_CHANGES")}
+                className="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold rounded-2xl text-xs transition-all cursor-pointer"
+              >
+                Request Changes
+              </button>
+
+              <button
+                type="button"
+                disabled={reviewActionLoading}
+                onClick={() => handleReviewRole("APPROVE")}
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-xs transition-all shadow-xs cursor-pointer"
+              >
+                Approve Configuration
+              </button>
+
+              <button
+                type="button"
+                disabled={reviewActionLoading}
+                onClick={() => handleReviewRole("ACTIVATE")}
+                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-xs transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
+              >
+                <Check className="w-4 h-4" />
+                <span>Activate Role (Go Live)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─────────────────────────────────────────────
           BROADCAST ANNOUNCEMENT MODAL
-      â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      ───────────────────────────────────────────── */}
       {showBroadcastModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-[fadeIn_0.15s_ease]">
           <div className="bg-white max-w-md w-full rounded-[32px] border border-surface-container shadow-2xl p-6 sm:p-8 space-y-5">
