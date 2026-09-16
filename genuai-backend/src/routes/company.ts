@@ -74,6 +74,27 @@ router.get('/overview/:companyId', async (req, res) => {
       [companyId]
     );
 
+    // Phase 1 Role Stats
+    const companyRolesQuery = await pool.query(
+      `SELECT 
+         COUNT(CASE WHEN workflow_status = 'ACTIVE' THEN 1 END) as active_roles,
+         COUNT(CASE WHEN workflow_status = 'DRAFT' THEN 1 END) as draft_roles,
+         COUNT(CASE WHEN workflow_status IN ('SUBMITTED', 'UNDER_REVIEW') THEN 1 END) as under_review_roles,
+         COUNT(CASE WHEN workflow_status = 'NEEDS_CHANGES' THEN 1 END) as needs_changes_roles,
+         COALESCE(SUM(vacancies), 0) as total_vacancies
+       FROM company_roles
+       WHERE company_id = $1`,
+      [companyId]
+    );
+
+    const roleStats = {
+      activeRoles: parseInt(companyRolesQuery.rows[0]?.active_roles || '0', 10),
+      draftRoles: parseInt(companyRolesQuery.rows[0]?.draft_roles || '0', 10),
+      underReviewRoles: parseInt(companyRolesQuery.rows[0]?.under_review_roles || '0', 10),
+      needsChangesRoles: parseInt(companyRolesQuery.rows[0]?.needs_changes_roles || '0', 10),
+      totalVacancies: parseInt(companyRolesQuery.rows[0]?.total_vacancies || '0', 10),
+    };
+
     const totalApps = parseInt(candidatesQuery.rows[0]?.count || '0', 10);
     const activeJobsCount = parseInt(activeJobsQuery.rows[0]?.count || '0', 10);
     const newAppsCount = parseInt(newAppsQuery.rows[0]?.count || '0', 10);
@@ -154,6 +175,7 @@ router.get('/overview/:companyId', async (req, res) => {
     );
 
     res.json({
+      roleStats,
       kpis: {
         activeJobs: activeJobsCount,
         totalCandidates: totalApps,
