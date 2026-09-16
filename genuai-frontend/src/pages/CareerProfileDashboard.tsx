@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ResumeGenerator from './ResumeGenerator';
 import CoverLetterGenerator from './CoverLetterGenerator';
 import ATSChecker from './ATSChecker';
 import PortfolioManager from './PortfolioManager';
 import { GenuAILogo } from '../components/common/GenuAILogo';
+import { getCandidatePersonalizationContext, PersonalizationContext } from '../services/genuaiWorksService';
 
 interface Props { user: any; onBack: () => void; }
 
@@ -16,7 +17,17 @@ const TOOLS = [
 
 export default function CareerProfileDashboard({ user, onBack }: Props) {
   const [openTool, setOpenTool] = useState<string | null>(null);
+  const [careerContext, setCareerContext] = useState<PersonalizationContext | null>(null);
   const name = user?.user?.name || user?.name || 'Candidate';
+  const userId = user?.user?.id || user?.id;
+
+  useEffect(() => {
+    if (userId) {
+      getCandidatePersonalizationContext(userId)
+        .then(ctx => setCareerContext(ctx))
+        .catch(err => console.warn('CareerProfile context error:', err));
+    }
+  }, [userId]);
 
   if (openTool === 'resume') return <ResumeGenerator user={user} onBack={() => setOpenTool(null)} />;
   if (openTool === 'cover') return <CoverLetterGenerator user={user} onBack={() => setOpenTool(null)} />;
@@ -59,6 +70,35 @@ export default function CareerProfileDashboard({ user, onBack }: Props) {
              <img src="/icons/resume_gen.png" alt="Career" className="w-14 h-14 object-contain mix-blend-screen opacity-90" />
           </div>
         </div>
+
+        {/* Target Role Resume Guidance Banner (Phase 2 Personalization) */}
+        {careerContext && careerContext.targets.length > 0 && (
+          <div className="glass p-lg rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-50/80 via-white to-purple-50/60 mb-xl text-left relative z-10 shadow-2xs">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+              <span className="text-xs font-black uppercase tracking-wider text-indigo-brand flex items-center gap-1.5">
+                🎯 Target Role Resume &amp; ATS Guidance
+              </span>
+              <span className="text-xs font-bold text-on-surface-variant">
+                Targeting: {careerContext.targets.map(t => `${t.companyName} (${t.roleTitle})`).join(', ')}
+              </span>
+            </div>
+            {careerContext.recommendedSkills.all.length > 0 && (
+              <div className="space-y-1 mt-2">
+                <div className="text-xs font-bold text-on-surface">Recommended ATS Keywords for your Target Roles:</div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {careerContext.recommendedSkills.all.map((sk, i) => (
+                    <span key={i} className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white border border-indigo-200 text-indigo-brand shadow-2xs">
+                      + {sk}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="text-[11px] font-medium text-on-surface-variant/80 mt-2 italic">
+              Use these target keywords in the AI Resume Builder &amp; ATS Scanner for maximum match score.
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl relative z-10">
           {TOOLS.map(tool => (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AIMockInterview from './AIMockInterview';
 import ProjectBuildingPractice from './ProjectBuildingPractice';
 import GroupDiscussionPractice from './GroupDiscussionPractice';
@@ -6,6 +6,7 @@ import SVARPractice from './SVARPractice';
 import InclusiveLearningHub from './InclusiveLearningHub';
 import SkillTestPractice from './SkillTestPractice';
 import { GenuAILogo } from '../components/common/GenuAILogo';
+import { getCandidatePersonalizationContext, PersonalizationContext } from '../services/genuaiWorksService';
 
 interface Props { user: any; onBack: () => void; }
 
@@ -22,7 +23,17 @@ export default function PracticeDashboard({ user, onBack }: Props) {
   const [active, setActive]   = useState<string|null>(null);
   const [openTool, setOpenTool] = useState<string|null>(null);
   const [toast, setToast]     = useState('');
+  const [careerContext, setCareerContext] = useState<PersonalizationContext | null>(null);
   const name = user?.user?.name || user?.name || 'Candidate';
+  const userId = user?.user?.id || user?.id;
+
+  useEffect(() => {
+    if (userId) {
+      getCandidatePersonalizationContext(userId)
+        .then(ctx => setCareerContext(ctx))
+        .catch(err => console.warn('Context fetch error:', err));
+    }
+  }, [userId]);
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 2500); };
 
@@ -85,6 +96,37 @@ export default function PracticeDashboard({ user, onBack }: Props) {
             Master every stage of the hiring process with AI-driven practice environments.
           </p>
         </div>
+
+        {/* Targeted Role Recommendations Banner (Phase 2 Personalization) */}
+        {careerContext && careerContext.targets.length > 0 && (
+          <div className="bg-gradient-to-r from-indigo-50/90 via-purple-50/80 to-white p-4 sm:p-5 rounded-2xl border border-indigo-100 shadow-2xs mb-6 relative z-10">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-brand text-white">
+                    🎯 Personalized for Your Targets
+                  </span>
+                  <span className="text-xs font-bold text-on-surface">
+                    {careerContext.targets.map(t => `${t.companyName} - ${t.roleTitle}`).join(', ')}
+                  </span>
+                </div>
+                {careerContext.recommendedSkills.all.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                    <span className="text-xs font-bold text-on-surface">Priority Target Skills:</span>
+                    {careerContext.recommendedSkills.all.slice(0, 8).map((sk, i) => (
+                      <span key={i} className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-indigo-200 text-indigo-brand shadow-2xs">
+                        {sk}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="text-[11px] font-medium text-on-surface-variant/80 italic">
+                All practice tools remain 100% accessible
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Modules Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 relative z-10">

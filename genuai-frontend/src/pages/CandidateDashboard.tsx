@@ -11,6 +11,12 @@ import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer } fro
 import { ROLES } from "../constants/roles";
 import { getUserName, getUserEmail, getUserId, getVerdictColor } from "../utils/formatters";
 import { generateAssessmentPDF } from "../utils/pdfHelper";
+import {
+  getEligibleCareerOptions,
+  getCandidateCareerInterests,
+  addCareerInterest,
+  removeCareerInterest,
+} from "../services/genuaiWorksService";
 
 interface Props {
   user: any;
@@ -85,6 +91,73 @@ export default function CandidateDashboard({ user, onLogout, onInterview, onResu
   const userName = getUserName(user, "Candidate");
   const userEmail = getUserEmail(user);
   const userId = getUserId(user);
+
+  // ─── PHASE 2: CAREER INTEREST CONTEXT STATE ───
+  const [careerOptions, setCareerOptions] = useState<any[]>([]);
+  const [savedCareerTargets, setSavedCareerTargets] = useState<any[]>([]);
+  const [selCompanyId, setSelCompanyId] = useState<number | "">("");
+  const [selRoleId, setSelRoleId] = useState<number | "">("");
+  const [careerTargetSaving, setCareerTargetSaving] = useState(false);
+
+  const loadCareerContext = async () => {
+    try {
+      const [opts, targets] = await Promise.all([
+        getEligibleCareerOptions().catch(() => []),
+        getCandidateCareerInterests(userId).catch(() => []),
+      ]);
+      setCareerOptions(opts);
+      setSavedCareerTargets(targets);
+      if (opts.length > 0 && !selCompanyId) {
+        setSelCompanyId(opts[0].companyId);
+      }
+    } catch (e) {
+      console.warn("Failed to load career options:", e);
+    }
+  };
+
+  useEffect(() => {
+    loadCareerContext();
+  }, [userId]);
+
+  const handleAddCareerTarget = async () => {
+    if (!selCompanyId || !selRoleId) {
+      alert("Please select both a company and a role.");
+      return;
+    }
+    const cId = Number(selCompanyId);
+    const rId = Number(selRoleId);
+
+    if (savedCareerTargets.some(t => t.companyId === cId && t.companyRoleId === rId)) {
+      alert("You have already added this company and role combination to your career targets.");
+      return;
+    }
+
+    setCareerTargetSaving(true);
+    try {
+      await addCareerInterest(cId, rId, userId);
+      const updated = await getCandidateCareerInterests(userId);
+      setSavedCareerTargets(updated);
+      setSelRoleId("");
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Failed to add career target.");
+    } finally {
+      setCareerTargetSaving(false);
+    }
+  };
+
+  const handleRemoveCareerTarget = async (targetId: number) => {
+    try {
+      await removeCareerInterest(targetId, userId);
+      setSavedCareerTargets(prev => prev.filter(t => t.id !== targetId));
+    } catch {
+      alert("Failed to remove target.");
+    }
+  };
+
+  const currentCompany = careerOptions.find(c => c.companyId === Number(selCompanyId));
+  const availableRolesForCompany = currentCompany ? currentCompany.departments.flatMap((d: any) =>
+    d.roles.map((r: any) => ({ ...r, departmentName: d.departmentName }))
+  ) : [];
 
   useEffect(() => {
     Promise.all([
@@ -386,6 +459,133 @@ export default function CandidateDashboard({ user, onLogout, onInterview, onResu
                 {i + 1}. {s}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* ── PHASE 2: CAREER INTEREST CONTEXT PANEL ── */}
+        {step === 0 && (
+          <div className="max-w-3xl mx-auto mb-xl">
+            <div className="glass p-lg md:p-xl rounded-xxl border border-surface-container shadow-md text-left bg-white/95">
+              <div className="flex items-center gap-3 mb-md border-b border-surface-container pb-md">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-brand flex items-center justify-center font-black text-xl shrink-0">
+                  🎯
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-on-surface">Career Interest Context</h2>
+                  <p className="text-xs text-on-surface-variant">Tell GenuAI what opportunities you're interested in to personalize your preparation and discovery.</p>
+                </div>
+              </div>
+
+              {/* Company -> Role Cascading Dropdowns */}
+              <div className="bg-surface-bright/60 p-md rounded-2xl border border-surface-container mb-lg">
+                <div className="text-xs font-bold text-on-surface mb-xs">Add a Target Company &amp; Role</div>
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-sm">
+                  {/* Select Company */}
+                  <div className="sm:col-span-2">
+                    <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Company</label>
+                    <select
+                      value={selCompanyId}
+                      onChange={(e) => {
+                        const val = e.target.value ? Number(e.target.value) : "";
+                        setSelCompanyId(val);
+                        setSelRoleId("");
+                      }}
+                      className="w-full p-2.5 bg-white border border-surface-container rounded-xl text-xs font-semibold text-on-surface outline-none focus:border-indigo-brand"
+                    >
+                      <option value="">Select Company...</option>
+                      {careerOptions.map((c) => (
+                        <option key={c.companyId} value={c.companyId}>
+                          {c.companyName} ({c.location || 'Remote'})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Select Role */}
+                  <div className="sm:col-span-2">
+                    <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider block mb-1">Role</label>
+                    <select
+                      value={selRoleId}
+                      onChange={(e) => setSelRoleId(e.target.value ? Number(e.target.value) : "")}
+                      disabled={!selCompanyId || availableRolesForCompany.length === 0}
+                      className="w-full p-2.5 bg-white border border-surface-container rounded-xl text-xs font-semibold text-on-surface outline-none focus:border-indigo-brand disabled:opacity-50"
+                    >
+                      <option value="">
+                        {!selCompanyId ? "Select Company First" : availableRolesForCompany.length === 0 ? "No Active Roles" : "Select Role..."}
+                      </option>
+                      {availableRolesForCompany.map((r: any) => (
+                        <option key={r.id} value={r.id}>
+                          {r.title} ({r.departmentName}) — {r.experienceLevel}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Add Button */}
+                  <div className="sm:col-span-1 flex items-end">
+                    <button
+                      type="button"
+                      disabled={!selCompanyId || !selRoleId || careerTargetSaving}
+                      onClick={handleAddCareerTarget}
+                      className="w-full py-2.5 px-3 bg-indigo-brand hover:bg-indigo-brand-dark text-white font-bold rounded-xl text-xs transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1 shadow-xs"
+                    >
+                      {careerTargetSaving ? "Adding..." : "+ Add Target"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* My Career Targets List */}
+              <div>
+                <div className="flex items-center justify-between mb-sm">
+                  <span className="text-xs font-black uppercase tracking-wider text-on-surface">My Career Targets</span>
+                  <span className="text-[11px] font-bold text-on-surface-variant">{savedCareerTargets.length} selected</span>
+                </div>
+
+                {savedCareerTargets.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+                    {savedCareerTargets.map((target) => (
+                      <div key={target.id} className="p-3.5 bg-surface-bright rounded-2xl border border-surface-container flex items-start justify-between gap-2 shadow-2xs hover:border-indigo-brand/40 transition-all">
+                        <div>
+                          <div className="text-xs font-black text-on-surface flex items-center gap-1.5">
+                            🏢 {target.companyName}
+                          </div>
+                          <div className="text-xs font-bold text-indigo-brand mt-0.5">
+                            {target.roleTitle}
+                          </div>
+                          <div className="text-[10px] text-on-surface-variant flex items-center gap-2 mt-1">
+                            <span>📁 {target.departmentName || 'General'}</span>
+                            <span>📍 {target.location || 'Remote'}</span>
+                          </div>
+                          <div className="mt-2">
+                            {target.isAvailable ? (
+                              <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                ✓ Live Opportunity
+                              </span>
+                            ) : (
+                              <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                                ⚠ Currently unavailable
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveCareerTarget(target.id)}
+                          className="text-[10px] font-bold text-rose-600 hover:text-rose-800 hover:underline cursor-pointer shrink-0"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-6 text-center text-xs text-on-surface-variant/80 border border-dashed border-surface-container rounded-2xl bg-surface-bright/30">
+                    No career targets yet. Add companies and roles above to personalize your GenuAI experience.
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 

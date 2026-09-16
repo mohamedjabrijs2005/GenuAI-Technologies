@@ -86,7 +86,24 @@ router.get('/overview/:userId', async (req, res) => {
        LIMIT 5`
     );
 
-    // 7. Dynamic AI Insight
+    // 7. Career Targets Summary (Phase 2 minimal count)
+    const targetCountRes = await pool.query(
+      `SELECT COUNT(*) as total_targets,
+              COUNT(CASE WHEN (COALESCE(cp.verification_status, 'UNVERIFIED') = 'VERIFIED') AND COALESCE(cr.workflow_status, 'DRAFT') = 'ACTIVE' THEN 1 END) as live_targets
+       FROM candidate_role_interests cri
+       LEFT JOIN users u ON cri.company_id = u.id
+       LEFT JOIN company_profiles cp ON u.id = cp.user_id
+       LEFT JOIN company_roles cr ON cri.company_role_id = cr.id
+       WHERE cri.candidate_id = $1 AND (cri.status IS NULL OR cri.status = 'active')`,
+      [userId]
+    ).catch(() => ({ rows: [{ total_targets: 0, live_targets: 0 }] }));
+
+    const careerTargetsSummary = {
+      total: parseInt(targetCountRes.rows[0]?.total_targets || '0', 10),
+      live: parseInt(targetCountRes.rows[0]?.live_targets || '0', 10),
+    };
+
+    // 8. Dynamic AI Insight
     let aiInsight = "AI career insights will appear as you build your GenuAI profile and activity.";
     if (completionScore < 100) {
       aiInsight = `Complete your profile by adding your ${missingFields.slice(0, 2).join(' and ')} to maximize recruiter visibility.`;
@@ -113,6 +130,7 @@ router.get('/overview/:userId', async (req, res) => {
       interviews: interviewRes.rows,
       recommendedJobs: jobsRes.rows,
       notifications: notifRes.rows,
+      careerTargetsSummary,
       aiInsight,
     });
   } catch (err: any) {

@@ -612,3 +612,101 @@ export const reviewRoleConfiguration = async (
   return res.data;
 };
 
+// ─── PHASE 2: CANDIDATE CAREER INTEREST CONTEXT & PERSONALIZATION SERVICE ───
+
+export interface CareerTargetItem {
+  id: number;
+  candidateId: number;
+  companyId: number;
+  companyName: string;
+  industry: string;
+  location: string;
+  companyRoleId: number;
+  roleTitle: string;
+  departmentName: string;
+  experienceLevel: string;
+  isAvailable: boolean;
+  availabilityLabel: 'Live Opportunity' | 'Currently unavailable';
+  createdAt: string;
+}
+
+export interface CareerOptionCompany {
+  companyId: number;
+  companyName: string;
+  industry: string;
+  location: string;
+  departments: Array<{
+    departmentId: number;
+    departmentName: string;
+    roles: Array<{
+      id: number;
+      title: string;
+      experienceLevel: string;
+      employmentType: string;
+    }>;
+  }>;
+}
+
+export interface PersonalizationContext {
+  candidateId: number;
+  targets: CareerTargetItem[];
+  availableCount: number;
+  unavailableCount: number;
+  recommendedSkills: {
+    technical: string[];
+    nonTechnical: string[];
+    domain: string[];
+    all: string[];
+  };
+  recommendedModules: Array<{
+    id: number;
+    name: string;
+    canonicalName: string;
+    category: string;
+  }>;
+}
+
+export const getEligibleCareerOptions = async (): Promise<CareerOptionCompany[]> => {
+  const res = await apiClient.get('/candidate/interests/career-options');
+  return res.data.options || [];
+};
+
+export const getCandidateCareerInterests = async (candidateId?: number): Promise<CareerTargetItem[]> => {
+  const url = candidateId ? `/candidate/interests/${candidateId}` : '/candidate/interests';
+  const res = await apiClient.get(url);
+  return res.data.targets || res.data.selections || [];
+};
+
+export const addCareerInterest = async (
+  companyId: number,
+  companyRoleId: number,
+  candidateId?: number
+): Promise<any> => {
+  const url = candidateId ? `/candidate/interests/${candidateId}` : '/candidate/interests';
+  const res = await apiClient.post(url, { companyId, companyRoleId });
+  return res.data;
+};
+
+export const removeCareerInterest = async (
+  targetId: number | string,
+  candidateId?: number
+): Promise<any> => {
+  const url = candidateId ? `/candidate/interests/${targetId}?candidateId=${candidateId}` : `/candidate/interests/${targetId}`;
+  const res = await apiClient.delete(url);
+  return res.data;
+};
+
+export const getCandidatePersonalizationContext = async (candidateId?: number): Promise<PersonalizationContext> => {
+  const url = candidateId ? `/candidate/interests/context/${candidateId}` : '/candidate/interests/context';
+  const res = await apiClient.get(url);
+  return res.data.context || {
+    candidateId: candidateId || 0,
+    targets: [],
+    availableCount: 0,
+    unavailableCount: 0,
+    recommendedSkills: { technical: [], nonTechnical: [], domain: [], all: [] },
+    recommendedModules: [],
+  };
+};
+
+

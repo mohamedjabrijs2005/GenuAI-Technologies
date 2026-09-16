@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getJobs, getNetworkPosts, createNetworkPost, getEvents, getPMStatus, getNews } from '../services/api';
 import { GenuAILogo } from '../components/common/GenuAILogo';
+import { getCandidatePersonalizationContext, PersonalizationContext } from '../services/genuaiWorksService';
 
 interface Props { user: any; onBack: () => void; }
 
@@ -12,19 +13,40 @@ function JobBoard({ user, onBack, initialFilter = 'All' }: { user: any, onBack: 
 
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [careerContext, setCareerContext] = useState<PersonalizationContext | null>(null);
+  const userId = user?.user?.id || user?.id;
 
   useEffect(() => {
     getJobs()
       .then(res => { setJobs(res.data.jobs || []); setLoading(false); })
       .catch(err => { console.error(err); setLoading(false); });
-  }, []);
 
-  const filteredJobs = jobs.filter(j => {
-    if (filterMode !== 'All' && filterMode !== 'Internships' && j.mode !== filterMode) return false;
-    if (filterMode === 'Internships' && j.type !== 'Internship') return false;
-    if (search && !j.title.toLowerCase().includes(search.toLowerCase()) && !(j.skills || '').toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
-  });
+    if (userId) {
+      getCandidatePersonalizationContext(userId)
+        .then(ctx => setCareerContext(ctx))
+        .catch(err => console.warn('SearchHub context load error:', err));
+    }
+  }, [userId]);
+
+  const filteredJobs = jobs
+    .filter(j => {
+      if (filterMode !== 'All' && filterMode !== 'Internships' && j.mode !== filterMode) return false;
+      if (filterMode === 'Internships' && j.type !== 'Internship') return false;
+      if (search && !j.title.toLowerCase().includes(search.toLowerCase()) && !(j.skills || '').toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if (!careerContext || careerContext.targets.length === 0) return 0;
+      const targetComps = new Set(careerContext.targets.map(t => t.companyId));
+      const targetRoles = careerContext.targets.map(t => t.roleTitle.toLowerCase());
+
+      const aCompMatch = targetComps.has(a.company_id) ? 2 : 0;
+      const bCompMatch = targetComps.has(b.company_id) ? 2 : 0;
+      const aRoleMatch = targetRoles.some(r => (a.title || '').toLowerCase().includes(r)) ? 1 : 0;
+      const bRoleMatch = targetRoles.some(r => (b.title || '').toLowerCase().includes(r)) ? 1 : 0;
+
+      return (bCompMatch + bRoleMatch) - (aCompMatch + aRoleMatch);
+    });
 
   return (
     <div className="max-w-[1100px] mx-auto w-full p-lg md:p-xl">
