@@ -2,13 +2,54 @@ import express from 'express';
 import pool from '../db';
 import { sendEmail } from '../utils/mailer';
 import { getAdminForwardTemplate } from '../utils/emailTemplates';
+import { requireSelfOrRole } from '../middleware/auth';
 
 const router = express.Router();
 
 // ─────────────────────────────────────────────
+// Ownership helpers — confirm the calling company actually owns
+// the resource being read/changed, before touching the database.
+// ─────────────────────────────────────────────
+async function jobBelongsToCompany(jobId: string, companyId: number): Promise<boolean> {
+  const r = await pool.query('SELECT company_id FROM jobs WHERE id = $1', [jobId]);
+  return r.rows.length > 0 && Number(r.rows[0].company_id) === companyId;
+}
+
+async function interviewBelongsToCompany(interviewId: string, companyId: number): Promise<boolean> {
+  const r = await pool.query('SELECT company_id FROM interviews WHERE id = $1', [interviewId]);
+  return r.rows.length > 0 && Number(r.rows[0].company_id) === companyId;
+}
+
+async function projectBelongsToCompany(projectId: string, companyId: number): Promise<boolean> {
+  const r = await pool.query('SELECT company_id FROM projects WHERE id = $1', [projectId]);
+  return r.rows.length > 0 && Number(r.rows[0].company_id) === companyId;
+}
+
+async function assessmentBelongsToCompany(assessmentId: string, companyId: number): Promise<boolean> {
+  const r = await pool.query(
+    'SELECT active_company_id, company_ids FROM assessments WHERE id = $1',
+    [assessmentId]
+  );
+  if (r.rows.length === 0) return false;
+  const row = r.rows[0];
+  return Number(row.active_company_id) === companyId || (row.company_ids || []).map(Number).includes(companyId);
+}
+
+async function hasCandidateRelationship(companyId: number, candidateId: string): Promise<boolean> {
+  const r = await pool.query(
+    `SELECT 1 FROM assessments WHERE user_id = $1 AND (active_company_id = $2 OR $2 = ANY(company_ids))
+     UNION SELECT 1 FROM interviews WHERE candidate_id = $1 AND company_id = $2
+     UNION SELECT 1 FROM candidate_company_matches WHERE candidate_id = $1 AND company_id = $2
+     LIMIT 1`,
+    [candidateId, companyId]
+  );
+  return r.rows.length > 0;
+}
+
+// ─────────────────────────────────────────────
 // 1. Company Dashboard Overview & KPIs (8 KPIs + 10-Stage Pipeline + Today Actions)
 // ─────────────────────────────────────────────
-router.get('/overview/:companyId', async (req, res) => {
+router.get('/overview/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
 
@@ -225,7 +266,7 @@ router.get('/overview/:companyId', async (req, res) => {
 // ─────────────────────────────────────────────
 // 2. AI Recruitment Insights (Groq / Backend AI)
 // ─────────────────────────────────────────────
-router.get('/ai-insights/:companyId', async (req, res) => {
+router.get('/ai-insights/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
     const candidatesRes = await pool.query(
@@ -276,7 +317,7 @@ router.get('/ai-insights/:companyId', async (req, res) => {
 // ─────────────────────────────────────────────
 // 3. Candidates Management
 // ─────────────────────────────────────────────
-router.get('/candidates/:companyId', async (req, res) => {
+router.get('/candidates/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
     const { search, verdict } = req.query;
@@ -319,6 +360,15 @@ router.get('/candidate-profile/:candidateId', async (req, res) => {
   try {
     const { candidateId } = req.params;
 
+    // A company may only view a candidate it actually has a relationship
+    // with (an assessment, interview, or match record). Admins can view any.
+    if (req.user?.role !== 'admin') {
+      const allowed = await hasCandidateRelationship(req.user!.id, candidateId);
+      if (!allowed) {
+        return res.status(403).json({ error: 'You do not have permission to view this candidate.' });
+      }
+    }
+
     const candidateQuery = await pool.query(
       `SELECT id, name, email, role, phone, college, github, linkedin, created_at FROM users WHERE id = $1`,
       [candidateId]
@@ -357,7 +407,7 @@ router.get('/candidate-profile/:candidateId', async (req, res) => {
 // ─────────────────────────────────────────────
 // 5. Job Management
 // ─────────────────────────────────────────────
-router.get('/jobs/:companyId', async (req, res) => {
+router.get('/jobs/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
     const result = await pool.query(
@@ -377,7 +427,6 @@ router.get('/jobs/:companyId', async (req, res) => {
 router.post('/jobs', async (req, res) => {
   try {
     const {
-      company_id,
       title,
       department,
       location,
@@ -390,6 +439,12 @@ router.post('/jobs', async (req, res) => {
       assessment_config,
       status,
     } = req.body;
+
+    // A job is always created under the caller's own company_id.
+    // Admins may explicitly target another company via body.company_id.
+    const company_id = req.user!.role === 'admin' && req.body.company_id
+      ? req.body.company_id
+      : req.user!.id;
 
     if (!company_id || !title || !description) {
       return res.status(400).json({ error: 'Title and description are required.' });
@@ -427,6 +482,10 @@ router.put('/jobs/:id', async (req, res) => {
     const { id } = req.params;
     const { title, department, location, employment_type, experience_level, description, skills, salary_min, salary_max, status } = req.body;
 
+    if (req.user?.role !== 'admin' && !(await jobBelongsToCompany(id, req.user!.id))) {
+      return res.status(403).json({ error: 'You do not have permission to modify this job.' });
+    }
+
     const result = await pool.query(
       `UPDATE jobs SET
         title = COALESCE($1, title),
@@ -452,7 +511,7 @@ router.put('/jobs/:id', async (req, res) => {
 // ─────────────────────────────────────────────
 // 6. Interview Scheduling & Management
 // ─────────────────────────────────────────────
-router.get('/interviews/:companyId', async (req, res) => {
+router.get('/interviews/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
     const result = await pool.query(
@@ -468,7 +527,6 @@ router.get('/interviews/:companyId', async (req, res) => {
 router.post('/interviews', async (req, res) => {
   try {
     const {
-      company_id,
       candidate_id,
       candidate_name,
       candidate_email,
@@ -478,6 +536,10 @@ router.post('/interviews', async (req, res) => {
       meeting_link,
       interviewer_name,
     } = req.body;
+
+    const company_id = req.user!.role === 'admin' && req.body.company_id
+      ? req.body.company_id
+      : req.user!.id;
 
     if (!company_id || !candidate_id || !scheduled_at) {
       return res.status(400).json({ error: 'Candidate and scheduled time are required.' });
@@ -512,6 +574,10 @@ router.put('/interviews/:id/status', async (req, res) => {
     const { id } = req.params;
     const { status, score, ai_summary } = req.body;
 
+    if (req.user?.role !== 'admin' && !(await interviewBelongsToCompany(id, req.user!.id))) {
+      return res.status(403).json({ error: 'You do not have permission to modify this interview.' });
+    }
+
     const result = await pool.query(
       `UPDATE interviews SET
         status = COALESCE($1, status),
@@ -530,7 +596,7 @@ router.put('/interviews/:id/status', async (req, res) => {
 // ─────────────────────────────────────────────
 // 7. Project Assignment & Review
 // ─────────────────────────────────────────────
-router.get('/projects/:companyId', async (req, res) => {
+router.get('/projects/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
     const result = await pool.query(
@@ -549,7 +615,11 @@ router.get('/projects/:companyId', async (req, res) => {
 
 router.post('/projects', async (req, res) => {
   try {
-    const { company_id, candidate_id, title, description, deadline } = req.body;
+    const { candidate_id, title, description, deadline } = req.body;
+
+    const company_id = req.user!.role === 'admin' && req.body.company_id
+      ? req.body.company_id
+      : req.user!.id;
 
     const result = await pool.query(
       `INSERT INTO projects (company_id, candidate_id, title, description, deadline, status, created_at)
@@ -567,6 +637,10 @@ router.put('/projects/:id/score', async (req, res) => {
   try {
     const { id } = req.params;
     const { score, feedback, status } = req.body;
+
+    if (req.user?.role !== 'admin' && !(await projectBelongsToCompany(id, req.user!.id))) {
+      return res.status(403).json({ error: 'You do not have permission to modify this project.' });
+    }
 
     const result = await pool.query(
       `UPDATE projects SET
@@ -586,7 +660,7 @@ router.put('/projects/:id/score', async (req, res) => {
 // ─────────────────────────────────────────────
 // 8. Company Profile & Team Settings
 // ─────────────────────────────────────────────
-router.get('/profile/:companyId', async (req, res) => {
+router.get('/profile/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
 
@@ -615,7 +689,7 @@ router.get('/profile/:companyId', async (req, res) => {
   }
 });
 
-router.put('/profile/:companyId', async (req, res) => {
+router.put('/profile/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
     const {
@@ -702,7 +776,7 @@ router.put('/profile/:companyId', async (req, res) => {
 // ─────────────────────────────────────────────
 // 9. Subscription & Quota
 // ─────────────────────────────────────────────
-router.get('/subscription/:companyId', async (req, res) => {
+router.get('/subscription/:companyId', requireSelfOrRole('companyId', 'admin'), async (req, res) => {
   try {
     const { companyId } = req.params;
     const jobsCountRes = await pool.query(`SELECT COUNT(*) FROM jobs WHERE company_id = $1`, [companyId]);
@@ -746,6 +820,10 @@ router.put('/candidate-stage/:id', async (req, res) => {
     const { id } = req.params;
     const { verdict } = req.body;
 
+    if (req.user?.role !== 'admin' && !(await assessmentBelongsToCompany(id, req.user!.id))) {
+      return res.status(403).json({ error: 'You do not have permission to modify this candidate record.' });
+    }
+
     const result = await pool.query(
       `UPDATE assessments SET verdict = COALESCE($1, verdict) WHERE id = $2 RETURNING *`,
       [verdict, id]
@@ -761,8 +839,6 @@ router.post('/scorecard', async (req, res) => {
   try {
     const {
       interview_id,
-      candidate_id,
-      company_id,
       technical_score,
       communication_score,
       problem_solving_score,
@@ -770,6 +846,10 @@ router.post('/scorecard', async (req, res) => {
       recommendation,
       notes,
     } = req.body;
+
+    if (interview_id && req.user?.role !== 'admin' && !(await interviewBelongsToCompany(interview_id, req.user!.id))) {
+      return res.status(403).json({ error: 'You do not have permission to score this interview.' });
+    }
 
     const avgScore = Math.round(
       ((technical_score || 0) + (communication_score || 0) + (problem_solving_score || 0) + (teamwork_score || 0)) * 2.5
@@ -797,4 +877,3 @@ router.post('/scorecard', async (req, res) => {
 });
 
 export default router;
-
