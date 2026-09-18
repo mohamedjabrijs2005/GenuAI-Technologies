@@ -128,7 +128,7 @@ passport.deserializeUser((user: any, done) => done(null, user));
 function issueJwtAndRedirect(req: any, res: any) {
   const user: any = req.user;
   if (!user) return res.redirect(`${FRONTEND_URL}/auth?oauth_error=Authentication+failed`);
-  const token = jwt.sign({ id: user.id, role: user.role, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+  const token = signToken({ id: user.id, role: user.role, email: user.email });
   const userData = encodeURIComponent(JSON.stringify({ id: user.id, name: user.name, email: user.email, role: user.role, token }));
   res.redirect(`${FRONTEND_URL}/auth?oauth_user=${userData}`);
 }
@@ -195,7 +195,7 @@ router.get('/me', async (req, res) => {
       return res.status(401).json({ error: 'No authenticated session' });
     }
     const token = authHeader.split(' ')[1];
-    const decoded: any = jwt.verify(token, JWT_SECRET);
+    const decoded = verifyToken(token);
     const result = await pool.query('SELECT id, name, email, role, phone, college FROM users WHERE id = $1', [decoded.id]);
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'User profile not found' });
@@ -342,7 +342,7 @@ router.post('/verify-otp', async (req, res) => {
 
     delete otpStore[trimmedEmail];
 
-    const token = jwt.sign({ id: newUser.id, role: newUser.role, email: newUser.email }, JWT_SECRET, { expiresIn: '7d' });
+    const token = signToken({ id: newUser.id, role: newUser.role, email: newUser.email });
     res.json({ user: newUser, token });
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Registration verification failed.' });
@@ -372,7 +372,7 @@ router.post('/register', async (req, res) => {
       pool.query('UPDATE users SET github = $1, linkedin = $2 WHERE id = $3', [github || '', linkedin || '', newUser.id]).catch(() => {});
     }
 
-    const token = jwt.sign({ id: newUser.id, role: newUser.role, email: newUser.email }, JWT_SECRET, { expiresIn: '7d' });
+    const token = signToken({ id: candidate.id, role: candidate.role, email: candidate.email });
     res.json({ user: newUser, token });
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Registration failed.' });
