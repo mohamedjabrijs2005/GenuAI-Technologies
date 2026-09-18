@@ -1,11 +1,10 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as LinkedInStrategy } from 'passport-linkedin-oauth2';
-import pool from '../db';
+import { signToken, verifyToken } from '../config/jwt';
 import { sendEmail } from '../utils/mailer';
 import { getOtpTemplate } from '../utils/emailTemplates';
 
@@ -18,8 +17,6 @@ const isProd = process.env.NODE_ENV === 'production' || !!process.env.RENDER;
 
 const FRONTEND_URL = isProd ? (process.env.FRONTEND_URL || FRONTEND_URL_PROD) : 'http://localhost:5173';
 const BACKEND_URL = isProd ? (process.env.BACKEND_URL || BACKEND_URL_PROD) : 'http://localhost:3000';
-// ADD (near the other imports at the top of the file):
-import { signToken, verifyToken } from '../config/jwt';
 
 console.log(`[Auth] Mode: ${isProd ? 'Production' : 'Development'}`);
 console.log(`[Auth] Backend URL: ${BACKEND_URL}`);
