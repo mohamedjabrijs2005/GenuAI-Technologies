@@ -7,7 +7,7 @@ const router = express.Router();
 // ─────────────────────────────────────────────
 // 1. Candidate Dashboard Overview & Telemetry
 // ─────────────────────────────────────────────
-router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'), async (req, res) => { {
+router.get('/overview/:userId', requireSelfOrRole('userId', 'admin'), async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -142,7 +142,7 @@ router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'),
 // ─────────────────────────────────────────────
 // 2. Candidate Update Profile
 // ─────────────────────────────────────────────
-router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'), async (req, res) => { {
+router.put('/profile/:userId', requireSelfOrRole('userId', 'admin'), async (req, res) => {
   try {
     const { userId } = req.params;
     const { name, phone, college, github, linkedin } = req.body;
@@ -172,7 +172,7 @@ router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'),
 // ─────────────────────────────────────────────
 // 3. GET /candidate/:id/company-matches — Real candidate company match scores
 // ─────────────────────────────────────────────
-router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'), async (req, res) => { {
+router.get('/:userId/company-matches', requireSelfOrRole('userId', 'admin'), async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -205,8 +205,7 @@ router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'),
 // ─────────────────────────────────────────────
 // 4. GET /candidate/match/groups/:candidateId or /match/groups/:candidateId
 // ─────────────────────────────────────────────
-// WITH:
-router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'), async (req, res) => { {
+router.get('/match/groups/:candidateId', requireSelfOrRole('candidateId', 'admin'), async (req, res) => {
   try {
     const { candidateId } = req.params;
 
