@@ -4,9 +4,10 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as LinkedInStrategy } from 'passport-linkedin-oauth2';
-import { signToken, verifyToken } from '../config/jwt';
+import pool from '../db';
 import { sendEmail } from '../utils/mailer';
 import { getOtpTemplate } from '../utils/emailTemplates';
+import { signToken, verifyToken } from '../config/jwt';
 
 const router = express.Router();
 const otpStore: Record<string, { otp: string; expires: number; data: any }> = {};
@@ -240,11 +241,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
-    const token = jwt.sign(
-      { id: candidate.id, role: candidate.role, email: candidate.email },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = signToken({ id: candidate.id, role: candidate.role, email: candidate.email });
 
     return res.json({
       user: {
@@ -327,7 +324,7 @@ router.post('/verify-otp', async (req, res) => {
 
     const { name, password, role, phone, college, github, linkedin } = record.data;
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
     // Core database insertion using guaranteed standard columns
     const result = await pool.query(
       'INSERT INTO users (name, email, password_hash, role, phone, college) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, email, role, phone, college',
@@ -372,7 +369,7 @@ router.post('/register', async (req, res) => {
       pool.query('UPDATE users SET github = $1, linkedin = $2 WHERE id = $3', [github || '', linkedin || '', newUser.id]).catch(() => {});
     }
 
-    const token = signToken({ id: candidate.id, role: candidate.role, email: candidate.email });
+    const token = signToken({ id: newUser.id, role: newUser.role, email: newUser.email });
     res.json({ user: newUser, token });
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Registration failed.' });
