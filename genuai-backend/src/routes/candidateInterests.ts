@@ -1,23 +1,15 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '../config/jwt';
 import pool from '../db';
 import { CareerContextService } from '../services/careerContextService';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'genuai_jwt_secret_key_2026';
-
-/**
- * Helper to safely derive candidate user_id from Bearer token
- */
 const getAuthUserId = (req: express.Request): number | null => {
   try {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      const decoded: any = jwt.verify(token, JWT_SECRET);
-      if (decoded && decoded.id) {
-        return parseInt(String(decoded.id), 10);
-      }
+      const decoded = verifyToken(authHeader.split(' ')[1]);
+      if (decoded?.id) return Number(decoded.id);
     }
   } catch {
     // Ignore token parse error
