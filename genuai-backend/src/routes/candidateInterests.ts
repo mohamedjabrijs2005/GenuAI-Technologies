@@ -1,15 +1,24 @@
 import express from 'express';
-import { verifyToken } from '../config/jwt';
 import pool from '../db';
 import { CareerContextService } from '../services/careerContextService';
+import { verifyToken } from '../config/jwt';
 
 const router = express.Router();
+
+/**
+ * Helper to safely derive candidate user_id from Bearer token.
+ * Returns null if there is no token, or the token is invalid/expired —
+ * callers must treat null as "not logged in" and reject the request,
+ * never fall back to trusting a client-supplied ID instead.
+ */
 const getAuthUserId = (req: express.Request): number | null => {
   try {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const decoded = verifyToken(authHeader.split(' ')[1]);
-      if (decoded?.id) return Number(decoded.id);
+      if (decoded?.id) {
+        return Number(decoded.id);
+      }
     }
   } catch {
     // Ignore token parse error
@@ -43,7 +52,6 @@ router.get('/career-options', async (_req, res) => {
          AND cr.workflow_status = 'ACTIVE'
          AND LOWER(u.name) NOT LIKE '%mohamed jabri%'
          AND LOWER(u.name) NOT LIKE '%demo company%'
-         AND LOWER(u.name) NOT LIKE '%nigga%'
          AND LOWER(TRIM(u.name)) NOT IN ('company', 'test', 'admin')
        ORDER BY company_name ASC, department_name ASC, cr.title ASC`
     );
@@ -91,11 +99,7 @@ router.get('/career-options', async (_req, res) => {
 // ─────────────────────────────────────────────
 const handleGetInterests = async (req: express.Request, res: express.Response) => {
   try {
-    const authId = getAuthUserId(req);
-    const rawParam = req.params.candidateId;
-    const paramStr = typeof rawParam === 'string' ? rawParam : Array.isArray(rawParam) ? rawParam[0] : null;
-    const paramId = paramStr ? parseInt(paramStr, 10) : null;
-    const candidateId = authId || paramId;
+    const candidateId = getAuthUserId(req);
 
     if (!candidateId) {
       return res.status(401).json({ error: 'Authentication required to view career targets.' });
@@ -156,11 +160,7 @@ router.get('/:candidateId', handleGetInterests);
 // ─────────────────────────────────────────────
 const handlePostInterest = async (req: express.Request, res: express.Response) => {
   try {
-    const authId = getAuthUserId(req);
-    const rawParam = req.params.candidateId;
-    const paramStr = typeof rawParam === 'string' ? rawParam : Array.isArray(rawParam) ? rawParam[0] : null;
-    const paramId = paramStr ? parseInt(paramStr, 10) : null;
-    const candidateId = authId || paramId;
+    const candidateId = getAuthUserId(req);
 
     if (!candidateId) {
       return res.status(401).json({ error: 'Authentication required to add career target.' });
@@ -278,11 +278,7 @@ router.post('/:candidateId', handlePostInterest);
 // ─────────────────────────────────────────────
 const handleDeleteInterest = async (req: express.Request, res: express.Response) => {
   try {
-    const authId = getAuthUserId(req);
-    const rawQueryCand = req.query.candidateId;
-    const queryCandStr = typeof rawQueryCand === 'string' ? rawQueryCand : Array.isArray(rawQueryCand) ? String(rawQueryCand[0]) : null;
-    const paramCandidateId = queryCandStr ? parseInt(queryCandStr, 10) : null;
-    const candidateId = authId || paramCandidateId;
+    const candidateId = getAuthUserId(req);
 
     if (!candidateId) {
       return res.status(401).json({ error: 'Authentication required to remove career target.' });
@@ -319,11 +315,7 @@ router.delete('/', handleDeleteInterest);
 // ─────────────────────────────────────────────
 const handleGetContext = async (req: express.Request, res: express.Response) => {
   try {
-    const authId = getAuthUserId(req);
-    const rawParam = req.params.candidateId;
-    const paramStr = typeof rawParam === 'string' ? rawParam : Array.isArray(rawParam) ? rawParam[0] : null;
-    const paramId = paramStr ? parseInt(paramStr, 10) : null;
-    const candidateId = authId || paramId;
+    const candidateId = getAuthUserId(req);
 
     if (!candidateId) {
       return res.status(401).json({ error: 'Authentication required for personalization context.' });
