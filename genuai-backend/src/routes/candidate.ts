@@ -1,12 +1,13 @@
 import express from 'express';
 import pool from '../db';
+import { requireSelfOrRole } from '../middleware/auth';
 
 const router = express.Router();
 
 // ─────────────────────────────────────────────
 // 1. Candidate Dashboard Overview & Telemetry
 // ─────────────────────────────────────────────
-router.get('/overview/:userId', async (req, res) => {
+router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'), async (req, res) => { {
   try {
     const { userId } = req.params;
 
@@ -141,7 +142,7 @@ router.get('/overview/:userId', async (req, res) => {
 // ─────────────────────────────────────────────
 // 2. Candidate Update Profile
 // ─────────────────────────────────────────────
-router.put('/profile/:userId', async (req, res) => {
+router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'), async (req, res) => { {
   try {
     const { userId } = req.params;
     const { name, phone, college, github, linkedin } = req.body;
@@ -171,7 +172,7 @@ router.put('/profile/:userId', async (req, res) => {
 // ─────────────────────────────────────────────
 // 3. GET /candidate/:id/company-matches — Real candidate company match scores
 // ─────────────────────────────────────────────
-router.get('/:userId/company-matches', async (req, res) => {
+router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'), async (req, res) => { {
   try {
     const { userId } = req.params;
 
@@ -204,7 +205,8 @@ router.get('/:userId/company-matches', async (req, res) => {
 // ─────────────────────────────────────────────
 // 4. GET /candidate/match/groups/:candidateId or /match/groups/:candidateId
 // ─────────────────────────────────────────────
-router.get('/match/groups/:candidateId', async (req, res) => {
+// WITH:
+router.get('/overview/:userId', requireSelfOrRole('userId', 'admin', 'company'), async (req, res) => { {
   try {
     const { candidateId } = req.params;
 
