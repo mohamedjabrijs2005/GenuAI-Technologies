@@ -27,6 +27,7 @@ import rolesRoutes from './routes/roles';
 import subscriptionsRoutes from './routes/subscriptions';
 import pool from './db';
 import { initSocket } from './socket';
+import { authenticateToken, requireRole } from './middleware/auth';
 
 dotenv.config();
 
@@ -41,18 +42,14 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
-app.use('/auth', authRoutes);
-app.use('/assessment', assessmentRoutes);
-app.use('/upload', uploadRoutes);
-app.use('/email', emailRoutes);
-app.use('/admin', adminRoutes);
-app.use('/company', companyRoutes);
-app.use('/company-roles', companyRolesRoutes);
-app.use('/roles', rolesRoutes);
-app.use('/subscriptions', subscriptionsRoutes);
-app.use('/candidate', candidateRoutes);
-app.use('/candidate/interests', candidateInterestsRoutes);
-app.use('/genuai-works', genuaiWorksRoutes);
+app.use('/candidate', authenticateToken, candidateRoutes);
+app.use('/candidate/interests', authenticateToken, candidateInterestsRoutes);
+app.use('/company', authenticateToken, requireRole('company', 'admin'), companyRoutes);
+app.use('/admin', authenticateToken, requireRole('admin'), adminRoutes);
+app.use('/company-roles', authenticateToken, requireRole('company', 'admin'), companyRolesRoutes);
+app.use('/integrity', authenticateToken, integrityRoutes);
+app.use('/integrity/risk', authenticateToken, riskRoutes);
+app.use('/ai', authenticateToken, aiRoutes); // stops the open Groq-quota-burning proxy
 
 // Direct top-level module library route (Fix 3)
 app.get('/modules', async (_req, res) => {
