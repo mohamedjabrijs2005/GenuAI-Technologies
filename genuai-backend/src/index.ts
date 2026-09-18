@@ -42,14 +42,44 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
+// ─────────────────────────────────────────────
+// Public routes — no login required
+// ─────────────────────────────────────────────
+app.use('/auth', authRoutes);
+app.use('/roles', rolesRoutes);
+app.use('/subscriptions', subscriptionsRoutes);
+app.use('/jobs', jobRoutes);
+app.use('/news', newsRoutes);
+
+// ─────────────────────────────────────────────
+// Protected routes — require a valid logged-in user
+// ─────────────────────────────────────────────
+app.use('/assessment', authenticateToken, assessmentRoutes);
+app.use('/upload', authenticateToken, uploadRoutes);
+app.use('/email', authenticateToken, emailRoutes);
 app.use('/candidate', authenticateToken, candidateRoutes);
 app.use('/candidate/interests', authenticateToken, candidateInterestsRoutes);
-app.use('/company', authenticateToken, requireRole('company', 'admin'), companyRoutes);
-app.use('/admin', authenticateToken, requireRole('admin'), adminRoutes);
-app.use('/company-roles', authenticateToken, requireRole('company', 'admin'), companyRolesRoutes);
+app.use('/genuai-works', authenticateToken, genuaiWorksRoutes);
+app.use('/skill', authenticateToken, skillRoutes);
+app.use('/coach', authenticateToken, coachRoutes);
+app.use('/history', authenticateToken, historyRoutes);
+app.use('/events', authenticateToken, eventsRoutes);
+app.use('/pm', authenticateToken, pmRoutes);
+app.use('/network', authenticateToken, networkRoutes);
+app.use('/ai', authenticateToken, aiRoutes);
 app.use('/integrity', authenticateToken, integrityRoutes);
 app.use('/integrity/risk', authenticateToken, riskRoutes);
-app.use('/ai', authenticateToken, aiRoutes); // stops the open Groq-quota-burning proxy
+
+// ─────────────────────────────────────────────
+// Company-only routes
+// ─────────────────────────────────────────────
+app.use('/company', authenticateToken, requireRole('company', 'admin'), companyRoutes);
+app.use('/company-roles', authenticateToken, requireRole('company', 'admin'), companyRolesRoutes);
+
+// ─────────────────────────────────────────────
+// Admin-only routes
+// ─────────────────────────────────────────────
+app.use('/admin', authenticateToken, requireRole('admin'), adminRoutes);
 
 // Direct top-level module library route (Fix 3)
 app.get('/modules', async (_req, res) => {
@@ -67,7 +97,7 @@ app.get('/modules', async (_req, res) => {
 });
 
 // Direct top-level candidate match groups route (Fix 3)
-app.get('/match/groups/:candidateId', async (req, res) => {
+app.get('/match/groups/:candidateId', authenticateToken, async (req, res) => {
   try {
     const { candidateId } = req.params;
     const groupsRes = await pool.query(
@@ -86,17 +116,6 @@ app.get('/match/groups/:candidateId', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-app.use('/skill', skillRoutes);
-app.use('/jobs', jobRoutes);
-app.use('/coach', coachRoutes);
-app.use('/history', historyRoutes);
-app.use('/events', eventsRoutes);
-app.use('/pm', pmRoutes);
-app.use('/network', networkRoutes);
-app.use('/news', newsRoutes);
-app.use('/ai', aiRoutes);
-app.use('/integrity', integrityRoutes);
-app.use('/integrity/risk', riskRoutes);
 
 app.get('/', (_req, res) => res.json({ name: 'GenuAI Technologies API Server', status: 'ok', health: '/health', version: '1.0.0' }));
 app.get('/health', (_req, res) => res.json({ status: 'ok', time: new Date() }));
