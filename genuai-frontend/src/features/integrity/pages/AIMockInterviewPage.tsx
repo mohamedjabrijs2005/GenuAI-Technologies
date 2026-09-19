@@ -5,6 +5,7 @@ import { FaceMonitorCanvas } from '../components/FaceMonitorCanvas';
 import { useSpeechRecognition } from '../../../hooks/useSpeechRecognition';
 import { generateInterviewQuestion, evaluateInterviewAnswer } from '../../../services/groqService';
 import { analyzeAIAssistanceLikelihood } from '../services/aiAssistanceAnalyzer';
+import { submitConsent } from '../services/integrityClient';
 import type {
   MockInterviewQuestion,
   InterviewQuestionResponse,
@@ -59,8 +60,14 @@ export const AIMockInterviewPage: React.FC<Props> = ({ user, onBack, onComplete 
   };
 
   // Step 1: Consent
-  const handleConsentGiven = (c: CandidateConsent) => {
+    const handleConsentGiven = async (c: CandidateConsent) => {
     setConsent(c);
+    try {
+      await submitConsent(sessionId, c);
+    } catch {
+      // Non-blocking: don't stop the candidate's flow if the consent
+      // record fails to save, but this should be monitored server-side.
+    }
     logTimeline('Consent Agreement Accepted', 'Candidate agreed to Identity & Security Check terms', 'INFO');
     setPhase('identity');
   };
@@ -218,7 +225,7 @@ export const AIMockInterviewPage: React.FC<Props> = ({ user, onBack, onComplete 
 
       {/* PHASE 2: Identity Check */}
       {phase === 'identity' && (
-        <IdentityCheckModal candidateId={candidateId} onComplete={handleIdentityComplete} onCancel={onBack} />
+        <IdentityCheckModal candidateId={candidateId} sessionId={sessionId} onComplete={handleIdentityComplete} onCancel={onBack} />
       )}
 
       {/* PHASE 3: Intro */}
