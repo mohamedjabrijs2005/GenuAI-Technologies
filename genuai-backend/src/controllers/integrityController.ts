@@ -5,7 +5,9 @@ import { AnalyticsService } from '../services/analyticsService';
 
 export const handleSaveConsent = async (req: Request, res: Response) => {
   try {
-    const candidateId = (req as any).user?.id || req.body.candidateId || 1;
+    // candidateId always comes from the verified token now — never from
+    // the request body, and never a hardcoded fallback like "1".
+    const candidateId = req.user!.id;
     await IntegrityService.saveConsent(candidateId, req.body);
     res.json({ success: true, message: 'Consent recorded successfully' });
   } catch (err: any) {
@@ -15,7 +17,7 @@ export const handleSaveConsent = async (req: Request, res: Response) => {
 
 export const handleVerifyIdentity = async (req: Request, res: Response) => {
   try {
-    const candidateId = (req as any).user?.id || req.body.candidateId || 1;
+    const candidateId = req.user!.id;
     const result = await IntegrityService.verifyCandidateIdentity(
       candidateId,
       req.body.faceImageBase64,
@@ -29,8 +31,11 @@ export const handleVerifyIdentity = async (req: Request, res: Response) => {
 
 export const handleLogEvent = async (req: Request, res: Response) => {
   try {
-    const event = await IntegrityService.logEvent(req.body);
-    res.json({ success: true, event });
+    // Force the event's candidateId to match the logged-in caller, so a
+    // candidate can never log a monitoring event under someone else's ID.
+    const event = { ...req.body, candidateId: req.user!.id };
+    const saved = await IntegrityService.logEvent(event);
+    res.json({ success: true, event: saved });
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'Failed to log monitoring event' });
   }
@@ -48,8 +53,7 @@ export const handleGetReport = async (req: Request, res: Response) => {
 
 export const handleGetCompanyReports = async (req: Request, res: Response) => {
   try {
-    const companyIdStr = (req.params.companyId as string) || '1';
-    const companyId = parseInt(companyIdStr, 10) || 1;
+    const companyId = parseInt(req.params.companyId, 10);
     const reports = await IntegrityService.getCompanyReports(companyId);
     res.json(reports);
   } catch (err: any) {
@@ -85,8 +89,7 @@ export const handleSaveDecision = async (req: Request, res: Response) => {
 
 export const handleGetCompanyAnalytics = async (req: Request, res: Response) => {
   try {
-    const companyIdStr = (req.params.companyId as string) || '1';
-    const companyId = parseInt(companyIdStr, 10) || 1;
+    const companyId = parseInt(req.params.companyId, 10);
     const analytics = await AnalyticsService.getCompanyDashboardAnalytics(companyId);
     res.json(analytics);
   } catch (err: any) {
