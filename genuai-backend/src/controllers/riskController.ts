@@ -13,8 +13,7 @@ export const handleEvaluateRisk = async (req: Request, res: Response) => {
 
 export const handleGetPolicy = async (req: Request, res: Response) => {
   try {
-    const companyIdStr = (req.params.companyId as string) || '1';
-    const companyId = parseInt(companyIdStr, 10) || 1;
+    const companyId = parseInt(req.params.companyId, 10);
     const policy = PolicyEngine.getCompanyPolicy(companyId);
     res.json(policy);
   } catch (err: any) {
@@ -24,8 +23,7 @@ export const handleGetPolicy = async (req: Request, res: Response) => {
 
 export const handleSetPolicy = async (req: Request, res: Response) => {
   try {
-    const companyIdStr = (req.params.companyId as string) || '1';
-    const companyId = parseInt(companyIdStr, 10) || 1;
+    const companyId = parseInt(req.params.companyId, 10);
     const updated = PolicyEngine.setCompanyPolicy(companyId, req.body);
     res.json({ success: true, policy: updated });
   } catch (err: any) {
