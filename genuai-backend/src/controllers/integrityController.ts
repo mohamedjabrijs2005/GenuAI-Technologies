@@ -5,10 +5,12 @@ import { AnalyticsService } from '../services/analyticsService';
 
 export const handleSaveConsent = async (req: Request, res: Response) => {
   try {
-    // candidateId always comes from the verified token now — never from
-    // the request body, and never a hardcoded fallback like "1".
     const candidateId = req.user!.id;
-    await IntegrityService.saveConsent(candidateId, req.body);
+    const { sessionId, ...consent } = req.body;
+    if (!sessionId) {
+      return res.status(400).json({ error: 'sessionId is required.' });
+    }
+    await IntegrityService.saveConsent(candidateId, sessionId, consent as any);
     res.json({ success: true, message: 'Consent recorded successfully' });
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'Failed to save consent' });
@@ -18,8 +20,13 @@ export const handleSaveConsent = async (req: Request, res: Response) => {
 export const handleVerifyIdentity = async (req: Request, res: Response) => {
   try {
     const candidateId = req.user!.id;
+    const { sessionId } = req.body;
+    if (!sessionId) {
+      return res.status(400).json({ error: 'sessionId is required.' });
+    }
     const result = await IntegrityService.verifyCandidateIdentity(
       candidateId,
+      sessionId,
       req.body.faceImageBase64,
       req.body.voiceSampleBase64
     );
@@ -31,8 +38,6 @@ export const handleVerifyIdentity = async (req: Request, res: Response) => {
 
 export const handleLogEvent = async (req: Request, res: Response) => {
   try {
-    // Force the event's candidateId to match the logged-in caller, so a
-    // candidate can never log a monitoring event under someone else's ID.
     const event = { ...req.body, candidateId: req.user!.id };
     const saved = await IntegrityService.logEvent(event);
     res.json({ success: true, event: saved });
