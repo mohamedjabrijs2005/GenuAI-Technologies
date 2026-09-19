@@ -299,11 +299,15 @@ router.post('/send-otp', async (req, res) => {
       console.warn('[Auth OTP Mailer Warning]:', mailErr?.message || mailErr);
     }
 
-    res.json({
+       res.json({
       message: 'Verification OTP sent to your email!',
       email: trimmedEmail,
       otpSent: true,
-      devOtp: otp, // Provides instant verification during testing
+      // Only ever expose the raw OTP outside production, and only when
+      // explicitly opted in — never leak it to a real user by default.
+      ...(process.env.NODE_ENV !== 'production' && process.env.EXPOSE_DEV_OTP === 'true'
+        ? { devOtp: otp }
+        : {}),
     });
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Failed to send OTP.' });
@@ -409,9 +413,11 @@ router.post('/forgot-password-otp', async (req, res) => {
       console.warn('[Auth Reset Mailer Warning]:', mailErr?.message || mailErr);
     }
 
-    res.json({
+        res.json({
       message: 'Password reset OTP sent to your email',
-      devOtp: otp,
+      ...(process.env.NODE_ENV !== 'production' && process.env.EXPOSE_DEV_OTP === 'true'
+        ? { devOtp: otp }
+        : {}),
     });
   } catch (err: any) {
     res.status(400).json({ error: err.message || 'Failed to send reset code.' });
