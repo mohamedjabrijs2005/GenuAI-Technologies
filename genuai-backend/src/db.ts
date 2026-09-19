@@ -650,49 +650,43 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           RAISE NOTICE 'Skipping interviews FK repair: %', SQLERRM;
         END $$;
 
-        -- Clean up bogus/test company accounts and test candidate interests
-        DELETE FROM candidate_role_interests 
-        WHERE company_id IN (
-          SELECT id FROM users 
-          WHERE role = 'company' 
-            AND (LOWER(name) LIKE '%mohamed jabri%' 
-                 OR LOWER(name) LIKE '%demo company%' 
-                 OR LOWER(TRIM(name)) = 'company' 
-                 OR LOWER(TRIM(name)) = 'test')
-        );
+        -- Repair schema drift across every table that links to a company
+        -- via company_id. Several of these tables were created in the live
+        -- database before ON DELETE CASCADE was added to this script, so
+        -- CREATE TABLE IF NOT EXISTS above never retroactively fixed them.
+        -- This loop re-applies the correct constraint to all of them, so a
+        -- single company user can always be safely removed and every
+        -- dependent row across the whole schema cleans up automatically —
+        -- no need to hand-write a DELETE for each table below.
+        DO $$
+        DECLARE
+          tbl TEXT;
+          tables TEXT[] := ARRAY[
+            'jobs','interviews','projects','departments','role_equivalency_mapping',
+            'company_roles','company_assessment_configurations','company_configuration_versions',
+            'company_configuration_agreements','candidate_company_interests','candidate_role_interests',
+            'candidate_company_matches','company_intelligence','company_subscriptions',
+            'configuration_change_requests','payments'
+          ];
+        BEGIN
+          FOREACH tbl IN ARRAY tables LOOP
+            BEGIN
+              EXECUTE format('ALTER TABLE %I DROP CONSTRAINT IF EXISTS %I', tbl, tbl || '_company_id_fkey');
+              EXECUTE format('ALTER TABLE %I ADD CONSTRAINT %I FOREIGN KEY (company_id) REFERENCES users(id) ON DELETE CASCADE', tbl, tbl || '_company_id_fkey');
+            EXCEPTION WHEN OTHERS THEN
+              RAISE NOTICE 'Skipping FK repair for %: %', tbl, SQLERRM;
+            END;
+          END LOOP;
+        END $$;
 
-        DELETE FROM candidate_company_interests 
-        WHERE company_id IN (
-          SELECT id FROM users 
-          WHERE role = 'company' 
-            AND (LOWER(name) LIKE '%mohamed jabri%' 
-                 OR LOWER(name) LIKE '%demo company%' 
-                 OR LOWER(TRIM(name)) = 'company' 
-                 OR LOWER(TRIM(name)) = 'test')
-        );
-
-        DELETE FROM interviews
-        WHERE company_id IN (
-          SELECT id FROM users 
-          WHERE role = 'company' 
-            AND (LOWER(name) LIKE '%mohamed jabri%' 
-                 OR LOWER(name) LIKE '%demo company%' 
-                 OR LOWER(TRIM(name)) = 'company' 
-                 OR LOWER(TRIM(name)) = 'test')
-        );
-
+        -- Clean up bogus/test company accounts. With every FK above now
+        -- correctly cascading, this single statement is enough — every
+        -- referencing row in every one of those 16 tables is removed
+        -- automatically by Postgres, not by separate DELETE statements here.
         DELETE FROM users 
         WHERE role = 'company' 
           AND (LOWER(name) LIKE '%mohamed jabri%' 
                OR LOWER(name) LIKE '%demo company%' 
-               OR LOWER(TRIM(name)) = 'company' 
-               OR LOWER(TRIM(name)) = 'test');
-
-        DELETE FROM users 
-        WHERE role = 'company' 
-          AND (LOWER(name) LIKE '%mohamed jabri%' 
-               OR LOWER(name) LIKE '%demo company%' 
-               OR LOWER(name) LIKE '%nigga%' 
                OR LOWER(TRIM(name)) = 'company' 
                OR LOWER(TRIM(name)) = 'test');
 
