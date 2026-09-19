@@ -9,18 +9,36 @@ import type {
   CandidateConsent,
 } from '../types';
 
-export const submitConsent = async (sessionId: string, consent: CandidateConsent) => {
+export function submitConsent(consent: CandidateConsent): Promise<any>;
+export function submitConsent(sessionId: string, consent: CandidateConsent): Promise<any>;
+export async function submitConsent(
+  sessionIdOrConsent: string | CandidateConsent,
+  maybeConsent?: CandidateConsent
+) {
+  let sessionId: string;
+  let consent: CandidateConsent;
+  if (typeof sessionIdOrConsent === 'string') {
+    sessionId = sessionIdOrConsent;
+    consent = maybeConsent!;
+  } else {
+    consent = sessionIdOrConsent;
+    sessionId = `session-${(consent as any)?.candidateId || Date.now()}`;
+  }
   const res = await apiClient.post('/integrity/consent', { sessionId, ...consent });
   return res.data;
-};
+}
 
 export const verifyIdentity = async (payload: {
-  sessionId: string;
+  sessionId?: string;
   candidateId: number;
   faceImageBase64?: string;
   voiceSampleBase64?: string;
 }): Promise<IdentityVerificationResult> => {
-  const res = await apiClient.post('/integrity/verify-identity', payload);
+  const finalPayload = {
+    sessionId: payload.sessionId || `session-${payload.candidateId}-${Date.now()}`,
+    ...payload,
+  };
+  const res = await apiClient.post('/integrity/verify-identity', finalPayload);
   return res.data;
 };
 

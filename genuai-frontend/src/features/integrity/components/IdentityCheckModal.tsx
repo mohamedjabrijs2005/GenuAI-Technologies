@@ -4,7 +4,7 @@ import { verifyIdentity } from '../services/integrityClient';
 
 interface Props {
   candidateId: number;
-  sessionId: string;
+  sessionId?: string;
   onComplete: (result: IdentityVerificationResult) => void;
   onCancel: () => void;
 }
@@ -106,10 +106,10 @@ export const IdentityCheckModal: React.FC<Props> = ({ candidateId, sessionId, on
     setStep('verifying');
     try {
         const res = await verifyIdentity({
-        sessionId,
-        candidateId,
-        faceImageBase64: capturedPhoto || undefined,
-      });
+          sessionId: sessionId || `session-${candidateId}-${Date.now()}`,
+          candidateId,
+          faceImageBase64: capturedPhoto || undefined,
+        });
 
       const finalRes: IdentityVerificationResult = {
         ...res,
