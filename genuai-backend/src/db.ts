@@ -720,6 +720,40 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           ('Sales Executive', 'Sales', 'Enterprise sales, client relations, and growth strategy'),
           ('Associate Consultant', 'Consulting', 'Technical consulting, system design, and client advisory')
         ON CONFLICT (canonical_name) DO NOTHING;
+
+        -- ─────────────────────────────────────────────
+        -- Phase 1: Real, persisted integrity sessions
+        -- (replaces the old in-memory Map-based store, which lost all
+        -- data on every restart and couldn't scale past one instance)
+        -- ─────────────────────────────────────────────
+        CREATE TABLE IF NOT EXISTS integrity_sessions (
+          id SERIAL PRIMARY KEY,
+          session_id VARCHAR(255) UNIQUE NOT NULL,
+          candidate_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          assessment_id INTEGER REFERENCES assessments(id) ON DELETE SET NULL,
+          company_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+          consent JSONB,
+          identity_verification JSONB,
+          integrity_score INTEGER,
+          risk_level VARCHAR(20),
+          status VARCHAR(20) DEFAULT 'active',
+          created_at TIMESTAMP DEFAULT NOW(),
+          updated_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS integrity_events (
+          id SERIAL PRIMARY KEY,
+          session_id VARCHAR(255) NOT NULL REFERENCES integrity_sessions(session_id) ON DELETE CASCADE,
+          candidate_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          event_type VARCHAR(100) NOT NULL,
+          severity VARCHAR(20) DEFAULT 'INFO',
+          metadata JSONB,
+          created_at TIMESTAMP DEFAULT NOW()
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_integrity_events_session ON integrity_events(session_id);
+        CREATE INDEX IF NOT EXISTS idx_integrity_sessions_candidate ON integrity_sessions(candidate_id);
+        CREATE INDEX IF NOT EXISTS idx_integrity_sessions_company ON integrity_sessions(company_id);
       `);
 
       // Ensure standard enterprise companies
