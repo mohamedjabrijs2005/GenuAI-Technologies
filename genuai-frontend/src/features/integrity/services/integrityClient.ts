@@ -9,12 +9,13 @@ import type {
   CandidateConsent,
 } from '../types';
 
-export const submitConsent = async (consent: CandidateConsent) => {
-  const res = await apiClient.post('/integrity/consent', consent);
+export const submitConsent = async (sessionId: string, consent: CandidateConsent) => {
+  const res = await apiClient.post('/integrity/consent', { sessionId, ...consent });
   return res.data;
 };
 
 export const verifyIdentity = async (payload: {
+  sessionId: string;
   candidateId: number;
   faceImageBase64?: string;
   voiceSampleBase64?: string;
