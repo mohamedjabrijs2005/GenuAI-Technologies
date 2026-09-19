@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
-import { Strategy as LinkedInStrategy } from 'passport-linkedin-oauth2';
+import { Strategy as LinkedInStrategy } from 'passport-linkedign-oauth2';
 import pool from '../db';
 import { sendEmail } from '../utils/mailer';
 import { getOtpTemplate } from '../utils/emailTemplates';
@@ -297,6 +297,8 @@ router.post('/send-otp', async (req, res) => {
       emailDelivered = true;
     } catch (mailErr: any) {
       console.warn('[Auth OTP Mailer Warning]:', mailErr?.message || mailErr);
+      delete otpStore[trimmedEmail];
+      return res.status(502).json({ error: 'We could not send the verification email right now. Please try again in a moment.' });
     }
 
        res.json({
