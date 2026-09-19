@@ -4,13 +4,14 @@ import { verifyIdentity } from '../services/integrityClient';
 
 interface Props {
   candidateId: number;
+  sessionId: string;
   onComplete: (result: IdentityVerificationResult) => void;
   onCancel: () => void;
 }
 
 const VOICE_PRACTICE_SENTENCE = "The quick brown fox jumps over the lazy dog to verify voice consistency.";
 
-export const IdentityCheckModal: React.FC<Props> = ({ candidateId, onComplete, onCancel }) => {
+export const IdentityCheckModal: React.FC<Props> = ({ candidateId, sessionId, onComplete, onCancel }) => {
   const [step, setStep] = useState<'camera' | 'liveness' | 'voice' | 'verifying' | 'summary'>('camera');
   const [webcamStream, setWebcamStream] = useState<MediaStream | null>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
@@ -104,7 +105,8 @@ export const IdentityCheckModal: React.FC<Props> = ({ candidateId, onComplete, o
   const runVerification = async () => {
     setStep('verifying');
     try {
-      const res = await verifyIdentity({
+        const res = await verifyIdentity({
+        sessionId,
         candidateId,
         faceImageBase64: capturedPhoto || undefined,
       });
