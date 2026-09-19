@@ -29,6 +29,7 @@ import pool from './db';
 import { initSocket } from './socket';
 import { authenticateToken, requireRole } from './middleware/auth';
 import { authLimiter, aiLimiter, generalLimiter } from './middleware/rateLimit';
+import evidenceRoutes from './routes/evidence';
 
 dotenv.config();
 
@@ -74,6 +75,7 @@ app.use('/network', authenticateToken, networkRoutes);
 app.use('/ai', authenticateToken, aiLimiter, aiRoutes);
 app.use('/integrity', authenticateToken, integrityRoutes);
 app.use('/integrity/risk', authenticateToken, riskRoutes);
+app.use('/evidence', evidenceRoutes);
 
 // ─────────────────────────────────────────────
 // Company-only routes
