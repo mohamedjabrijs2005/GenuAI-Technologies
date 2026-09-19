@@ -1,15 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken, JwtPayload } from '../config/jwt';
+import { verifyToken } from '../config/jwt';
 
+// Extend Passport's existing Express.User interface instead of redeclaring
+// req.user's type — Passport already augments Express.Request globally,
+// and TypeScript requires all such augmentations to agree.
 declare global {
   namespace Express {
-    interface Request {
-      user?: JwtPayload;
+    interface User {
+      id: number;
+      role: string;
+      email: string;
     }
   }
 }
 
-/** Requires a valid Bearer token. Rejects with 401 if missing/invalid. */
+/** Safely handles Express 5's string | string[] route param type. */
+export function paramString(value: string | string[] | undefined): string {
+  return Array.isArray(value) ? value[0] : (value || '');
+}
+
 export function authenticateToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -24,7 +33,6 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
   }
 }
 
-/** Attaches req.user if a valid token is present, but never rejects the request. */
 export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -38,7 +46,6 @@ export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
   next();
 }
 
-/** Restricts to specific roles. Use AFTER authenticateToken. */
 export function requireRole(...roles: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) return res.status(401).json({ error: 'Authentication required.' });
@@ -49,14 +56,10 @@ export function requireRole(...roles: string[]) {
   };
 }
 
-/**
- * Allows access if the caller IS the resource owner (req.params[paramName] === req.user.id)
- * OR has one of the given elevated roles (e.g. admin). Use AFTER authenticateToken.
- */
 export function requireSelfOrRole(paramName: string, ...roles: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) return res.status(401).json({ error: 'Authentication required.' });
-    const targetId = Number(req.params[paramName]);
+    const targetId = Number(paramString(req.params[paramName]));
     if (req.user.id === targetId || roles.includes(req.user.role)) return next();
     return res.status(403).json({ error: 'You do not have permission to access this resource.' });
   };
