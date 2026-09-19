@@ -638,6 +638,18 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
         -- Extend jobs table to link company_roles
         ALTER TABLE jobs ADD COLUMN IF NOT EXISTS company_role_id INTEGER REFERENCES company_roles(id);
 
+                -- Repair schema drift: this table's live FK constraint predates
+        -- the ON DELETE CASCADE added above, and CREATE TABLE IF NOT EXISTS
+        -- cannot retroactively fix an already-existing table's constraints.
+        DO $$
+        BEGIN
+          ALTER TABLE interviews DROP CONSTRAINT IF EXISTS interviews_company_id_fkey;
+          ALTER TABLE interviews ADD CONSTRAINT interviews_company_id_fkey
+            FOREIGN KEY (company_id) REFERENCES users(id) ON DELETE CASCADE;
+        EXCEPTION WHEN OTHERS THEN
+          RAISE NOTICE 'Skipping interviews FK repair: %', SQLERRM;
+        END $$;
+
         -- Clean up bogus/test company accounts and test candidate interests
         DELETE FROM candidate_role_interests 
         WHERE company_id IN (
@@ -645,7 +657,6 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           WHERE role = 'company' 
             AND (LOWER(name) LIKE '%mohamed jabri%' 
                  OR LOWER(name) LIKE '%demo company%' 
-                 OR LOWER(name) LIKE '%nigga%' 
                  OR LOWER(TRIM(name)) = 'company' 
                  OR LOWER(TRIM(name)) = 'test')
         );
@@ -656,10 +667,26 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
           WHERE role = 'company' 
             AND (LOWER(name) LIKE '%mohamed jabri%' 
                  OR LOWER(name) LIKE '%demo company%' 
-                 OR LOWER(name) LIKE '%nigga%' 
                  OR LOWER(TRIM(name)) = 'company' 
                  OR LOWER(TRIM(name)) = 'test')
         );
+
+        DELETE FROM interviews
+        WHERE company_id IN (
+          SELECT id FROM users 
+          WHERE role = 'company' 
+            AND (LOWER(name) LIKE '%mohamed jabri%' 
+                 OR LOWER(name) LIKE '%demo company%' 
+                 OR LOWER(TRIM(name)) = 'company' 
+                 OR LOWER(TRIM(name)) = 'test')
+        );
+
+        DELETE FROM users 
+        WHERE role = 'company' 
+          AND (LOWER(name) LIKE '%mohamed jabri%' 
+               OR LOWER(name) LIKE '%demo company%' 
+               OR LOWER(TRIM(name)) = 'company' 
+               OR LOWER(TRIM(name)) = 'test');
 
         DELETE FROM users 
         WHERE role = 'company' 
