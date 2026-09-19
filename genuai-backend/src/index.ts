@@ -28,13 +28,15 @@ import subscriptionsRoutes from './routes/subscriptions';
 import pool from './db';
 import { initSocket } from './socket';
 import { authenticateToken, requireRole } from './middleware/auth';
+import { authLimiter, aiLimiter, generalLimiter } from './middleware/rateLimit';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Trust proxy for Render/Vercel (required for correct HTTPS detection in OAuth)
+// Trust proxy for Render/Vercel (required for correct HTTPS detection in OAuth
+// AND for express-rate-limit to see the real visitor IP instead of Render's proxy IP)
 app.set('trust proxy', 1);
 
 app.use(cors({ origin: true, methods: ['GET','POST','PUT','DELETE','OPTIONS'], allowedHeaders: ['Content-Type','Authorization'], credentials: true }));
@@ -42,10 +44,13 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
+// Baseline rate limit applied to every request that reaches this point
+app.use(generalLimiter);
+
 // ─────────────────────────────────────────────
 // Public routes — no login required
 // ─────────────────────────────────────────────
-app.use('/auth', authRoutes);
+app.use('/auth', authLimiter, authRoutes);
 app.use('/roles', rolesRoutes);
 app.use('/subscriptions', subscriptionsRoutes);
 app.use('/jobs', jobRoutes);
@@ -66,7 +71,7 @@ app.use('/history', authenticateToken, historyRoutes);
 app.use('/events', authenticateToken, eventsRoutes);
 app.use('/pm', authenticateToken, pmRoutes);
 app.use('/network', authenticateToken, networkRoutes);
-app.use('/ai', authenticateToken, aiRoutes);
+app.use('/ai', authenticateToken, aiLimiter, aiRoutes);
 app.use('/integrity', authenticateToken, integrityRoutes);
 app.use('/integrity/risk', authenticateToken, riskRoutes);
 
