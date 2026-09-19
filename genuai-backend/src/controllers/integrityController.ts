@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IntegrityService } from '../services/integrityService';
 import { ReportService } from '../services/reportService';
 import { AnalyticsService } from '../services/analyticsService';
+import { paramString } from '../middleware/auth';
 
 export const handleSaveConsent = async (req: Request, res: Response) => {
   try {
@@ -48,7 +49,7 @@ export const handleLogEvent = async (req: Request, res: Response) => {
 
 export const handleGetReport = async (req: Request, res: Response) => {
   try {
-    const sessionId = (req.params.sessionId as string) || '';
+    const sessionId = paramString(req.params.sessionId);
     const report = await IntegrityService.getReport(sessionId);
     res.json(report);
   } catch (err: any) {
@@ -58,7 +59,7 @@ export const handleGetReport = async (req: Request, res: Response) => {
 
 export const handleGetCompanyReports = async (req: Request, res: Response) => {
   try {
-    const companyId = parseInt(req.params.companyId, 10);
+    const companyId = parseInt(paramString(req.params.companyId), 10);
     const reports = await IntegrityService.getCompanyReports(companyId);
     res.json(reports);
   } catch (err: any) {
@@ -94,7 +95,7 @@ export const handleSaveDecision = async (req: Request, res: Response) => {
 
 export const handleGetCompanyAnalytics = async (req: Request, res: Response) => {
   try {
-    const companyId = parseInt(req.params.companyId, 10);
+    const companyId = parseInt(paramString(req.params.companyId), 10);
     const analytics = await AnalyticsService.getCompanyDashboardAnalytics(companyId);
     res.json(analytics);
   } catch (err: any) {
