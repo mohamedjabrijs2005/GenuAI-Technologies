@@ -48,9 +48,13 @@ export default function DynamicAssessmentPage({ user, onBack }: { user?: any; on
   }, []);
 
   const handleGeneratePath = async () => {
+    if (!user?.id) {
+      alert('Please log in to generate your assessment path.');
+      return;
+    }
     setLoading(true);
     try {
-      const data = await generateDynamicPath(user?.id || 1, selections);
+      const data = await generateDynamicPath(user.id, selections);
       setPathData(data);
     } catch (err: any) {
       alert('Failed to generate path: ' + err.message);

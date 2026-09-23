@@ -775,6 +775,39 @@ async function initSchemaWithRetry(maxRetries = 5, delayMs = 3000) {
         CREATE INDEX IF NOT EXISTS idx_integrity_events_session ON integrity_events(session_id);
         CREATE INDEX IF NOT EXISTS idx_integrity_sessions_candidate ON integrity_sessions(candidate_id);
         CREATE INDEX IF NOT EXISTS idx_integrity_sessions_company ON integrity_sessions(company_id);
+
+        -- ─────────────────────────────────────────────
+        -- Evidence Vault & Verification
+        -- ─────────────────────────────────────────────
+        CREATE TABLE IF NOT EXISTS evidence_records (
+          id SERIAL PRIMARY KEY,
+          candidate_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          assessment_attempt_id INTEGER NOT NULL REFERENCES assessment_attempts(id) ON DELETE CASCADE,
+          module_name VARCHAR(255) NOT NULL,
+          score NUMERIC,
+          percentage NUMERIC,
+          issued_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          expires_at TIMESTAMP WITH TIME ZONE,
+          signature_hash VARCHAR(255) NOT NULL,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        );
+
+        CREATE TABLE IF NOT EXISTS evidence_shares (
+          id SERIAL PRIMARY KEY,
+          evidence_record_id INTEGER NOT NULL REFERENCES evidence_records(id) ON DELETE CASCADE,
+          candidate_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          company_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          share_token VARCHAR(255) UNIQUE NOT NULL,
+          shared_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          expires_at TIMESTAMP WITH TIME ZONE,
+          revoked_at TIMESTAMP WITH TIME ZONE,
+          UNIQUE(evidence_record_id, company_id)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_evidence_records_candidate ON evidence_records(candidate_id);
+        CREATE INDEX IF NOT EXISTS idx_evidence_shares_candidate ON evidence_shares(candidate_id);
+        CREATE INDEX IF NOT EXISTS idx_evidence_shares_company ON evidence_shares(company_id);
+        CREATE INDEX IF NOT EXISTS idx_evidence_shares_token ON evidence_shares(share_token);
       `);
 
       // Ensure standard enterprise companies
